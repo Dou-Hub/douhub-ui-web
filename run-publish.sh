@@ -1,4 +1,4 @@
 set -e
-sh run-tsc.sh
+rm -rf build
 sh run-test.sh
 npm publish
