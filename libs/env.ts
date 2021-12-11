@@ -1,6 +1,6 @@
 
 import { useEffect, createElement } from 'react';
-import { throttle } from 'lodash';
+import { isEmpty, throttle } from 'lodash';
 import { useEnvStore } from "douhub-ui-store";
 
 let envCache = {
@@ -10,15 +10,19 @@ let envCache = {
     offsetHeight: 0
 };
 
+let _window: any = typeof window !== "undefined" ? window : {};
+let _process: any = typeof process !== "undefined" ? process : {};;
 
-export const Env = (props: any) => {
-
+export const EnvCenter = (props: any) => {
+    const { stage } = props;
     const envStore = useEnvStore({});
-
     const envHandler = throttle(() => {
+        
+        if (isEmpty(_window)) return ()=>{};
+
         const env = {
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: _window.innerWidth,
+            height: _window.innerHeight,
             offsetHeight: document.documentElement.offsetHeight,
             scrollTop: document.documentElement.scrollTop,
             scrollHeight: document.documentElement.scrollHeight
@@ -27,9 +31,8 @@ export const Env = (props: any) => {
         if (envCache.width != env.width) {
             envCache.width = env.width;
             envStore.setWidth(env.width);
-            const body = window.document.getElementById('body');
-            if(body) body.className = `body body-${envStore.size}`;
-            console.log({ width: env.width });
+            const body = _window.document.getElementById('body');
+            if (body) body.className = `body body-${envStore.size}`;
         }
 
         if (envCache.height != env.height || envCache.scrollTop != env.scrollTop) {
@@ -38,8 +41,10 @@ export const Env = (props: any) => {
             envCache.scrollTop = env.scrollTop;
 
             envStore.setHeight(env.height, env.offsetHeight, env.scrollTop, env.scrollHeight);
-            console.log({ height: env.height, offsetHeight: env.offsetHeight, scrollTop: env.scrollTop, scrollHeight: env.scrollHeight });
         }
+
+        if (stage !== 'prod') console.log({ height: env.height, width: env.width, offsetHeight: env.offsetHeight, scrollTop: env.scrollTop, scrollHeight: env.scrollHeight });
+
     }, 100);
 
     const scrollHandler = () => {
@@ -47,40 +52,38 @@ export const Env = (props: any) => {
     };
 
     const onBeforeUnload = () => {
-        window.scrollTo(0, 0);
+        if (isEmpty(_window)) return;
+        _window.scrollTo(0, 0);
     }
 
     useEffect(() => {
-        envHandler();
         //const interval = setInterval(envHandler, 500);
-
-        if (window.addEventListener) {
-            window.addEventListener("resize", envHandler);
-            window.addEventListener("scroll", scrollHandler);
-            window.addEventListener("beforeunload", onBeforeUnload);
+        if (isEmpty(_window)) return;
+        envHandler();
+        if (_window.addEventListener) {
+            _window.addEventListener("resize", envHandler);
+            _window.addEventListener("scroll", scrollHandler);
+            _window.addEventListener("beforeunload", onBeforeUnload);
         } else {
-         
-            (<any>window).attachEvent("onresize", envHandler);
-            (<any>window).attachEvent("onscroll", scrollHandler);
-            (<any>window).attachEvent("onbeforeunload", onBeforeUnload)
-            
+
+            _window.attachEvent("onresize", envHandler);
+            _window.attachEvent("onscroll", scrollHandler);
+            _window.attachEvent("onbeforeunload", onBeforeUnload);
         }
 
         return () => {
 
-            if (window.removeEventListener) {
-                window.removeEventListener("onresize", envHandler);
-                window.removeEventListener("scroll", envHandler);
-                window.removeEventListener("beforeunload", onBeforeUnload);
+            if (_window.removeEventListener) {
+                _window.removeEventListener("onresize", envHandler);
+                _window.removeEventListener("scroll", envHandler);
+                _window.removeEventListener("beforeunload", onBeforeUnload);
             } else {
-                (<any>window).detachEvent("onresize", envHandler);
-                (<any>window).detachEvent("onscroll", envHandler);
-                (<any>window).detachEvent("onbeforeunload", onBeforeUnload);
+                _window.detachEvent("onresize", envHandler);
+                _window.detachEvent("onscroll", envHandler);
+                _window.detachEvent("onbeforeunload", onBeforeUnload);
             }
-
-            // clearInterval(interval);
         }
-    }, []);
+    }, [_process?.browser]);
 
-    return createElement('div', null,'');
+    return createElement('div', null, '');
 };
