@@ -9,4 +9,5 @@ const Text = (props: Record<string, any>) => {
         <div {...props}>{props.children}</div>
 };
 
+Text.displayName = 'controls.text';
 export default Text;

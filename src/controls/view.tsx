@@ -5,4 +5,5 @@ const View = (props: Record<string, any>) => {
     </div>;
 };
 
+View.displayName = 'controls.view';
 export default View;

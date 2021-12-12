@@ -3,6 +3,20 @@ import { ReactSVG } from 'react-svg';
 import { isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
 
+export const SVG_CSS = `
+    .svg {
+        line-height: 1;
+        height: inherit;
+        width: inherit;
+    }
+    .svg div,
+    .svg svg
+    {
+        height: inherit;
+        width: inherit;
+    }
+`
+
 const SVG = (props: Record<string, any>) => {
     const { style, color } = props;
     const src = isNonEmptyString(props.src) ? props.src : '';
@@ -31,5 +45,6 @@ const SVG = (props: Record<string, any>) => {
         </div>}
     </>
 }
-SVG.displayName = 'SVG';
+
+SVG.displayName = 'controls.svg';
 export default SVG;
