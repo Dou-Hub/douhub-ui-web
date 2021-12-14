@@ -9,6 +9,8 @@ import SVG from './controls/svg';
 import {PAGE_CSS} from './page/css';
 import Logo from './controls/logo';
 export {getServerSidePropsForPage} from './page/server';
+import PageBase from './page/base';
+import PageHead from './page/head';
 
 export {abortCallAPI, callAPI} from './call-api';
 export {
@@ -18,5 +20,5 @@ export {
     getPlatformApiEndpoint, logDynamic} from './util';
 
 export {
-    View, Text, SVG, PAGE_CSS, Logo
+    View, Text, SVG, PAGE_CSS, Logo, PageBase, PageHead
 };

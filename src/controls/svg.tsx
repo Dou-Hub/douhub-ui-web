@@ -17,6 +17,8 @@ export const SVG_CSS = `
     }
 `
 
+
+
 const SVG = (props: Record<string, any>) => {
     const { style, color } = props;
     const src = isNonEmptyString(props.src) ? props.src : '';
