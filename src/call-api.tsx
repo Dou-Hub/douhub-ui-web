@@ -1,7 +1,7 @@
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { isNil, isString, isArray, map, without, isEmpty } from 'lodash';
 
-let _window: any = typeof window !== "undefined" ? window : {};
+import { _window } from "douhub-helper-util";
 
 export const abortCallAPI = () => {
     if (isEmpty(_window)) return;

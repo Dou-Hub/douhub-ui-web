@@ -5,9 +5,10 @@ import Head from './head';
 
 const PageBase = (props: Record<string, any>) => {
 
-    const { solution, children } = props;
+    const { solution} = props;
     const Header = props.Header ? props.Header : ()=><></>;
     const Footer = props.Footer ? props.Footer : ()=><></>;
+    const Body = props.Body ? props.Body : ()=><></>;
 
     const sharedProps = { solution };
   
@@ -16,7 +17,7 @@ const PageBase = (props: Record<string, any>) => {
         <EnvCenter />
         <MessageCenter />
         <Header {...sharedProps} />
-        {children}
+        <Body {...sharedProps} />
         <Footer {...sharedProps} />
     </div>
 };

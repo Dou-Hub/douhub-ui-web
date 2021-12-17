@@ -1716,10 +1716,10 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-douhub-helper-util@^1.0.27:
-  version "1.0.27"
-  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.27.tgz#1dec9685d3ab72d1a90144d3b0ae8fc7f223a980"
-  integrity sha512-r+Ei7F6SiS5bE6VR6Q5PzAtFuNUOPxjmIkDmGrBPr7grkiyvCXB4UzKig+2ymv6LV6tzXgP4+mmRNVk7qgI/6w==
+douhub-helper-util@1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.28.tgz#0c5dfcb84aa3d833c478dc8f3eb9ff511e795aab"
+  integrity sha512-0vDfcR7Mau9d6cuSKLp12NYdXtVac4MkStismy8lkqGwgw1366s9pTl90CYXcy2v5Fqce1r4R9SQeJNL2tYroA==
   dependencies:
     is-url "^1.2.4"
     js-base64 "^3.7.2"
@@ -1727,11 +1727,12 @@ douhub-helper-util@^1.0.27:
     lodash "^4.17.21"
     uuid "^8.3.2"
 
-douhub-ui-store@^1.0.26:
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.26.tgz#bb12ddf8687cff6f986b442b34023d3547c495bc"
-  integrity sha512-OybjMhnI37ebwPfmLKl9YOx+MNl7T0LHiNGlmNAjEofsG2opltiPc3S0m0axEQRxEDFmz5VRNIrXoY5r2AnvwA==
+douhub-ui-store@1.0.27:
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.27.tgz#21a84ade3d027a6e4143cb32adf14056e155077b"
+  integrity sha512-Q1FUqnKdxi3koNKM9ZWHk5dp73fP24tUqRrjwJk2Ooitl2WvK5+Nv2AC/CQAgy7huP3bWVDvn4u5slmcjk9EgQ==
   dependencies:
+    douhub-helper-util "1.0.28"
     lodash "^4.17.21"
     mobx "^6.3.5"
     mobx-react "^7.2.1"
