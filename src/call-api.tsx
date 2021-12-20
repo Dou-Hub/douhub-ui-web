@@ -1,6 +1,6 @@
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
-import { isNil, isString, isArray, map, without, isEmpty } from 'lodash';
-
+import { isNil, isString, map, without, isEmpty } from 'lodash';
+import axios, {Method} from 'axios';
 import { _window } from "douhub-helper-util";
 
 export const abortCallAPI = () => {
@@ -8,13 +8,38 @@ export const abortCallAPI = () => {
     return new _window.AbortController;
 }
 
+const processServerlessOfflineError = (data: string) => {
+    try {
+        data = data
+        .replace('{errorMessage=','{"errorMessage":')
+            .replace('statusCode=', '"statusCode":')
+            .replace('headers=', '"headers":"')
+            .replace('errorType=Error','"errorType":"Error"')
+            .replace('body=', '", "body:')
+            .replace('"body":"','"body":')
+            .replace(/\\"/g, '"');
+        
+        data = data.substring(0,data.indexOf('stackTrace=')).substring(0,data.indexOf('"errorType":"Error"'))
+        data = data.substring(0, data.length-4) + "}}";
+        return JSON.parse(data).errorMessage;
+    }
+    catch
+    {
+        console.error({ error: 'Failed to process the result from the offline API.', data });
+    }
+
+    return data;
+}
+
 const processServerlessOfflineResult = (data: string) => {
     try {
-        data = data.replace('statusCode=', '"statusCode":')
+        data = data
+            .replace('statusCode=', '"statusCode":')
             .replace('headers=', '"headers":"')
             .replace('body=', '", "body":');
         const dataJSON: Record<string, any> = JSON.parse(data);
         const headers = dataJSON?.headers?.replace('{', '').replace('}', '').split(',');
+
         dataJSON.headers = without(map(headers, (header) => {
             const headerPair = header.split('=');
             const newHeader: Record<string, any> = {};
@@ -40,18 +65,21 @@ const processServerlessOfflineResult = (data: string) => {
 export const callAPI = (
     url: string,
     data: Record<string, any>,
-    method?: string,
+    method: Method,
     settings?: {
-        apiToken?: string, skipCognito?: boolean, cognito?: any, solutionId?: string
+        apiToken?: string, 
+        skipCognito?: boolean, 
+        cognito?: any, 
+        solutionId?: string,
+        stage?:'dev'|'staging'|'prod' 
     }): Promise<Record<string, any>> => {
 
     if (!isObject(settings)) settings = {};
     if (isNil(data)) data = {};
-    method = isNonEmptyString(method) ? method?.toUpperCase() : 'POST';
-
+   
     let headers: Record<string, any> = {
         'Accept': 'application/json,application/xml,text/plain,text/html,*.*',
-        'Content-Type': 'application/x-www-form-urlencoded'
+        // 'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     if (settings?.solutionId) {
@@ -67,27 +95,38 @@ export const callAPI = (
         headers.apiToken = settings?.apiToken;
     }
 
-    let params = Object.keys(data).map((key) => {
-        let v = data[key];
-        if (isArray(v) || isObject(v)) v = JSON.stringify(v);
-        return encodeURIComponent(key) + '=' + encodeURIComponent(v);
-    }).join('&');
+    const config:Record<string,any> = {
+        url, 
+        method,
+        headers
+    }
 
-    if (method === 'GET') {
-        if (params.length > 0) url = url.indexOf('?') > 0 ? `${url}&${params}` : `${url}?${params}`;
+    // if (method === 'GET') {
+    //     let params = Object.keys(data).map((key) => {
+    //         let v = data[key];
+    //         if (isArray(v) || isObject(v)) v = JSON.stringify(v);
+    //         return encodeURIComponent(key) + '=' + encodeURIComponent(v);
+    //     }).join('&');
+
+    //     if (params.length > 0) url = url.indexOf('?') > 0 ? `${url}&${params}` : `${url}?${params}`;
+    // }
+
+    if (method === 'GET')
+    {
+       if (isObject(data)) config.params = data;
+    }
+    else
+    {
+        if (isObject(data)) config.data = data;
     }
 
     return new Promise((resolve, reject) => {
         const localAPI = url.indexOf('//localhost') > 0;
-        fetch(url, {
-            method, headers,
-            redirect: "follow",
-            body: method === 'GET' ? null : params
-        })
-            .then((response) => response.json())
-            .then((data) => {
+        axios(config)
+            .then((result:Record<string,any>) => {
+                let data = result.data;
 
-                if (localAPI) {
+                if (localAPI && data) {
                     data = processServerlessOfflineResult(data);
                 }
 
@@ -109,18 +148,28 @@ export const callAPI = (
                 // console.log({ data})
                 resolve(data);
             })
-            .catch((error) => {
+            .catch((response:Record<string,any>) => {
+                
+                console.log({response});
 
+                let error = response.response?response.response:{message:response.message, code:500};
+
+                if (localAPI && error?.data) {
+                    error = processServerlessOfflineError(error.data);
+                    if (isObject(error?.body)) error = error.body;
+                }
+               
                 if (isString(error)) {
                     error = { errorMessage: error };
                 }
                 else {
-                    if (isString(error.errorMessage)) {
+                    if (!isObject(error)) error = {};
+                    if (isString(error?.errorMessage)) {
                         try {
-                            error = JSON.parse(error.errorMessage);
+                            error = JSON.parse(error?.errorMessage);
                         }
                         catch (ex) {
-                            error.message = error.errorMessage
+                            error.message = error?.errorMessage
                         }
                     }
                 }
