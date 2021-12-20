@@ -6,18 +6,23 @@
 import View from './controls/view';
 import Text from './controls/text';
 import SVG from './controls/svg';
-import {PAGE_CSS} from './page/css';
+import { PAGE_CSS } from './page/css';
 import Logo from './controls/logo';
-export {getServerSidePropsForPage} from './page/server';
+export { getServerSidePropsForPage } from './page/server';
 import PageBase from './page/base';
 import PageHead from './page/head';
 
-export {abortCallAPI, callAPI} from './call-api';
+export { abortCallAPI, callAPIBase } from './call-api';
+export { callAPI } from './context/auth-call-api';
+
+export { signIn, signInCognito, getCurrentPoolUser } from './context/auth-cognito';
+
 export {
-    getSession, 
-    setSession, 
+    getSession,
+    setSession,
     removeSession,
-    getPlatformApiEndpoint, logDynamic} from './util';
+    getPlatformApiEndpoint, logDynamic
+} from './util';
 
 export {
     View, Text, SVG, PAGE_CSS, Logo, PageBase, PageHead

@@ -62,14 +62,13 @@ const processServerlessOfflineResult = (data: string) => {
 }
 
 
-export const callAPI = (
+export const callAPIBase = (
     url: string,
     data: Record<string, any>,
     method: Method,
     settings?: {
         apiToken?: string, 
-        skipCognito?: boolean, 
-        cognito?: any, 
+        headers?:any,
         solutionId?: string,
         stage?:'dev'|'staging'|'prod' 
     }): Promise<Record<string, any>> => {
@@ -78,17 +77,13 @@ export const callAPI = (
     if (isNil(data)) data = {};
    
     let headers: Record<string, any> = {
-        'Accept': 'application/json,application/xml,text/plain,text/html,*.*',
+        ...settings?.headers, 
+        Accept: 'application/json,application/xml,text/plain,text/html,*.*',
         // 'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     if (settings?.solutionId) {
         headers.solutionId = settings.solutionId;
-    }
-
-    if (settings?.cognito?.signInUserSession && !settings.skipCognito) {
-        headers.Authorization = settings.cognito.signInUserSession.idToken.jwtToken;
-        headers.AccessToken = settings.cognito.signInUserSession.accessToken.jwtToken;
     }
 
     if (isNonEmptyString(settings?.apiToken)) {

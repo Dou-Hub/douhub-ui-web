@@ -1,7 +1,7 @@
 import { isNonEmptyString } from 'douhub-helper-util';
 import _, { assign } from 'lodash';
 import nookies from 'nookies';
-import {  callAPI } from '../call-api';
+import {  callAPIBase } from '../call-api';
 import { getPlatformApiEndpoint} from '../util';
 
 export const getServerSidePropsForPage = async (
@@ -43,13 +43,20 @@ export const getServerSidePropsForPage = async (
 
     let solution: Record<string, any> = { solutionId: settings.solutionId, host, country };
 
-    const currentContext = await callAPI(
-        getPlatformApiEndpoint(settings, 'context', 'current'),
+    const apiEndpoint = {
+        context: getPlatformApiEndpoint(settings, 'context', ''),
+        realtime: getPlatformApiEndpoint(settings, 'realtime', ''),
+    }
+
+    const currentContext = await callAPIBase(
+        `${apiEndpoint.context}current`,
         { solutionId: settings.solutionId }, 'GET'); //TODO: use us only for now
 
     if (currentContext.type != 'error' && currentContext?.context?.solution) {
         solution = { ...currentContext?.context?.solution, host, country };
     }
+
+    solution.apiEndpoint = apiEndpoint;
 
     const passPreReleaseCode = !solution.preReleaseMode || solution.preReleaseMode && cookies && cookies['pre-release-code'] == solution.version;
 
