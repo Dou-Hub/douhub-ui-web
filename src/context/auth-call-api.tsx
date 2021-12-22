@@ -3,15 +3,16 @@ import { getCurrentPoolUser } from './auth-cognito';
 import { Method } from 'axios';
 import { isEmpty } from 'lodash';
 import { callAPIBase } from '../call-api';
+import { getAuth } from '..';
 
-export const callAPI = (
-    auth: any,
+export const callAPI = async (
     solution: Record<string, any>,
     path: string,
     data: Record<string, any>,
     method: Method,
     settings?: Record<string, any>): Promise<Record<string, any>> => {
 
+    const auth = await getAuth(solution);
     if (!isObject(settings)) settings = {};
     if (settings) settings.solutionId = solution.id;
 

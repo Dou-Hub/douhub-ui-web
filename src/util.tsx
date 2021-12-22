@@ -1,7 +1,7 @@
 
 import nookies from 'nookies';
-import { isObject, isNonEmptyString } from 'douhub-helper-util';
-import { isNumber } from 'lodash';
+import { isObject, isNonEmptyString, ttl, _window } from 'douhub-helper-util';
+import { isNil, isInteger, isNumber } from 'lodash';
 
 export const getPlatformApiEndpoint = (appSettings: Record<string, any>, apiName: string, functionName: string, country?: string): string => {
     return `${appSettings.platformEndpoint
@@ -10,20 +10,20 @@ export const getPlatformApiEndpoint = (appSettings: Record<string, any>, apiName
         .replace('{country}', country ? country : appSettings.country)}/${functionName}`;
 }
 
-export const getSession = (name: string, ctx?: any) => {
+export const getCookie = (name: string, ctx?: any) => {
     const o = nookies.get(ctx);
     if (!isObject(o)) return '';
     const v = nookies.get(ctx)[name];
     return v ? v : '';
 };
 
-export const setSession = (name: string, value: string, ctx?: any, maxAgeMins?: number) => {
+export const setCookie = (name: string, value: string, ctx?: any, maxAgeMins?: number) => {
     if (!isNumber(maxAgeMins)) maxAgeMins = 360;
     const option = { path: "/", maxAge: maxAgeMins * 60 };
     nookies.set(ctx, name, value, option);
 };
 
-export const removeSession = (name: string, ctx?: any) => {
+export const removeCookie = (name: string, ctx?: any) => {
     nookies.destroy(ctx, name, { path: "/" });
 };
 
@@ -37,4 +37,43 @@ export const logDynamic = (object: Record<string, any>, url: string, name: strin
     return object;
 }
 
+export const getLocalStorage = (key:string, defaultValue:any) => {
+
+    if (!isNonEmptyString(key)) return null;
+
+    let data = null;
+    const storageData = _window.localStorage.getItem(key);
+    try {
+        data = JSON.parse(storageData ? storageData : '{}');
+        if (isObject(data) && isInteger(data.ttl) && Date.now() > data.ttl * 1000) //ttl in seconds
+        {
+            return defaultValue ? defaultValue : null;
+        }
+    }
+    catch (error) {
+        data = storageData;
+    }
+
+    return data ? data : (defaultValue ? defaultValue : null);
+};
+
+
+export const setLocalStorage = (key: string, data: any, expireMinutes: number) => {
+
+    if (!isNonEmptyString(key)) return null;
+    if (isNil(data)) return _window.localStorage.removeItem(key);
+
+    if (isInteger(expireMinutes) && expireMinutes > 0) {
+        const storageData = { data, ttl: ttl(expireMinutes) };
+        _window.localStorage.setItem(key, JSON.stringify(storageData));
+    }
+    else {
+        _window.localStorage.setItem(key, isObject(data) ? JSON.stringify(data) : data);
+    }
+
+};
+
+export const removeLocalStorage = (key: string) => {
+    localStorage.removeItem(key);
+};
 

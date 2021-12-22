@@ -57,6 +57,7 @@ export const getServerSidePropsForPage = async (
     }
 
     solution.apiEndpoint = apiEndpoint;
+    solution.stage = settings.stage;
 
     const passPreReleaseCode = !solution.preReleaseMode || solution.preReleaseMode && cookies && cookies['pre-release-code'] == solution.version;
 

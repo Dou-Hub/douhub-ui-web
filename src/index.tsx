@@ -15,12 +15,15 @@ import PageHead from './page/head';
 export { abortCallAPI, callAPIBase } from './call-api';
 export { callAPI } from './context/auth-call-api';
 
-export { signIn, signInCognito, getCurrentPoolUser } from './context/auth-cognito';
+export { signIn, getAuth, signInCognito, getCurrentPoolUser } from './context/auth-cognito';
 
 export {
-    getSession,
-    setSession,
-    removeSession,
+    getLocalStorage,
+    setLocalStorage,
+    removeLocalStorage,
+    getCookie,
+    setCookie,
+    removeCookie,
     getPlatformApiEndpoint, logDynamic
 } from './util';
 

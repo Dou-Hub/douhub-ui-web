@@ -3,6 +3,16 @@ import { callAPIBase} from '../call-api';
 import { assign, each, without, map } from 'lodash';
 import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window } from 'douhub-helper-util';
 
+//create aws-amplify/auth object with settings from solution profile
+export const getAuth = async (solution: Record<string, any>) => {
+    if (!_window._auth) {
+        console.log(`getAuth`);
+        _window._auth = (await import('@aws-amplify/auth')).default;
+        _window._auth.configure({ ...solution && solution.auth.cognito });
+    }
+    return _window._auth;
+}
+
 export const signInCognito = async (auth: any, loginId: string, password: string) => {
     return await (new Promise((resolve, reject) => {
         auth.signIn(loginId, password)
@@ -17,11 +27,11 @@ export const signInCognito = async (auth: any, loginId: string, password: string
 }
 
 export const signIn = async (
-    auth: any,
     solution: Record<string, any>,
     data: Record<string, any>,
     settings: Record<string, any>) => {
 
+    const auth = await getAuth(solution);
     let user: any = null;
     const { password, verificationCode } = data;
 
@@ -106,8 +116,8 @@ export const signIn = async (
 }
 
 
-export const getCurrentPoolUser =  (auth: any): Record<string, any> => {
-
+export const getCurrentPoolUser = async (solution:Record<string, any>): Promise<Record<string, any>> => {
+    const auth = await getAuth(solution);
     let hasCognito = false;
     for (let x in _window.localStorage) {
         if (x.indexOf('CognitoIdentityServiceProvider') >= 0 && !hasCognito) {
@@ -119,6 +129,7 @@ export const getCurrentPoolUser =  (auth: any): Record<string, any> => {
 }
 
 export const getCurrentPoolUserInternal =  (auth: any): Record<string, any> => {
+    
     return new Promise((resolve) => {
         auth.currentUserPoolUser()
             .then((user: Record<string, any>) => {

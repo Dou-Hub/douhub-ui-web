@@ -1,7 +1,7 @@
 {
   "name": "douhub-ui-web",
   "licence": "MIT",
-  "version": "1.0.34",
+  "version": "1.0.38",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/esm/index.d.ts",
@@ -17,6 +17,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
+    "@aws-amplify/auth": "^4.3.19",
     "axios": "^0.24.0",
     "douhub-helper-util": "^1.0.28",
     "douhub-ui-store": "1.0.27",

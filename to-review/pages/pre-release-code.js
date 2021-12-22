@@ -3,7 +3,7 @@
 import FieldText from '../fields/text';
 import FieldRow from '../fields/row';
 import { solution } from '../../../shared/metadata/solution';
-import { setSession } from '../../util/web';
+import { setCookie } from '../../util/web';
 
 export const getServerSideProps = async (props) => {
     return { header: { hide: true }, footer: { hide: true } }
@@ -13,7 +13,7 @@ export const MainArea = (props) => {
 
     const onChange = (code) => {
         if (code == solution.version) {
-            setSession('pre-release-code', code);
+            setCookie('pre-release-code', code);
             window.location = '/';
         }
     };
