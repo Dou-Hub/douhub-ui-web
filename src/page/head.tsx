@@ -2,7 +2,6 @@ import React from 'react';
 import Head from 'next/head';
 import { isObject } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
-import { PAGE_CSS } from './css';
 
 const PageHead = (props: {
     noIndex?: false,
@@ -117,7 +116,6 @@ const PageHead = (props: {
 
         {site.googleTagManagerId && <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.googleTagManagerId}`}></script>}
         {gtag && <script dangerouslySetInnerHTML={{ __html: gtag }} />}
-        <style dangerouslySetInnerHTML={{ __html: PAGE_CSS}}/>
     </Head>
 }
 

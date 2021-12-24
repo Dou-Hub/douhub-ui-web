@@ -1,4 +1,4 @@
-const PageHeaderUserCSS = () => <style global jsx>{`
+const PageHeaderUserCSS = () => <style global={true} jsx={true}>{`
 
     .header .user-avatar-icon-wrapper,
     .header .user-avatar-image-wrapper

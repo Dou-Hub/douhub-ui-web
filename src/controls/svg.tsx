@@ -3,8 +3,9 @@ import { ReactSVG } from 'react-svg';
 import { isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
 
-export const SVG_CSS = `
-    .svg {
+const CSS = () => <style global={true} jsx={true}>{
+`
+     .svg {
         line-height: 1;
         height: inherit;
         width: inherit;
@@ -16,8 +17,8 @@ export const SVG_CSS = `
         width: inherit;
     }
 `
-
-
+}
+</style>
 
 const SVG = (props: Record<string, any>) => {
     const { style, color } = props;
@@ -28,7 +29,7 @@ const SVG = (props: Record<string, any>) => {
         if (isFunction(props.onClick)) props.onClick();
     }
 
-    const css = isNonEmptyString(color)? `
+    const css = isNonEmptyString(color) ? `
         #${id} .svg svg
         {
             fill: ${color};
@@ -38,11 +39,12 @@ const SVG = (props: Record<string, any>) => {
         {
             fill: ${color};
         }
-    `:''
+    `: ''
 
     return <>
         {isNonEmptyString(css) && isNonEmptyString(src) && <style key="css" dangerouslySetInnerHTML={{ __html: css }} />}
         {isNonEmptyString(src) && <div id={id} onClick={onClick} style={style} className={`svg-wrapper ${props.className ? props.className : ''}`}>
+            {CSS}
             <ReactSVG src={src} className="svg" />
         </div>}
     </>

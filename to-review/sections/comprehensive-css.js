@@ -1,5 +1,5 @@
 
-const ConprehensiveSectionCSS = () => <style global jsx>
+const ConprehensiveSectionCSS = () => <style global={true} jsx={true}>
 {`
     .section-comprehensive
     {

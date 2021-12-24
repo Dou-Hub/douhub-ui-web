@@ -1,7 +1,7 @@
 import { ReactSVG } from 'react-svg';
 import _ from '../../../shared/util/base';
 
-const SVGCSS = () => <style global jsx>{`
+const SVGCSS = () => <style global={true} jsx={true}>{`
     .svg {
         line-height: 1;
         height: inherit;

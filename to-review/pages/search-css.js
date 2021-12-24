@@ -1,4 +1,4 @@
-const SearchPageCSS = () => <style global jsx>{`
+const SearchPageCSS = () => <style global={true} jsx={true}>{`
     .search-page-title
     {
         font-size: 1.6rem !important;

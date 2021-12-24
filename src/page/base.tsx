@@ -18,6 +18,7 @@ const PageBase = (props: Record<string, any>) => {
         <MessageCenter />
         <Header {...sharedProps} />
         <Body {...sharedProps} />
+        {props.children}
         <Footer {...sharedProps} />
     </div>
 };

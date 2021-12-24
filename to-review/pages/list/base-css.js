@@ -1,4 +1,4 @@
-const ListBaseCSS = () => <style global jsx>{`
+const ListBaseCSS = () => <style global={true} jsx={true}>{`
 
     body
     {

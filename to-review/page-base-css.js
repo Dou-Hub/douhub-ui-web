@@ -1,4 +1,4 @@
-const PageBaseCSS = () => <style global jsx>{`
+const PageBaseCSS = () => <style global={true} jsx={true}>{`
 
     html {
         --antd-wave-shadow-color: none !important;

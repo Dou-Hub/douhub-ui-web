@@ -1,6 +1,6 @@
 const DISPLAY_NAME = 'TagsSectionCSS';
 
-const TagsSectionCSS = () => <style global jsx>
+const TagsSectionCSS = () => <style global={true} jsx={true}>
     {`
     
     .section-tags .tag

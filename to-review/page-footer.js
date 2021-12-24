@@ -5,7 +5,7 @@ import { View } from '../components/controls/base';
 import _ from '../../shared/util/base';
 // import { connect, getPublicKeyFromSeed } from '../../bandup-blockchain/solana/network';
 
-const PageFooterCSS = () => <style global jsx>{`
+const PageFooterCSS = () => <style global={true} jsx={true}>{`
     .footer-wrapper {
         display: flex;
         flex-direction: column;

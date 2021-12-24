@@ -35,7 +35,7 @@ export const MESSAGE = {
 export const PAGE_SIZE = 30;
 
 
-const LoadMoreStyles = () => <style global jsx>
+const LoadMoreStyles = () => <style global={true} jsx={true}>
     {`
     .list-load-more-button-wrapper
     {
@@ -62,7 +62,7 @@ const LoadMoreStyles = () => <style global jsx>
 `}
 </style>
 
-const LoadingStyles = () => <style global jsx>{`
+const LoadingStyles = () => <style global={true} jsx={true}>{`
     .list-loading 
     {
         width: 100%;
@@ -98,7 +98,7 @@ export const Loading = (props) => {
 }
 
 
-const ListMessageStyles = () => <style global jsx>{`
+const ListMessageStyles = () => <style global={true} jsx={true}>{`
     .list-message
     {
         margin-top: 30px;

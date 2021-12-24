@@ -1,4 +1,4 @@
-const PageHeaderCSS = () => <style global jsx>{`
+const PageHeaderCSS = () => <style global={true} jsx={true}>{`
 
 .header-wrapper
 {

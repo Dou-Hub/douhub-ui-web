@@ -1,5 +1,5 @@
 
-const BannerSectionStyles = () => <style global jsx>
+const BannerSectionStyles = () => <style global={true} jsx={true}>
 {`
     .section-banner 
     {

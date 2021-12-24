@@ -1,4 +1,4 @@
-const ToolbarSectionCSS = () => <style global jsx>
+const ToolbarSectionCSS = () => <style global={true} jsx={true}>
 {`
     .section-toolbar
     {

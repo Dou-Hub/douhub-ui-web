@@ -1,5 +1,5 @@
 
-const ParagraphSectionCSS = () => <style global jsx>
+const ParagraphSectionCSS = () => <style global={true} jsx={true}>
 {`
     .section-paragraph
     {

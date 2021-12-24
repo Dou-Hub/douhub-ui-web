@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
 
-const PageHeaderLoaderCSS = () => <style global jsx>{`
+const PageHeaderLoaderCSS = () => <style global={true} jsx={true}>{`
 
 .header-loader-wrapper
 {

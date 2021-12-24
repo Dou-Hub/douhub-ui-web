@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import _, { assign } from 'lodash';
 import nookies from 'nookies';
 import {  callAPIBase } from '../call-api';
@@ -17,7 +17,7 @@ export const getServerSidePropsForPage = async (
     country = country ? country.toLowerCase() : '';
     country = country != 'us' && country != 'ca' ? 'us' : country;
 
-    console.log({ headers: req.headers });
+    //console.log({ headers: req.headers });
 
     const countryName = req.headers['CloudFront-Viewer-Country-Name'.toLowerCase()];
     const region = req.headers['CloudFront-Viewer-Country-Region'.toLowerCase()];
@@ -48,7 +48,7 @@ export const getServerSidePropsForPage = async (
         realtime: getPlatformApiEndpoint(settings, 'realtime', ''),
     }
 
-    const currentContext = await callAPIBase(
+    const currentContext = isObject(baseProps.currentContext)?baseProps.currentContext: await callAPIBase(
         `${apiEndpoint.context}current`,
         { solutionId: settings.solutionId }, 'GET'); //TODO: use us only for now
 

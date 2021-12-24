@@ -1,5 +1,5 @@
 import { colorByName } from '../../../shared/util/colors';
-const ColumnsSectionCSS = ()=> <style global jsx>
+const ColumnsSectionCSS = ()=> <style global={true} jsx={true}>
     {`    
         .section-columns {
             display: flex !important;

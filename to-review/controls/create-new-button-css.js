@@ -1,6 +1,6 @@
 import { colorByName } from '../../../shared/util/colors';
 
-const CreateButtonCSS = () => <style global jsx>{`
+const CreateButtonCSS = () => <style global={true} jsx={true}>{`
 
 .create-new-button
 {

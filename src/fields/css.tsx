@@ -1,4 +1,6 @@
-export const Field_CSS = `
+import React from "react";
+console.log('Load FieldCSS');
+const FieldCSS = () => <style global={true} jsx={true}>{`
     .field
     {
         display: flex;
@@ -106,12 +108,13 @@ export const Field_CSS = `
     .field-doing div
     {
         font-size: 1rem !important;
-    }
+    } 
 
-    .field-hr
+    /* 
+    .field-disabled
     {
-        margin-bottom: 30px;
-        width: 100%;
-        border-bottom: dashed 5px rgba(0,0,0,0.1) !important;
-    }
-`
+        color: #cccccc !important;
+    } */
+`}</style>
+FieldCSS.displayName = 'FieldCSS';
+export default FieldCSS;

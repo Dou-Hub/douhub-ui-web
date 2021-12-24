@@ -19,7 +19,7 @@ export const MainArea = (props) => {
     };
 
     return <div className="section section-form">
-        <style global jsx>{`
+        <style global={true} jsx={true}>{`
             .page {
                 max-width: 100% !important;
                 padding-top: 100px;
