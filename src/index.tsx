@@ -7,9 +7,8 @@ import View from './controls/view';
 import Text from './controls/text';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
-export { getServerSidePropsForPage } from './page/server';
-import PageBase from './page/base';
-import PageHead from './page/head';
+export { getServerSidePropsForPage } from './pages/server';
+
 import AppBase from './app';
 
 //Sections
@@ -24,11 +23,16 @@ import CodesField from './fields/codes';
 import TextField from './fields/text';
 import MessageField from './fields/message';
 
+//Pages
+import PageBase from './pages/base';
+import PageHead from './pages/head';
+import SignInPageBody from './pages/sign-in/body';
+
 export { abortCallAPI, callAPIBase } from './call-api';
 export { callAPI } from './context/auth-call-api';
 export { signIn, getAuth, signInCognito, getCurrentPoolUser } from './context/auth-cognito';
 
-export {SignInFields} from './sections/auth/helper';
+export { SignInFields } from './sections/auth/helper';
 
 export {
     getLocalStorage,
@@ -41,7 +45,11 @@ export {
 } from './util';
 
 export {
-    View, Text, SVG, Logo, PageBase, PageHead, AppBase
+    View, Text, SVG, Logo
+};
+
+export {
+    PageBase, PageHead, AppBase, SignInPageBody
 };
 
 export {
@@ -56,5 +64,5 @@ export {
     CodesField,
     TextField,
     MessageField
-} 
+}
 
