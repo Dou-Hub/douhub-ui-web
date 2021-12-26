@@ -14,6 +14,8 @@ import AppBase from './app';
 //Sections
 import LogosSection from './sections/logos';
 import SignInSection from './sections/auth/sign-in';
+import SocialIconsSection from './sections/social-icons';
+import FooterColumnSection from './sections/footer/column';
 
 //Fields
 import LabelField from './fields/label';
@@ -54,7 +56,9 @@ export {
 
 export {
     LogosSection,
-    SignInSection
+    SignInSection,
+    SocialIconsSection,
+    FooterColumnSection
 }
 
 export {
