@@ -8,9 +8,9 @@ const FooterColumnSection = (props: Record<string, any>) => {
         <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">{data.title}</h3>
         <ul role="list" className="mt-4 space-y-4">
             {map(data.items, (item) => (
-                <li key={item.name}>
+                <li key={item.title}>
                     <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
-                        {item.name}
+                        {item.title}
                     </a>
                 </li>
             ))}

@@ -1,7 +1,9 @@
 
-import { callAPIBase} from '../call-api';
+import { useEffect, useState } from 'react';
+import { callAPIBase } from '../call-api';
 import { assign, each, without, map } from 'lodash';
 import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window } from 'douhub-helper-util';
+import { useRouter } from 'next/router';
 
 //create aws-amplify/auth object with settings from solution profile
 export const getAuth = async (solution: Record<string, any>) => {
@@ -47,7 +49,7 @@ export const signIn = async (
     if (isNonEmptyString(verificationCode) && verificationCode.length != 8) {
         return { error: 'ERROR_SIGNIN_NEED_VERIFY' };
     }
- 
+
     try {
         if (!isObject(settings)) settings = {};
 
@@ -116,7 +118,7 @@ export const signIn = async (
 }
 
 
-export const getCurrentPoolUser = async (solution:Record<string, any>): Promise<Record<string, any>> => {
+export const getCurrentPoolUser = async (solution: Record<string, any>): Promise<Record<string, any> | null> => {
     const auth = await getAuth(solution);
     let hasCognito = false;
     for (let x in _window.localStorage) {
@@ -124,20 +126,69 @@ export const getCurrentPoolUser = async (solution:Record<string, any>): Promise<
             hasCognito = true;
         }
     }
-    if (!hasCognito) return {};
+    if (!hasCognito) return null;
     return getCurrentPoolUserInternal(auth);
 }
 
-export const getCurrentPoolUserInternal =  (auth: any): Record<string, any> => {
-    
+export const getCurrentPoolUserInternal = (auth: any): Record<string, any> => {
+
     return new Promise((resolve) => {
         auth.currentUserPoolUser()
             .then((user: Record<string, any>) => {
                 resolve(user);
             })
-            .catch((error: Record<string, any>) => {
+            .catch((error: any) => {
                 console.error(error);
-                resolve({});
+                resolve(null);
             })
     });
+}
+
+
+export const signOut = async (solution: Record<string, any>): Promise<boolean> => {
+    const auth = await getAuth(solution);
+    return await signOutInternal(auth);
+}
+
+export const signOutInternal = (auth: any): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        auth.currentUserPoolUser()
+            .then(() => {
+                auth.signOut()
+                    .then(() => {
+                        resolve(true);
+                    })
+                    .catch((error: any) => {
+                        console.error(error);
+                        reject(false);
+                    })
+            })
+            .catch((error: any) => {
+                console.error(error);
+                reject(false);
+            })
+    });
+}
+
+export const useCurrentUser = (solution:Record<string,any>, signUrl:string) => {
+    const router = useRouter();
+    const [user, setUser] = useState<Record<string, any> | null>(null);
+    useEffect(() => {
+        if (!user && _window) {
+            getCurrentPoolUser(solution)
+                .then((cognitoUser: Record<string, any> | null) => {
+                    if (cognitoUser) {
+                        setUser(cognitoUser);
+                    }
+                    else {
+                        router.push(signUrl);
+                    }
+                })
+                .catch((error: any) => {
+                    console.error(error);
+                });
+        }
+    }, [_window]);
+
+    return user;
 }

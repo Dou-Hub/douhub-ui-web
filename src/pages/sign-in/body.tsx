@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail, isNonEmptyString, _window } from 'douhub-helper-util';
+import { isEmail, isNonEmptyString, _window, _track } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
 import {
     signIn, SignInSection, MessageField,
@@ -66,6 +66,9 @@ const SignInPageBody = (props: Record<string, any>) => {
                 setDoing('');
 
                 if (result.error) {
+
+                    if (_track) console.error({error: result.error});
+
                     switch (result.error) {
                         case 'ERROR_API_AUTH_USER_ORGS_VERIFICATION_FAILED':
                             {
@@ -109,9 +112,10 @@ const SignInPageBody = (props: Record<string, any>) => {
                 }
 
                 sendMessage('context-sign-in-success', 'action', result);
-                if (isFunction(props.onSuccess())) props.onSuccess(form);
+                if (isFunction(props.onSuccess)) props.onSuccess(form);
             }
             catch (error) {
+                if (_track) console.error({error});
                 setDoing('');
                 return onCreateError('Failed to sign in.');
             }

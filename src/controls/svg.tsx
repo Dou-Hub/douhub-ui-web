@@ -50,9 +50,9 @@ const SVG = (props: Record<string, any>) => {
     </style>
 
     return <>
+        <SVG_CSS />
+        <CSS />
         {isNonEmptyString(src) && <div id={id} onClick={onClick} style={style} className={`svg-wrapper ${props.className ? props.className : ''}`}>
-            <SVG_CSS />
-            <CSS />
             <ReactSVG src={src} className="svg" />
         </div>}
     </>
