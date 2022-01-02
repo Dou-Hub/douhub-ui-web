@@ -3,12 +3,12 @@ import nookies from 'nookies';
 import { isObject, isNonEmptyString, ttl, _window } from 'douhub-helper-util';
 import { isNil, isInteger, isNumber } from 'lodash';
 
-export const getPlatformApiEndpoint = (appSettings: Record<string, any>, apiName: string, functionName: string, country?: string): string => {
-    return `${appSettings.platformEndpoint
-        .replace('{name}', apiName)
-        .replace('{stage}', appSettings.stage)
-        .replace('{country}', country ? country : appSettings.country)}/${functionName}`;
-}
+// export const getPlatformApiEndpoint = (appSettings: Record<string, any>, apiName: string, functionName: string, country?: string): string => {
+//     return `${appSettings.platformEndpoint
+//         .replace('{name}', apiName)
+//         .replace('{stage}', appSettings.stage)
+//         .replace('{country}', country ? country : appSettings.country)}/${functionName}`;
+// }
 
 export const getCookie = (name: string, ctx?: any) => {
     const o = nookies.get(ctx);

@@ -1,34 +1,34 @@
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
-import { isNil, isString, map, without, isEmpty } from 'lodash';
-import axios, {Method} from 'axios';
-import { _window } from "douhub-helper-util";
+import { isNil, map, without, isEmpty } from 'lodash';
+import axios, { Method } from 'axios';
+import { _window , isObjectString} from "douhub-helper-util";
 
 export const abortCallAPI = () => {
     if (isEmpty(_window)) return;
     return new _window.AbortController;
 }
 
-const processServerlessOfflineError = (data: string) => {
+const processServerlessOfflineError = (message: string) => {
     try {
-        data = data
-        .replace('{errorMessage=','{"errorMessage":')
+        message = message
+            .replace('{errorMessage=', '{"errorMessage":')
             .replace('statusCode=', '"statusCode":')
             .replace('headers=', '"headers":"')
-            .replace('errorType=Error','"errorType":"Error"')
+            .replace('errorType=Error', '"errorType":"Error"')
             .replace('body=', '", "body:')
-            .replace('"body":"','"body":')
+            .replace('"body":"', '"body":')
             .replace(/\\"/g, '"');
-        
-        data = data.substring(0,data.indexOf('stackTrace=')).substring(0,data.indexOf('"errorType":"Error"'))
-        data = data.substring(0, data.length-4) + "}}";
-        return JSON.parse(data).errorMessage;
+
+        message = message.substring(0, message.indexOf('stackTrace=')).substring(0, message.indexOf('"errorType":"Error"'))
+        message = message.substring(0, message.length - 4) + "}}";
+        return JSON.parse(message).errorMessage;
     }
     catch
     {
-        console.error({ error: 'Failed to process the result from the offline API.', data });
+        console.error({ error: 'Failed to process the result from the offline API.', message });
     }
 
-    return data;
+    return {errorMessage: message};
 }
 
 const processServerlessOfflineResult = (data: string) => {
@@ -67,17 +67,17 @@ export const callAPIBase = (
     data: Record<string, any>,
     method: Method,
     settings?: {
-        apiToken?: string, 
-        headers?:any,
+        apiToken?: string,
+        headers?: any,
         solutionId?: string,
-        stage?:'dev'|'staging'|'prod' 
+        stage?: 'dev' | 'staging' | 'prod'
     }): Promise<Record<string, any>> => {
 
     if (!isObject(settings)) settings = {};
     if (isNil(data)) data = {};
-   
+
     let headers: Record<string, any> = {
-        ...settings?.headers, 
+        ...settings?.headers,
         Accept: 'application/json,application/xml,text/plain,text/html,*.*',
         // 'Content-Type': 'application/x-www-form-urlencoded'
     };
@@ -90,8 +90,8 @@ export const callAPIBase = (
         headers.apiToken = settings?.apiToken;
     }
 
-    const config:Record<string,any> = {
-        url, 
+    const config: Record<string, any> = {
+        url,
         method,
         headers
     }
@@ -106,19 +106,20 @@ export const callAPIBase = (
     //     if (params.length > 0) url = url.indexOf('?') > 0 ? `${url}&${params}` : `${url}?${params}`;
     // }
 
-    if (method === 'GET')
-    {
-       if (isObject(data)) config.params = data;
+    if (method === 'GET') {
+        if (isObject(data)) config.params = data;
     }
-    else
-    {
+    else {
         if (isObject(data)) config.data = data;
     }
 
     return new Promise((resolve, reject) => {
         const localAPI = url.indexOf('//localhost') > 0;
         axios(config)
-            .then((result:Record<string,any>) => {
+            .then((result: Record<string, any>) => {
+
+                console.log({ callAPIBaseResult: result });
+
                 let data = result.data;
 
                 if (localAPI && data) {
@@ -143,42 +144,33 @@ export const callAPIBase = (
                 // console.log({ data})
                 resolve(data);
             })
-            .catch((response:Record<string,any>) => {
-                
-                console.log({response});
+            .catch((result: Record<string, any>) => {
 
-                let error = response.response?response.response:{message:response.message, code:500};
+                console.error(result);
 
-                if (localAPI && error?.data) {
-                    error = processServerlessOfflineError(error.data);
-                    if (isObject(error?.body)) error = error.body;
+                let error: Record<string,any> = {};
+
+                if (localAPI) {
+
+                    // error = result.response?.data;
+                    error = processServerlessOfflineError(result?.response?.data?.errorMessage);
                 }
-               
-                if (isString(error)) {
-                    error = { errorMessage: error };
-                }
-                else {
-                    if (!isObject(error)) error = {};
-                    if (isString(error?.errorMessage)) {
-                        try {
-                            error = JSON.parse(error?.errorMessage);
-                        }
-                        catch (ex) {
-                            error.message = error?.errorMessage
-                        }
+                else
+                {
+                    if (isObjectString(result?.response?.data?.body))
+                    {
+                        error = JSON.parse(result?.response?.data?.body);
+                    }
+                    else
+                    {
+                        error.message = result.message;
+                        error.code = 500;
                     }
                 }
 
                 if (error.message && !error.statusMessage) error.statusMessage = error.message;
                 if (error.name && !error.statusName) error.statusName = error.name;
                 if (error.code && !error.statusCode) error.statusCode = error.code;
-
-                if (error.statusMessage === 'Failed to fetch') {
-                    error.statusMessage = 'ERROR_SYSTEM_FAILEDTOFETCH';
-                }
-
-                delete error.errorMessage;
-                delete error.message;
 
                 reject(error);
             });

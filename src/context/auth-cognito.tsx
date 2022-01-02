@@ -1,9 +1,11 @@
 
 import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
-import { assign, each, without, map } from 'lodash';
-import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window } from 'douhub-helper-util';
+import { callAPI } from '../context/auth-call-api';
+import { assign, each, without, map, isFunction } from 'lodash';
+import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window, _track } from 'douhub-helper-util';
 import { useRouter } from 'next/router';
+import { useContextStore} from 'douhub-ui-store';
 
 //create aws-amplify/auth object with settings from solution profile
 export const getAuth = async (solution: Record<string, any>) => {
@@ -56,7 +58,7 @@ export const signIn = async (
         const type = settings.type == 'mobile' ? settings.type : 'email';
 
         const userOrgs: Record<string, any> = await callAPIBase(
-            `${solution?.apiEndpoint?.context}user-orgs`,
+            `${solution.apis.context}user-orgs`,
             assign(
                 type == 'mobile' ? { mobile: data?.mobile } : { email: data?.email },
                 isNonEmptyString(verificationCode) ? { verificationCode } : {}
@@ -170,25 +172,51 @@ export const signOutInternal = (auth: any): Promise<boolean> => {
     });
 }
 
-export const useCurrentUser = (solution:Record<string,any>, signUrl:string) => {
+export const useCurrentContext = (solution: Record<string, any>, settings?: {
+    signInUrl?: '/auth/sign-in',
+    ignoreAuth?: boolean,
+    needSolution?: boolean,
+    onSuccess?: any,
+    onError?: any,
+    context?: Record<string,any>
+}) => {
     const router = useRouter();
-    const [user, setUser] = useState<Record<string, any> | null>(null);
+    const [context, setContext] = useState<Record<string, any> | null>(null);
+    const contextStore = useContextStore();
+  
     useEffect(() => {
-        if (!user && _window) {
-            getCurrentPoolUser(solution)
-                .then((cognitoUser: Record<string, any> | null) => {
-                    if (cognitoUser) {
-                        setUser(cognitoUser);
-                    }
-                    else {
-                        router.push(signUrl);
+        if (!context && _window) {
+
+            if (!settings) settings = {
+                signInUrl: '/auth/sign-in',
+                ignoreAuth: false,
+                needSolution: false,
+                onSuccess: null,
+                onError: null
+            }
+
+            const apiParams: Record<string, any> = { ignoreAuth: settings.ignoreAuth==true, needSolution: settings.needSolution==true };
+
+            callAPI(solution, `${solution.apis.context}current`, apiParams, 'GET')
+                .then((result: Record<string, any>) => {
+                    const currentContext = result.context;
+                    setContext(currentContext);
+                    contextStore.setData(currentContext);
+                    if (isFunction(settings?.onSuccess)) {
+                        settings?.onSuccess(currentContext);
                     }
                 })
                 .catch((error: any) => {
-                    console.error(error);
-                });
+                    if (_track) console.error(error);
+                    if (isFunction(settings?.onError)) {
+                        settings?.onError(error);
+                    }
+                    else {
+                        if (settings?.signInUrl) router.push(settings.signInUrl);
+                    }
+                })
         }
     }, [_window]);
 
-    return user;
+    return context;
 }

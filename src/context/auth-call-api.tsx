@@ -1,4 +1,4 @@
-import { isObject } from 'douhub-helper-util';
+import { isObject, _track } from 'douhub-helper-util';
 import { getCurrentPoolUser } from './auth-cognito';
 import { Method } from 'axios';
 import { isEmpty } from 'lodash';
@@ -19,7 +19,7 @@ export const callAPI = async (
     return new Promise((resolve, reject) => {
         getCurrentPoolUser(auth)
             .then((cognito: any) => {
-                console.log({cognito});
+                if (_track) console.log({cognito});
                 if (settings) settings.headers = {};
                 if (settings && !isEmpty(cognito)) 
                 {

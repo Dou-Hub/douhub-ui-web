@@ -1,8 +1,7 @@
-import { isNonEmptyString, isObject } from 'douhub-helper-util';
-import _, { assign } from 'lodash';
+import { isNonEmptyString } from 'douhub-helper-util';
+import { assign } from 'lodash';
 import nookies from 'nookies';
-import {  callAPIBase } from '../call-api';
-import { getPlatformApiEndpoint} from '../util';
+// import {  callAPIBase } from '../call-api';
 
 export const getServerSidePropsForPage = async (
     baseProps: Record<string, any>,
@@ -41,23 +40,19 @@ export const getServerSidePropsForPage = async (
     let host = req.headers.host;
     if (isNonEmptyString(host)) host = host.split(':')[0];
 
-    let solution: Record<string, any> = { solutionId: settings.solutionId, host, country };
+    const solution = baseProps.solution;
 
-    const apiEndpoint = {
-        context: getPlatformApiEndpoint(settings, 'context', ''),
-        realtime: getPlatformApiEndpoint(settings, 'realtime', ''),
-    }
+    //let solution: Record<string, any> = { solutionId: settings.solutionId, host, country };
+    // const currentContext = isObject(baseProps.currentContext)?baseProps.currentContext: await callAPIBase(
+    //     getPlatformApiEndpoint(settings, 'context', ''),
+    //     { solutionId: settings.solutionId }, 'GET'); //TODO: use us only for now
+    // if (currentContext.type != 'error' && currentContext?.context?.solution) {
+    //     solution = { ...currentContext?.context?.solution, host, country };
+    // }
 
-    const currentContext = isObject(baseProps.currentContext)?baseProps.currentContext: await callAPIBase(
-        `${apiEndpoint.context}current`,
-        { solutionId: settings.solutionId }, 'GET'); //TODO: use us only for now
-
-    if (currentContext.type != 'error' && currentContext?.context?.solution) {
-        solution = { ...currentContext?.context?.solution, host, country };
-    }
-
-    solution.apiEndpoint = apiEndpoint;
     solution.stage = settings.stage;
+    solution.host = host;
+    solution.country = country;
 
     const passPreReleaseCode = !solution.preReleaseMode || solution.preReleaseMode && cookies && cookies['pre-release-code'] == solution.version;
 

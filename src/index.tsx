@@ -3,11 +3,15 @@
 //  This source code is licensed under the MIT license.
 //  The detail information can be found in the LICENSE file in the root directory of this source tree.
 
+
+export { getServerSidePropsForPage } from './pages/server';
+
+//Controls
 import View from './controls/view';
 import Text from './controls/text';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
-export { getServerSidePropsForPage } from './pages/server';
+import UserAvatar from './controls/user-avatar';
 
 import AppBase from './app';
 
@@ -44,7 +48,7 @@ import SignInPageBody from './pages/sign-in/body';
 
 export { abortCallAPI, callAPIBase } from './call-api';
 export { callAPI } from './context/auth-call-api';
-export { signIn, getAuth, signInCognito, getCurrentPoolUser, signOut, useCurrentUser } from './context/auth-cognito';
+export { signIn, getAuth, signInCognito, getCurrentPoolUser, signOut, useCurrentContext } from './context/auth-cognito';
 
 export { SignInFields } from './sections/auth/helper';
 
@@ -55,11 +59,12 @@ export {
     getCookie,
     setCookie,
     removeCookie,
-    getPlatformApiEndpoint, logDynamic
+    logDynamic
+    // getPlatformApiEndpoint
 } from './util';
 
 export {
-    View, Text, SVG, Logo
+    View, Text, SVG, Logo, UserAvatar
 };
 
 export {

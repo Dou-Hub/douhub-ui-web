@@ -1,2 +1,2 @@
-npm unlink douhub-helper-util
-yarn add douhub-helper-util
+yarn upgrade douhub-helper-util --latest
+yarn upgrade douhub-ui-store --latest
