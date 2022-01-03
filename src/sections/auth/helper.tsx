@@ -1,14 +1,10 @@
 import React from "react";
-// import { isEmail, isPhoneNumber, isPassword } from "douhub-helper-util";
 import FieldText from '../../fields/text';
 import FieldCodes from '../../fields/codes';
 import AntCheckbox from '../../controls/antd/checkbox';
 import { isObject, isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
-// import { logDynamic } from 'douhub-ui-web';
-// import dynamic from 'next/dynamic';
 
-// let AntCheckbox:any = null;
 export const SignInFields = (props: Record<string,any>) => {
 
     const { onChangeForm, disabled, askForVerification, alwaysShowLabel } = props;
@@ -29,7 +25,7 @@ export const SignInFields = (props: Record<string,any>) => {
     const renderRememberMe=()=>{
         if (!isFunction(props.onChangeRememberMe)) return null;
         // if (!AntCheckbox) AntCheckbox = logDynamic(dynamic(() => import('../../../controls/antd/checkbox'), { ssr: false }), '../../../controls/antd/checkbox','Helper.SignInFields');
-        return <AntCheckbox disabled={disabled} checked={data.rememberMe==true} onChange={onChangeRememberMe}>Remember me</AntCheckbox>
+        return <AntCheckbox style={{marginBottom: '1rem'}} disabled={disabled} checked={data.rememberMe==true} onChange={onChangeRememberMe}>Remember me</AntCheckbox>
     }
 
     return <>

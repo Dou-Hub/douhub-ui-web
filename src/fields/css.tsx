@@ -68,6 +68,8 @@ const FieldCSS = () => <style global={true} jsx={true}>{`
     .field-message 
     {
         border-bottom: none !important;
+        font-size: 0.9rem;
+        line-height: 1.33;
     }
 
     .field-message-error 

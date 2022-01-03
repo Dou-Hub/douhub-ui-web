@@ -74,7 +74,7 @@ export const signIn = async (
             case 0:
                 {
                     if (userOrgs.length > 0) {
-                        console.log({ userOrgs, users })
+                        if (_track) console.log({ userOrgs, users })
                         return { error: 'ERROR_SIGNIN_NEED_VERIFY' };
                     }
                     else {

@@ -1,64 +1,74 @@
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
-import { isNil, map, without, isEmpty } from 'lodash';
+import { isNil, isEmpty } from 'lodash';
 import axios, { Method } from 'axios';
-import { _window , isObjectString} from "douhub-helper-util";
+import { _window, isObjectString } from "douhub-helper-util";
 
 export const abortCallAPI = () => {
     if (isEmpty(_window)) return;
     return new _window.AbortController;
 }
 
-const processServerlessOfflineError = (message: string) => {
+const processServerlessOfflineError = (message: string): Record<string, any> | null => {
     try {
-        message = message
-            .replace('{errorMessage=', '{"errorMessage":')
-            .replace('statusCode=', '"statusCode":')
-            .replace('headers=', '"headers":"')
-            .replace('errorType=Error', '"errorType":"Error"')
-            .replace('body=', '", "body:')
-            .replace('"body":"', '"body":')
-            .replace(/\\"/g, '"');
-
-        message = message.substring(0, message.indexOf('stackTrace=')).substring(0, message.indexOf('"errorType":"Error"'))
-        message = message.substring(0, message.length - 4) + "}}";
-        return JSON.parse(message).errorMessage;
+        const result = JSON.parse(message);
+        const error: Record<string, any> = JSON.parse(result.body).error;
+        return error;
     }
     catch
     {
-        console.error({ error: 'Failed to process the result from the offline API.', message });
+        console.error({ error: 'Failed to process the error from the offline API.', message });
+        return null;
     }
+    // try {
+    //     message = message
+    //         .replace('{errorMessage=', '{"errorMessage":')
+    //         .replace('statusCode=', '"statusCode":')
+    //         .replace('headers=', '"headers":"')
+    //         .replace('errorType=Error', '"errorType":"Error"')
+    //         .replace('body=', '", "body:')
+    //         .replace('"body":"', '"body":')
+    //         .replace(/\\"/g, '"');
 
-    return {errorMessage: message};
+    //     message = message.substring(0, message.indexOf('stackTrace=')).substring(0, message.indexOf('"errorType":"Error"'))
+    //     message = message.substring(0, message.length - 4) + "}}";
+    //     return JSON.parse(message).errorMessage;
+    // }
+    // catch
+    // {
+    //     console.error({ error: 'Failed to process the result from the offline API.', message });
+    //     return null;
+    // }
 }
 
 const processServerlessOfflineResult = (data: string) => {
     try {
-        data = data
-            .replace('statusCode=', '"statusCode":')
-            .replace('headers=', '"headers":"')
-            .replace('body=', '", "body":');
-        const dataJSON: Record<string, any> = JSON.parse(data);
-        const headers = dataJSON?.headers?.replace('{', '').replace('}', '').split(',');
+        return JSON.parse(data);
 
-        dataJSON.headers = without(map(headers, (header) => {
-            const headerPair = header.split('=');
-            const newHeader: Record<string, any> = {};
-            if (headerPair.length > 1 && headerPair[0].trim().length > 0) {
-                newHeader[headerPair[0].trim()] = headerPair[1].trim();
-                return newHeader;
-            }
-            else {
-                return null;
-            }
-        }), null);
-        return dataJSON;
+        // data = data
+        //     .replace('statusCode=', '"statusCode":')
+        //     .replace('headers=', '"headers":"')
+        //     .replace('body=', '", "body":');
+        // const dataJSON: Record<string, any> = JSON.parse(data);
+        // const headers = dataJSON?.headers?.replace('{', '').replace('}', '').split(',');
+
+        // dataJSON.headers = without(map(headers, (header) => {
+        //     const headerPair = header.split('=');
+        //     const newHeader: Record<string, any> = {};
+        //     if (headerPair.length > 1 && headerPair[0].trim().length > 0) {
+        //         newHeader[headerPair[0].trim()] = headerPair[1].trim();
+        //         return newHeader;
+        //     }
+        //     else {
+        //         return null;
+        //     }
+        // }), null);
+        // return dataJSON;
     }
     catch
     {
         console.error({ error: 'Failed to process the result from the offline API.', data });
+        return null;
     }
-
-    return data;
 }
 
 
@@ -122,8 +132,9 @@ export const callAPIBase = (
 
                 let data = result.data;
 
-                if (localAPI && data) {
-                    data = processServerlessOfflineResult(data);
+                if (localAPI && data && isNonEmptyString(data?.body)) {
+                    const processResult = processServerlessOfflineResult(data?.body);
+                    if (isObject(processResult)) resolve(processResult);
                 }
 
                 if (isObject(data) && (data.errorType || data.errorMessage)) {
@@ -144,26 +155,24 @@ export const callAPIBase = (
                 // console.log({ data})
                 resolve(data);
             })
-            .catch((result: Record<string, any>) => {
+            .catch((exception: Record<string, any>) => {
 
-                console.error(result);
+                console.error({ exception });
 
-                let error: Record<string,any> = {};
+                let error: Record<string, any> = {};
 
                 if (localAPI) {
-
-                    // error = result.response?.data;
-                    error = processServerlessOfflineError(result?.response?.data?.errorMessage);
+                    const processResult = processServerlessOfflineError(exception?.response?.data?.errorMessage);
+                    if (isNil(processResult)) reject(exception);
+                    error = !isNil(processResult)?processResult:{};
                 }
-                else
-                {
-                    if (isObjectString(result?.response?.data?.body))
-                    {
-                        error = JSON.parse(result?.response?.data?.body);
+
+                if (isEmpty(error)) {
+                    if (isObjectString(exception?.response?.data?.body)) {
+                        error = JSON.parse(exception?.response?.data?.body);
                     }
-                    else
-                    {
-                        error.message = result.message;
+                    else {
+                        error.message = exception.message;
                         error.code = 500;
                     }
                 }
