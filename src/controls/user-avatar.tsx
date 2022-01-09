@@ -12,12 +12,14 @@ const styles = {
 
 const UserAvatar = (props: Record<string, any>) => {
 
-    const { countWrapperStyle, countStyle, hide, count, menu } = props;
+    const { countWrapperStyle, countStyle, hide, count, menu, realtimeStatus } = props;
 
     const [user, setUser] = useState<Record<string, any>>(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' })
+    const [status, setStatus] = useState<string>('on');
 
     useEffect(() => {
         setUser(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' });
+        setStatus('on');
     }, props.user)
 
     const size = isInteger(props.size) ? props.size : 38;
@@ -56,7 +58,7 @@ const UserAvatar = (props: Record<string, any>) => {
                 {renderName()}
                 {renderAvatar()}
             </Menu.Button>
-
+            {realtimeStatus && <div className={`absolute right-0 top-0 rounded-full ${status=='on'?'bg-green-600':'bg-red-600'}`} style={{width:10, height:10}}/>}
             {isArray(menu) && menu.length > 0 && <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
