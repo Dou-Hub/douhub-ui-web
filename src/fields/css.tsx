@@ -13,6 +13,7 @@ const FieldCSS = () => <style global={true} jsx={true}>{`
         outline: none !important;
         box-shadow: none !important;
         margin-bottom: 1rem;
+        width: 100%;
     }
 
     .field.has-wrapper
@@ -54,6 +55,7 @@ const FieldCSS = () => <style global={true} jsx={true}>{`
         padding-bottom: 5px;
         margin-bottom: 1rem !important;
         font-style: italic !important;
+        text-align: left;
     } 
 
     .field-recaptcha {

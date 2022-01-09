@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
-import { isInteger, isNumber, isObject, isArray} from 'lodash';
+import React, { Fragment, useEffect, useState } from 'react';
+import { isInteger, isNumber, isObject, isArray } from 'lodash';
 import SVG from './svg';
-import { isNonEmptyString, COLORS } from 'douhub-helper-util'
+import { isNonEmptyString, COLORS, _track } from 'douhub-helper-util'
 import { Menu, Transition } from '@headlessui/react'
 import { map } from 'lodash';
 
@@ -12,12 +12,18 @@ const styles = {
 
 const UserAvatar = (props: Record<string, any>) => {
 
-    const { countWrapperStyle, countStyle, hide, count,  menu } = props;
-  
-    const user: Record<string, any> = isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' };
+    const { countWrapperStyle, countStyle, hide, count, menu } = props;
+
+    const [user, setUser] = useState<Record<string, any>>(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' })
+
+    useEffect(() => {
+        setUser(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' });
+    }, props.user)
+
     const size = isInteger(props.size) ? props.size : 38;
     let { firstName, lastName } = user;
 
+    if (_track) console.log({ user })
 
     const renderName = () => {
         if (isNonEmptyString(user.avatar)) return null;
@@ -38,7 +44,7 @@ const UserAvatar = (props: Record<string, any>) => {
     }
 
     const renderAvatar = () => {
-        return isNonEmptyString(user.avatar) && <img className="rounded-full" src={user.avatar} alt="" style={{ width: size }} />;
+        return isNonEmptyString(user.avatar) && <img className="rounded-full border border-gray-20" src={user.avatar} alt="" style={{ width: size }} />;
     }
 
     const renderUser = () => {

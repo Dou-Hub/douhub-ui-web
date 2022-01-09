@@ -13,6 +13,7 @@ const FieldLabelCSS = () => <style global={true} jsx={true}>
         line-height: 1.1 !important;
         margin-bottom: 0 !important;
         min-height: 18px;
+        text-align: left
     } 
 
     .field-label p

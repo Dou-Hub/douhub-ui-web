@@ -2726,10 +2726,10 @@ douhub-helper-util@1.0.36, douhub-helper-util@^1.0.36:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
-douhub-ui-store@1.0.32:
-  version "1.0.32"
-  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.32.tgz#fb95d2b003478b49449bd196eb4ca13354e37f28"
-  integrity sha512-N3UB60Ir8ehjjKY4Er2jalYiKa2vAM4CRf8Y0l8q/5y46IaDvTU+1+rcjL36P968FB5AiHFuWJxj7esMbR5vIQ==
+douhub-ui-store@1.0.43:
+  version "1.0.43"
+  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.43.tgz#3f42a3291474e1203c2ba38dfcd97aec8c701d5c"
+  integrity sha512-cAfbLH2LxZA5s6arFt/jGHo0ehRvpLSnaBx8FCuWq+B73uuw3bpezaeNyCGaRYdUmLYkxQr2y9oUZmCXSrzQ3A==
   dependencies:
     douhub-helper-util "1.0.36"
     lodash "^4.17.21"

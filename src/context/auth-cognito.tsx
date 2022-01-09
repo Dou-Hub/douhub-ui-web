@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
 import { callAPI } from '../context/auth-call-api';
-import { assign, each, without, map, isFunction } from 'lodash';
+import { assign, each, without, map, isFunction, isBoolean } from 'lodash';
 import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window, _track } from 'douhub-helper-util';
 import { useRouter } from 'next/router';
-import { useContextStore} from 'douhub-ui-store';
+import { useContextStore } from 'douhub-ui-store';
 
 //create aws-amplify/auth object with settings from solution profile
 export const getAuth = async (solution: Record<string, any>) => {
@@ -174,28 +174,33 @@ export const signOutInternal = (auth: any): Promise<boolean> => {
 
 export const useCurrentContext = (solution: Record<string, any>, settings?: {
     signInUrl?: '/auth/sign-in',
-    ignoreAuth?: boolean,
+    needAuthorization?: boolean,
     needSolution?: boolean,
     onSuccess?: any,
     onError?: any,
-    context?: Record<string,any>
+    context?: Record<string, any>
 }) => {
     const router = useRouter();
     const [context, setContext] = useState<Record<string, any> | null>(null);
     const contextStore = useContextStore();
-  
+
     useEffect(() => {
         if (!context && _window) {
 
             if (!settings) settings = {
                 signInUrl: '/auth/sign-in',
-                ignoreAuth: false,
+                needAuthorization: true,
                 needSolution: false,
                 onSuccess: null,
                 onError: null
             }
 
-            const apiParams: Record<string, any> = { ignoreAuth: settings.ignoreAuth==true, needSolution: settings.needSolution==true };
+            if (!isBoolean(settings.needAuthorization)) settings.needAuthorization = true;
+            if (!isBoolean(settings.needSolution)) settings.needSolution = false;
+            
+            const apiParams: Record<string, any> = { 
+                needAuthorization: settings.needAuthorization == true, 
+                needSolution: settings.needSolution == true };
 
             callAPI(solution, `${solution.apis.context}current`, apiParams, 'GET')
                 .then((result: Record<string, any>) => {

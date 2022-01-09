@@ -2,6 +2,7 @@
 import React from 'react';
 import { EnvCenter, MessageCenter } from "douhub-ui-store";
 import Head from './head';
+import {_window} from 'douhub-helper-util';
 
 const PageBase = (props: Record<string, any>) => {
 
@@ -9,7 +10,7 @@ const PageBase = (props: Record<string, any>) => {
     const Header = props.Header ? props.Header : ()=><></>;
     const Footer = props.Footer ? props.Footer : ()=><></>;
     const Body = props.Body ? props.Body : ()=><></>;
-
+    _window.solution = solution;
     const sharedProps = { solution };
   
     return <div id="body">

@@ -6,7 +6,7 @@ import { isNonEmptyString } from 'douhub-helper-util';
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
-    const { show, title, content, icon } = props;
+    const { show, title, content, Content, icon, titleClassName } = props;
     const buttons = isArray(props.buttons) ? props.buttons : [];
 
     const onClose = () => {
@@ -109,15 +109,14 @@ const BasicModal = (props: Record<string, any>) => {
                                 {isNonEmptyString(icon) && <div className="mx-auto flex items-center justify-center">
                                     <SVG src={icon} size={20} />
                                 </div>}
-                                {(isNonEmptyString(title) || isNonEmptyString(content)) && <div className="mt-3 text-center sm:mt-5">
-                                    {isNonEmptyString(title) && <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                {(isNonEmptyString(title) || isNonEmptyString(content)) && <div className="text-center">
+                                    {isNonEmptyString(title) && <Dialog.Title as="h3" className={`text-lg leading-6 font-medium text-gray-900 ${titleClassName?titleClassName:''}`}>
                                         {title}
                                     </Dialog.Title>}
-                                    {isNonEmptyString(content) && <div className="mt-2">
-                                        <p className="text-sm text-gray-500">
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
-                                        </p>
-                                    </div>}
+                                    <div className="my-4 text-align">
+                                       {content}
+                                       {Content && <Content {...props}/>}
+                                    </div>
                                 </div>}
                             </div>
                             {buttons.length > 0 && <div className="flex mt-5 sm:mt-6">

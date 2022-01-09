@@ -5,12 +5,15 @@ import { signOut } from '../../../context/auth-cognito';
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
 import UserAvatar from '../../user-avatar';
+import {_track} from 'douhub-helper-util';
 
 const PageHeaderMe = observer((props: Record<string, any>) => {
 
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
     const user = context.user;
+
+    if (_track) console.log({ user })
 
     const { solution } = props;
     const router = useRouter();
