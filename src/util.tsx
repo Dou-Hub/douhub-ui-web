@@ -1,7 +1,14 @@
 
 import nookies from 'nookies';
-import { isObject, isNonEmptyString, ttl, _window } from 'douhub-helper-util';
+import { isObject, isNonEmptyString, ttl } from 'douhub-helper-util';
 import { isNil, isInteger, isNumber } from 'lodash';
+
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
+export const _window: any = typeof window !== "undefined" ? window : {};
+export const _process: any = typeof process !== "undefined" ? process : {};;
+export const _track = `${publicRuntimeConfig.track}`.toLowerCase() == 'true' || `${_process?.env?.TRACK}`.toLowerCase() == 'true';
 
 // export const getPlatformApiEndpoint = (appSettings: Record<string, any>, apiName: string, functionName: string, country?: string): string => {
 //     return `${appSettings.platformEndpoint
@@ -29,10 +36,10 @@ export const removeCookie = (name: string, ctx?: any) => {
 
 export const logDynamic = (object: Record<string, any>, url: string, name: string) => {
     if (isNonEmptyString(name)) {
-        console.log(`Dynamic load ${url} ${name}`);
+        if (_track) console.log(`Dynamic load ${url} ${name}`);
     }
     else {
-        console.log(`Dynamic load ${url}`);
+        if (_track) console.log(`Dynamic load ${url}`);
     }
     return object;
 }

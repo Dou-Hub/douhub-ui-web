@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail, isNonEmptyString, _window, _track } from 'douhub-helper-util';
+import { isEmail, isNonEmptyString } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
+import { _window, _track } from "../../util";
 import {
     signIn, SignInSection, MessageField,
     SVG, getCookie, removeCookie, setCookie,

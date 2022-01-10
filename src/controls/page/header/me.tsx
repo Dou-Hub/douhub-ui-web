@@ -5,7 +5,7 @@ import { signOut } from '../../../context/auth-cognito';
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
 import UserAvatar from '../../user-avatar';
-import {_track} from 'douhub-helper-util';
+import {_track} from '../../../util';
 
 const PageHeaderMe = observer((props: Record<string, any>) => {
 

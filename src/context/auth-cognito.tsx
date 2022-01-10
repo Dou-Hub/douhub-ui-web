@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
 import { callAPI } from '../context/auth-call-api';
 import { assign, each, without, map, isFunction, isBoolean } from 'lodash';
-import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject, _window, _track } from 'douhub-helper-util';
+import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject } from 'douhub-helper-util';
+import { _window, _track } from "../util";
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
 
 //create aws-amplify/auth object with settings from solution profile
 export const getAuth = async (solution: Record<string, any>) => {
     if (!_window._auth) {
-        console.log(`getAuth`);
+        if (_track) console.log(`getAuth`);
         _window._auth = (await import('@aws-amplify/auth')).default;
         _window._auth.configure({ ...solution && solution.auth.cognito });
     }

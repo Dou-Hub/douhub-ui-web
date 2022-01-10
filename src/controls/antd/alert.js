@@ -1,4 +1,5 @@
 
 import { Alert } from 'antd';
-console.log('Load Ant Alert');
+import {_track} from '../../util';
+if (_track) console.log('Load Ant Alert');
 export default Alert;

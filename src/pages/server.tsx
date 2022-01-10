@@ -1,4 +1,4 @@
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isNonEmptyString,  _process, _track } from 'douhub-helper-util';
 import { assign } from 'lodash';
 import nookies from 'nookies';
 // import {  callAPIBase } from '../call-api';
@@ -15,8 +15,6 @@ export const getServerSidePropsForPage = async (
     let country = req.headers['CloudFront-Viewer-Country'.toLowerCase()];
     country = country ? country.toLowerCase() : '';
     country = country != 'us' && country != 'ca' ? 'us' : country;
-
-    //console.log({ headers: req.headers });
 
     const countryName = req.headers['CloudFront-Viewer-Country-Name'.toLowerCase()];
     const region = req.headers['CloudFront-Viewer-Country-Region'.toLowerCase()];
@@ -104,7 +102,7 @@ export const getServerSidePropsForPage = async (
     const path = resolvedUrl.split('?')[0].split('/');
     if (isNonEmptyString(locale) && path[0].length == 0) path[0] = locale;
 
-    // console.log({solution})
+    
 
     return {
         props: assign(
@@ -115,7 +113,7 @@ export const getServerSidePropsForPage = async (
                 locale, locales,
                 path
             },
-            { solution },
+            { solution, track: _track },
             pageProps)
     }
 }

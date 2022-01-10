@@ -2714,7 +2714,7 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-douhub-helper-util@1.0.36, douhub-helper-util@^1.0.36:
+douhub-helper-util@1.0.36:
   version "1.0.36"
   resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.36.tgz#91d330e512ac90fc9042112d132e77eda7df2168"
   integrity sha512-ikS4P7h0aiV4FuPeFppSWfTFaaijB8Hj5LElY/7s/Pkl/cj9tvc0h64xUFpFPrx7TtYL2YYsGUo/TsaHELZkjg==
@@ -2726,10 +2726,23 @@ douhub-helper-util@1.0.36, douhub-helper-util@^1.0.36:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
-douhub-ui-store@1.0.43:
-  version "1.0.43"
-  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.43.tgz#3f42a3291474e1203c2ba38dfcd97aec8c701d5c"
-  integrity sha512-cAfbLH2LxZA5s6arFt/jGHo0ehRvpLSnaBx8FCuWq+B73uuw3bpezaeNyCGaRYdUmLYkxQr2y9oUZmCXSrzQ3A==
+douhub-helper-util@^1.0.39:
+  version "1.0.39"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.39.tgz#3af96086f44e6d542aae01d3217ca4771759f534"
+  integrity sha512-1ZM4P+VF+8ywo+i4PL/4gsxSFNwd6YkC8cFQODxxjAKeHkSeLO2XaKv+kvvWkUwOx/PAGVPQ9X1Lut+/jwPSDQ==
+  dependencies:
+    axios "^0.24.0"
+    is-url "^1.2.4"
+    js-base64 "^3.7.2"
+    libphonenumber-js "^1.9.42"
+    lodash "^4.17.21"
+    slugify "^1.6.4"
+    uuid "^8.3.2"
+
+douhub-ui-store@1.0.45:
+  version "1.0.45"
+  resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.45.tgz#a320ab94584120622f0f03b7ddb8e588961518ec"
+  integrity sha512-JY7XSKcEX5iAcQXteDCKnX5fJEEKXOog1Fy51/xdELj/p9NgIHXMV+1GMssWyrf0ZoCuAuumtcM+7RpYGZw0Dw==
   dependencies:
     douhub-helper-util "1.0.36"
     lodash "^4.17.21"

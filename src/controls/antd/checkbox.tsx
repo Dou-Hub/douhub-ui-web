@@ -1,7 +1,8 @@
 import React from 'react';
 import { Checkbox } from 'antd';
-console.log('Load Ant Checkbox');
-
+import {_track} from '../../util';
+if (_track) console.log('Load Ant Button');
+   
 const CheckboxCSS = () => <style global={true} jsx={true}>{`
     .ant-checkbox-wrapper
     {
@@ -10,10 +11,7 @@ const CheckboxCSS = () => <style global={true} jsx={true}>{`
 `}
 </style>
 
-
-
 const AntCheckbox = (props:Record<string,any>) => {
-    console.log('Load Ant Button');
     return (
         <>
             <CheckboxCSS />

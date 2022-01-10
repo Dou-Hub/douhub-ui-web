@@ -1,7 +1,8 @@
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { isNil, isEmpty } from 'lodash';
 import axios, { Method } from 'axios';
-import { _window, isObjectString } from "douhub-helper-util";
+import {  isObjectString} from "douhub-helper-util";
+import { _window, _track } from "./util";
 
 export const abortCallAPI = () => {
     if (isEmpty(_window)) return;
@@ -128,7 +129,7 @@ export const callAPIBase = (
         axios(config)
             .then((result: Record<string, any>) => {
 
-                console.log({ callAPIBaseResult: result });
+                if (_track) console.log({ callAPIBaseResult: result });
 
                 let data = result.data;
 

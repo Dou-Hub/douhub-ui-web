@@ -2,7 +2,7 @@
 import React from 'react';
 import { EnvCenter, MessageCenter } from "douhub-ui-store";
 import Head from './head';
-import {_window} from 'douhub-helper-util';
+import { _window, _track } from "../util";
 
 const PageBase = (props: Record<string, any>) => {
 

@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { isInteger, isNumber, isObject, isArray } from 'lodash';
+import { isInteger, isNumber, isArray } from 'lodash';
 import SVG from './svg';
-import { isNonEmptyString, COLORS, _track } from 'douhub-helper-util'
+import { isNonEmptyString, COLORS } from 'douhub-helper-util'
 import { Menu, Transition } from '@headlessui/react'
 import { map } from 'lodash';
+import {_track} from '../util';
 
 const styles = {
     countWrapper: { position: 'absolute', top: -5, right: -5, borderRadius: 9, backgroundColor: COLORS.red, justifyContent: 'space-around' },
@@ -14,13 +15,16 @@ const UserAvatar = (props: Record<string, any>) => {
 
     const { countWrapperStyle, countStyle, hide, count, menu, realtimeStatus } = props;
 
-    const [user, setUser] = useState<Record<string, any>>(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' })
+    const [user, setUser] = useState<Record<string, any>>({});
     const [status, setStatus] = useState<string>('on');
 
     useEffect(() => {
-        setUser(isObject(props.user) ? props.user : { firstName: '', lastName: '', display: '' });
-        setStatus('on');
-    }, props.user)
+        if (isNonEmptyString(props.user?.id))
+        {
+            setUser(props.user);
+            setStatus('on');
+        }
+    }, [props.user])
 
     const size = isInteger(props.size) ? props.size : 38;
     let { firstName, lastName } = user;

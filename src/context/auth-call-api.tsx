@@ -1,9 +1,10 @@
-import { isObject, _track } from 'douhub-helper-util';
+import { isObject} from 'douhub-helper-util';
 import { getCurrentPoolUser } from './auth-cognito';
 import { Method } from 'axios';
 import { isEmpty } from 'lodash';
 import { callAPIBase } from '../call-api';
 import { getAuth } from '..';
+import {_track} from '../util';
 
 export const callAPI = async (
     solution: Record<string, any>,

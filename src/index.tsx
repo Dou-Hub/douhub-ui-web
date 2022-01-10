@@ -4,6 +4,7 @@
 //  The detail information can be found in the LICENSE file in the root directory of this source tree.
 
 
+
 export { getServerSidePropsForPage } from './pages/server';
 
 //Controls
@@ -59,8 +60,10 @@ export {
     getCookie,
     setCookie,
     removeCookie,
-    logDynamic
-    // getPlatformApiEndpoint
+    logDynamic,
+    _window,
+    _process,
+    _track
 } from './util';
 
 export {
