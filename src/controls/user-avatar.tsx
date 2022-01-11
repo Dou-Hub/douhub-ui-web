@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { isInteger, isNumber, isArray } from 'lodash';
 import SVG from './svg';
-import { isNonEmptyString, COLORS } from 'douhub-helper-util'
+import { isNonEmptyString, COLORS, stringToColor, getRecordDisplay } from 'douhub-helper-util'
 import { Menu, Transition } from '@headlessui/react'
 import { map } from 'lodash';
 import {_track} from '../util';
@@ -13,10 +13,21 @@ const styles = {
 
 const UserAvatar = (props: Record<string, any>) => {
 
-    const { countWrapperStyle, countStyle, hide, count, menu, realtimeStatus } = props;
+    const { countWrapperStyle, countStyle, hide, count, menu, realtimeStatus, className, nameToColor } = props;
 
     const [user, setUser] = useState<Record<string, any>>({});
     const [status, setStatus] = useState<string>('on');
+
+    let backgroundColor = isNonEmptyString(props.backgroundColor)?props.backgroundColor:COLORS.white;
+    let borderColor = isNonEmptyString(props.borderColor)?props.borderColor:COLORS.black;
+    let color = isNonEmptyString(props.color)?props.color:borderColor;
+
+    if (nameToColor)
+    {
+        backgroundColor = stringToColor(getRecordDisplay(user));
+        borderColor = backgroundColor;
+        color = COLORS.white;
+    }
 
     useEffect(() => {
         if (isNonEmptyString(props.user?.id))
@@ -34,17 +45,18 @@ const UserAvatar = (props: Record<string, any>) => {
     const renderName = () => {
         if (isNonEmptyString(user.avatar)) return null;
         return (isNonEmptyString(firstName) || isNonEmptyString(firstName)) ?
-            <div className="flex flex-row items-center rounded-full border border-black"
-                style={{ minWidth: size, minHeight: size }}>
+            <div className="flex flex-row items-center rounded-full border"
+                style={{ minWidth: size, minHeight: size, borderColor, backgroundColor }}>
                 <div className="flex flex-row justify-center w-full">
-                    <span>{isNonEmptyString(firstName) ? firstName.substring(0, 1).toUpperCase() : ''}</span>
-                    <span>{isNonEmptyString(lastName) ? lastName.substring(0, 1).toUpperCase() : ''}</span>
+                    <span style={{color}}>{isNonEmptyString(firstName) ? firstName.substring(0, 1).toUpperCase() : ''}</span>
+                    <span style={{color}}>{isNonEmptyString(lastName) ? lastName.substring(0, 1).toUpperCase() : ''}</span>
                 </div>
             </div>
             :
             <SVG
                 id="page-header-me"
                 style={{ width: size }}
+                color={color}
                 className="user-avatar-icon"
                 src="/icons/circle-user.svg" />
     }
@@ -56,8 +68,8 @@ const UserAvatar = (props: Record<string, any>) => {
     const renderUser = () => {
         return <Menu as="div" className="relative inline-block text-left">
             <Menu.Button
-                className="bg-white flex text-sm"
-                style={{ minWidth: size, minHeight: size }}
+                className="flex text-sm"
+                style={{ minWidth: size, minHeight: size}}
             >
                 {renderName()}
                 {renderAvatar()}
@@ -97,9 +109,8 @@ const UserAvatar = (props: Record<string, any>) => {
     return hide ? null : <>
 
         <div
-            className={`user-avatar ${user ? 'user-avatar-image-wrapper' : 'user-avatar-icon-wrapper'}`}
+            className={`user-avatar ${user ? 'user-avatar-image-wrapper' : 'user-avatar-icon-wrapper'} ${className?className:''}`}
             style={{ width: size, height: size, position: 'relative' }}>
-
             {renderUser()}
             {isNumber(count) && count > 0 &&
                 <div

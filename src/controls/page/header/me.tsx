@@ -5,7 +5,7 @@ import { signOut } from '../../../context/auth-cognito';
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
 import UserAvatar from '../../user-avatar';
-import {_track} from '../../../util';
+import { _track, _window } from '../../../util';
 
 const PageHeaderMe = observer((props: Record<string, any>) => {
 
@@ -15,7 +15,7 @@ const PageHeaderMe = observer((props: Record<string, any>) => {
 
     if (_track) console.log({ user })
 
-    const { solution } = props;
+    const solution = _window.solution;
     const router = useRouter();
 
     const menu = isArray(props.menu) && props.menu.length > 0 ? props.menu :
@@ -37,7 +37,7 @@ const PageHeaderMe = observer((props: Record<string, any>) => {
         ];
 
 
-    return <UserAvatar {...props} menu={menu} user={user} realtimeStatus={props.realtimeStatus}/>
+    return <UserAvatar {...props} menu={menu} user={user} realtimeStatus={props.realtimeStatus} />
 });
 
 export default PageHeaderMe
