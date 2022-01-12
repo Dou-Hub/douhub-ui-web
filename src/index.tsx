@@ -12,7 +12,9 @@ import View from './controls/view';
 import Text from './controls/text';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
+import Input from './controls/input';
 import UserAvatar from './controls/user-avatar';
+import TextArea from './controls/antd/textarea';
 
 import AppBase from './app';
 
@@ -67,7 +69,7 @@ export {
 } from './util';
 
 export {
-    View, Text, SVG, Logo, UserAvatar
+    View, Text, SVG, Logo, UserAvatar, Input, TextArea
 };
 
 export {
