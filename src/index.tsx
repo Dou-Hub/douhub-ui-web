@@ -15,7 +15,7 @@ import Logo from './controls/logo';
 import Input from './controls/input';
 import UserAvatar from './controls/user-avatar';
 import TextArea from './controls/antd/textarea';
-
+import Checkbox from './controls/antd/checkbox';
 import AppBase from './app';
 
 //Sections
@@ -69,7 +69,7 @@ export {
 } from './util';
 
 export {
-    View, Text, SVG, Logo, UserAvatar, Input, TextArea
+    View, Text, SVG, Logo, UserAvatar, Input, TextArea, Checkbox
 };
 
 export {
