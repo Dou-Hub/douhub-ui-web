@@ -1,8 +1,10 @@
 
 import { notification } from 'antd';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { _track } from '../../util';
+if (_track) console.log('Load Ant Notification');
 
-const AntNotification = (props) => {
+const AntNotification = (props: Record<string,any>) => {
 
     const { message, description, type, placement } = props;
 

@@ -1,7 +1,8 @@
 
-import {colorByName} from 'douhub-helper-util';
+import React from 'react';
+import { colorByName } from 'douhub-helper-util';
 import { Button } from 'antd';
-import {_track} from '../../util';
+import { _track } from '../../util';
 if (_track) console.log('Load Ant Button');
 
 const ButtonCSS = () => <style global={true} jsx={true}>{`
@@ -52,11 +53,11 @@ const ButtonCSS = () => <style global={true} jsx={true}>{`
 ButtonCSS.displayName = 'ButtonCSS';
 
 
-const AntButton = (props) => {
-     return (
+const AntButton = (props: Record<string, any>) => {
+    return (
         <>
             <ButtonCSS />
-            <Button {...props}/>
+            <Button {...props} />
         </>
     )
 }

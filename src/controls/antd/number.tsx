@@ -1,4 +1,5 @@
 
 import { InputNumber } from 'antd';
-console.log('Load Ant InputNumber');
+import { _track } from '../../util';
+if (_track) console.log('Load Ant InputNumber');
 export default InputNumber;

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Modal } from 'antd';
-console.log('Load Ant Modal');
+import { _track } from '../../util';
+if (_track) console.log('Load Ant Modal');
 
 const AntModalCSS = () => <style global={true} jsx={true}>{`
     .ant-modal 

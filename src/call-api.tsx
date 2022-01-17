@@ -72,17 +72,18 @@ const processServerlessOfflineResult = (data: string) => {
     }
 }
 
+export type APISettings = {
+    apiToken?: string,
+    headers?: any,
+    solutionId?: string,
+    stage?: 'dev' | 'staging' | 'prod'
+}
 
 export const callAPIBase = (
     url: string,
     data: Record<string, any>,
     method: Method,
-    settings?: {
-        apiToken?: string,
-        headers?: any,
-        solutionId?: string,
-        stage?: 'dev' | 'staging' | 'prod'
-    }): Promise<Record<string, any>> => {
+    settings?: APISettings): Promise<Record<string, any>> => {
 
     if (!isObject(settings)) settings = {};
     if (isNil(data)) data = {};

@@ -7,6 +7,8 @@
 
 export { getServerSidePropsForPage } from './pages/server';
 
+import AppBase from './app';
+
 //Controls
 import View from './controls/view';
 import Text from './controls/text';
@@ -16,7 +18,30 @@ import Input from './controls/input';
 import UserAvatar from './controls/user-avatar';
 import TextArea from './controls/antd/textarea';
 import Checkbox from './controls/antd/checkbox';
-import AppBase from './app';
+import Table from './controls/antd/table';
+import Tooltip from './controls/antd/tooltip';
+import Switch from './controls/antd/switch';
+import Slider from './controls/antd/slider';
+import InputPassword from './controls/antd/password';
+import InputNumber from './controls/antd/number';
+import Select from './controls/antd/select';
+import SelectOption from './controls/antd/select-option';
+import Notification from './controls/antd/notification';
+import Popconfirm from './controls/antd/popconfirm';
+import Dropdown from './controls/antd/dropdown';
+import Menu from './controls/antd/menu';
+import Alert from './controls/antd/alert';
+import Button from './controls/antd/button';
+import Affix from './controls/antd/affix';
+import Drawer from './controls/antd/drawer';
+
+export {
+    View, Text, SVG, Logo, UserAvatar, Input, TextArea, Checkbox, 
+    Table, Tooltip, Slider, Switch, Select, SelectOption,
+    InputPassword, InputNumber, Notification,
+    Popconfirm, Dropdown,Menu, Alert,Button,
+    Affix, Drawer
+};
 
 //Sections
 import LogosSection from './sections/logos';
@@ -49,7 +74,7 @@ import PageBase from './pages/base';
 import PageHead from './pages/head';
 import SignInPageBody from './pages/sign-in/body';
 
-export { abortCallAPI, callAPIBase } from './call-api';
+export { abortCallAPI, callAPIBase, APISettings } from './call-api';
 export { callAPI } from './context/auth-call-api';
 export { signIn, getAuth, signInCognito, getCurrentPoolUser, signOut, useCurrentContext } from './context/auth-cognito';
 
@@ -68,9 +93,6 @@ export {
     _track
 } from './util';
 
-export {
-    View, Text, SVG, Logo, UserAvatar, Input, TextArea, Checkbox
-};
 
 export {
     PageBase, PageHead, AppBase, SignInPageBody
