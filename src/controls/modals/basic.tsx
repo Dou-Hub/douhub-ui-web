@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { isFunction, isArray, map } from 'lodash';
+import { isFunction, isArray, map, isNil } from 'lodash';
 import SVG from '../svg';
 import { isNonEmptyString } from 'douhub-helper-util';
 
@@ -8,6 +8,16 @@ const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
     const { show, title, content, Content, icon, titleClassName } = props;
     const buttons = isArray(props.buttons) ? props.buttons : [];
+    const [processing, setProcessing] = useState<string|null>(null);
+    const [error, setError] = useState<string|null>(null);
+
+    useEffect(()=>{
+        setProcessing(props.processing);
+    },[props.processing]);
+
+    useEffect(()=>{
+        setError(props.error);
+    },[props.error]);
 
     const onClose = () => {
         if (isFunction(props.onClose)) props.onClose();
@@ -17,7 +27,18 @@ const BasicModal = (props: Record<string, any>) => {
         if (isFunction(props.onSubmit)) props.onSubmit();
     }
 
+    const renderProcessing = ()=>{
+        if (isNil(processing)) return null;
+       
+        return <div className="flex">
+            <span className="mr-2 text-blue-400">{processing}</span>
+            <SVG src="/icons/loading.svg" className="spinner" color="rgb(96 165 250)" style={{ width: 20, height:20 }} />
+        </div>
+    }
+
     const renderButtons = () => {
+        if (!isNil(processing)) return null;
+       
         return map(buttons, (button) => {
             const text = isNonEmptyString(button.cotextlor) ? button.text : '?';
             const disabled = button == button.disabled;
@@ -119,9 +140,11 @@ const BasicModal = (props: Record<string, any>) => {
                                     </div>
                                 </div>}
                             </div>
-                            {buttons.length > 0 && <div className="flex mt-10">
+                            {isNonEmptyString(error) && <div className="text-red-600 text-right">{error}</div>}
+                            {buttons.length > 0 && <div className="flex mt-6">
                                 <div className="flex-1"></div>
                                 {renderButtons()}
+                                {renderProcessing()}
                             </div>}
                         </div>
                     </Transition.Child>
