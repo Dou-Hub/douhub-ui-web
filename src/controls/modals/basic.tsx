@@ -23,7 +23,7 @@ const BasicModal = (props: Record<string, any>) => {
             const disabled = button == button.disabled;
             switch (button.type) {
                 case 'warning': {
-                    if (!isFunction(button.onSubmit)) button.onSubmit = onSubmit;
+                    if (!isFunction(button.onClick)) button.onClick = onSubmit;
                     return <button
                         key={text}
                         type="button"
@@ -35,7 +35,7 @@ const BasicModal = (props: Record<string, any>) => {
                     </button>
                 }
                 case 'danger': {
-                    if (!isFunction(button.onSubmit)) button.onSubmit = onSubmit;
+                    if (!isFunction(button.onClick)) button.onClick = onSubmit;
                     return <button
                         key={text}
                         type="button"
@@ -60,7 +60,7 @@ const BasicModal = (props: Record<string, any>) => {
                 }
                 default:
                     {
-                        if (!isFunction(button.onSubmit)) button.onSubmit = onSubmit;
+                        if (!isFunction(button.onClick)) button.onClick = onSubmit;
                         return <button
                             key={text}
                             type="button"

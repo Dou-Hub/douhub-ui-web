@@ -1,7 +1,6 @@
-import { isNonEmptyString, isObject } from 'douhub-helper-util';
+import { isNonEmptyString, isObject, isObjectString } from 'douhub-helper-util';
 import { isNil, isEmpty } from 'lodash';
 import axios, { Method } from 'axios';
-import {  isObjectString} from "douhub-helper-util";
 import { _window, _track } from "./util";
 
 export const abortCallAPI = () => {
@@ -118,7 +117,7 @@ export const callAPIBase = (
     //     if (params.length > 0) url = url.indexOf('?') > 0 ? `${url}&${params}` : `${url}?${params}`;
     // }
 
-    if (method === 'GET') {
+    if (method.toUpperCase() === 'GET') {
         if (isObject(data)) config.params = data;
     }
     else {
@@ -166,7 +165,7 @@ export const callAPIBase = (
                 if (localAPI) {
                     const processResult = processServerlessOfflineError(exception?.response?.data?.errorMessage);
                     if (isNil(processResult)) reject(exception);
-                    error = !isNil(processResult)?processResult:{};
+                    error = !isNil(processResult) ? processResult : {};
                 }
 
                 if (isEmpty(error)) {

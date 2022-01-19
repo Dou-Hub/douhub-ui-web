@@ -15,7 +15,7 @@ import Text from './controls/text';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
 import Input from './controls/input';
-import UserAvatar from './controls/user-avatar';
+import Avatar from './controls/avatar';
 import TextArea from './controls/antd/textarea';
 import Checkbox from './controls/antd/checkbox';
 import Table from './controls/antd/table';
@@ -36,7 +36,7 @@ import Affix from './controls/antd/affix';
 import Drawer from './controls/antd/drawer';
 
 export {
-    View, Text, SVG, Logo, UserAvatar, Input, TextArea, Checkbox, 
+    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox, 
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification,
     Popconfirm, Dropdown,Menu, Alert,Button,

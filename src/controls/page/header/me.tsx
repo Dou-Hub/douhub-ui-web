@@ -4,7 +4,7 @@ import { isArray, isFunction } from 'lodash';
 import { signOut } from '../../../context/auth-cognito';
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
-import UserAvatar from '../../user-avatar';
+import Avatar from '../../avatar';
 import { _track, _window } from '../../../util';
 
 const PageHeaderMe = observer((props: Record<string, any>) => {
@@ -37,7 +37,7 @@ const PageHeaderMe = observer((props: Record<string, any>) => {
         ];
 
 
-    return <UserAvatar {...props} menu={menu} user={user} realtimeStatus={props.realtimeStatus} />
+    return <Avatar {...props} menu={menu} data={user} realtimeStatus={props.realtimeStatus} />
 });
 
 export default PageHeaderMe

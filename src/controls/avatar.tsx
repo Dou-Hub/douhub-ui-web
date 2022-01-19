@@ -4,77 +4,84 @@ import SVG from './svg';
 import { isNonEmptyString, COLORS, stringToColor, getRecordDisplay } from 'douhub-helper-util'
 import { Menu, Transition } from '@headlessui/react'
 import { map } from 'lodash';
-import {_track} from '../util';
+import { _track } from '../util';
 
 const styles = {
     countWrapper: { position: 'absolute', top: -5, right: -5, borderRadius: 9, backgroundColor: COLORS.red, justifyContent: 'space-around' },
     count: { fontSize: 8, color: COLORS.white, alignSelf: 'center' }
 }
 
-const UserAvatar = (props: Record<string, any>) => {
+const Avatar = (props: Record<string, any>) => {
 
-    const { countWrapperStyle, countStyle, hide, count, menu, realtimeStatus, className, nameToColor } = props;
+    const { countWrapperStyle, countStyle, hide, count,
+        menu, realtimeStatus,
+        wrapperStyle, nameStyle, svgStyle,
+        nameToColor, notUser, imgStyle } = props;
 
-    const [user, setUser] = useState<Record<string, any>>({});
+    const className = {};
+    const [data, setData] = useState<Record<string, any>>({});
     const [status, setStatus] = useState<string>('on');
 
-    let backgroundColor = isNonEmptyString(props.backgroundColor)?props.backgroundColor:COLORS.white;
-    let borderColor = isNonEmptyString(props.borderColor)?props.borderColor:COLORS.black;
-    let color = isNonEmptyString(props.color)?props.color:borderColor;
+    let backgroundColor = isNonEmptyString(props.backgroundColor) ? props.backgroundColor : COLORS.white;
+    let borderColor = isNonEmptyString(props.borderColor) ? props.borderColor : COLORS.black;
+    let color = isNonEmptyString(props.color) ? props.color : borderColor;
+    const display = getRecordDisplay(data);
 
-    if (nameToColor)
-    {
-        backgroundColor = stringToColor(getRecordDisplay(user));
+    if (nameToColor) {
+        backgroundColor = stringToColor(display);
         borderColor = backgroundColor;
         color = COLORS.white;
     }
 
     useEffect(() => {
-        if (isNonEmptyString(props.user?.id))
-        {
-            setUser(props.user);
+        if (isNonEmptyString(props.data?.id)) {
+            setData(props.data);
             setStatus('on');
         }
-    }, [props.user])
+    }, [props.data])
 
     const size = isInteger(props.size) ? props.size : 38;
-    let { firstName, lastName } = user;
+    let { firstName, lastName } = data;
 
-    if (_track) console.log({ user })
+    if (!isNonEmptyString(firstName) && !isNonEmptyString(firstName) && !notUser) {
+        firstName = display.split(' ')[0];
+        if (display.split(' ').length > 1) lastName = display.split(' ')[1];
+    }
+
+    if (_track) console.log({ data })
 
     const renderName = () => {
-        if (isNonEmptyString(user.avatar)) return null;
+        if (isNonEmptyString(data.avatar)) return null;
         return (isNonEmptyString(firstName) || isNonEmptyString(firstName)) ?
             <div className="flex flex-row items-center rounded-full border"
-                style={{ minWidth: size, minHeight: size, borderColor, backgroundColor }}>
+                style={{ minWidth: size, minHeight: size, borderColor, backgroundColor, ...nameStyle }}>
                 <div className="flex flex-row justify-center w-full">
-                    <span style={{color}}>{isNonEmptyString(firstName) ? firstName.substring(0, 1).toUpperCase() : ''}</span>
-                    <span style={{color}}>{isNonEmptyString(lastName) ? lastName.substring(0, 1).toUpperCase() : ''}</span>
+                    <span style={{ color }}>{isNonEmptyString(firstName) ? firstName.substring(0, 1).toUpperCase() : ''}</span>
+                    <span style={{ color }}>{isNonEmptyString(lastName) ? lastName.substring(0, 1).toUpperCase() : ''}</span>
                 </div>
             </div>
             :
             <SVG
                 id="page-header-me"
-                style={{ width: size }}
+                style={{ width: size, ...svgStyle }}
                 color={color}
-                className="user-avatar-icon"
-                src="/icons/circle-user.svg" />
+                src={notUser ? "/icons/my-location.svg" : "/icons/circle-user.svg"} />
     }
 
     const renderAvatar = () => {
-        return isNonEmptyString(user.avatar) && <img className="rounded-full border border-gray-20" src={user.avatar} alt="" style={{ width: size }} />;
+        return isNonEmptyString(data.avatar) && <img className="rounded-full border border-gray-20" src={data.avatar} alt="" style={{ width: size, ...imgStyle }} />;
     }
 
     const renderUser = () => {
         return <Menu as="div" className="relative inline-block text-left">
             <Menu.Button
                 className="flex text-sm"
-                style={{ minWidth: size, minHeight: size}}
+                style={{ minWidth: size, minHeight: size }}
             >
                 {renderName()}
                 {renderAvatar()}
             </Menu.Button>
-            {realtimeStatus && <div className={`absolute right-0 top-0 rounded-full ${status=='on'?'bg-green-600':'bg-red-600'}`} style={{width:10, height:10}}/>}
+            {realtimeStatus && <div className={`absolute right-0 top-0 rounded-full ${status == 'on' ? 'bg-green-600' : 'bg-red-600'}`} style={{ width: 10, height: 10 }} />}
             {isArray(menu) && menu.length > 0 && <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -109,8 +116,8 @@ const UserAvatar = (props: Record<string, any>) => {
     return hide ? null : <>
 
         <div
-            className={`user-avatar ${user ? 'user-avatar-image-wrapper' : 'user-avatar-icon-wrapper'} ${className?className:''}`}
-            style={{ width: size, height: size, position: 'relative' }}>
+            className={`avatar ${data ? 'avatar-image-wrapper' : 'avatar-icon-wrapper'} ${className ? className : ''}`}
+            style={{ width: size, height: size, position: 'relative', ...wrapperStyle }}>
             {renderUser()}
             {isNumber(count) && count > 0 &&
                 <div
@@ -123,4 +130,4 @@ const UserAvatar = (props: Record<string, any>) => {
     </>
 }
 
-export default UserAvatar
+export default Avatar
