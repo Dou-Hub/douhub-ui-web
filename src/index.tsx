@@ -53,6 +53,8 @@ import FooterColumnSection from './sections/footer/column';
 //Modals
 import BasicModal from './controls/modals/basic';
 
+import FormBase from './sections/form/base';
+
 //Fields
 import LabelField from './fields/label';
 import NoteField from './fields/note';
@@ -60,6 +62,8 @@ import SectionField from './fields/section';
 import CodesField from './fields/codes';
 import TextField from './fields/text';
 import MessageField from './fields/message';
+import CheckboxField from './fields/checkbox';
+import CheckboxGroupField from './fields/checkbox-group';
 
 //Header Controls
 import PageHeaderMe from './controls/page/header/me';
@@ -68,8 +72,9 @@ import PageHeaderMenuItems from './controls/page/header/menu-items';
 import PageHeaderMenuPosts from './controls/page/header/menu-posts';
 import PageHeaderMenuActions from './controls/page/header/meun-actions';
 import PageHeaderNotification from './controls/page/header/notification';
+import UserProfileMeModal  from './sections/header/user-profile-me-modal';
+import UserProfileModal  from './sections/header/user-profile-modal';
 import PageLoader  from './controls/page/loader';
-
 //Pages
 import PageBase from './pages/base';
 import PageHead from './pages/head';
@@ -106,7 +111,9 @@ export {
     PageHeaderMenuPosts,
     PageHeaderMenuActions,
     PageHeaderNotification,
-    PageLoader
+    PageLoader,
+    UserProfileMeModal,
+    UserProfileModal
 };
 
 export {
@@ -121,11 +128,17 @@ export {
 }
 
 export {
+    FormBase
+}
+
+export {
     LabelField,
     NoteField,
     SectionField,
     CodesField,
     TextField,
-    MessageField
+    MessageField,
+    CheckboxField,
+    CheckboxGroupField
 }
 

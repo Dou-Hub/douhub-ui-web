@@ -23,7 +23,7 @@ const AntdCSS = () => <style global={true} jsx={true}>
     .ant-input[disabled]
     {
         color: rgba(0,0,0,0.3) !important;
-        background-color: rgba(0,0,0,0.01) !important;
+        background: #ffffff;
     }
 }`}
 </style>

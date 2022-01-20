@@ -15,7 +15,7 @@ function getBase64(file: any) {
     });
 }
 
-const PhotoUploader = (props: {
+const Uploader = (props: {
     entityName: string, 
     fileType: 'Photo'|'Document'|'Video'|'Audio',
     recordId: string, 
@@ -136,5 +136,5 @@ const PhotoUploader = (props: {
     </div>
 };
 
-export default PhotoUploader;
+export default Uploader;
 

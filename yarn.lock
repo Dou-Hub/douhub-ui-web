@@ -2714,10 +2714,23 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
-douhub-helper-util@1.0.40, douhub-helper-util@^1.0.40:
+douhub-helper-util@1.0.40:
   version "1.0.40"
   resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.40.tgz#ae2b00a377948133b91551fface1150349d356eb"
   integrity sha512-xSJhXks7LYDnvNiyBWFNKHczlz66v26Rt7LcgUbs35odRjd3BK9GxEI1EJJmV7lNfi78vrNjb5qBP7ynGK+Xlg==
+  dependencies:
+    axios "^0.24.0"
+    is-url "^1.2.4"
+    js-base64 "^3.7.2"
+    libphonenumber-js "^1.9.42"
+    lodash "^4.17.21"
+    slugify "^1.6.4"
+    uuid "^8.3.2"
+
+douhub-helper-util@^1.0.46:
+  version "1.0.46"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.46.tgz#fbee47e812320e4e53d679e1c597b71a7b4f91cb"
+  integrity sha512-jeFeETE5k9xCS5AyGWLPgCm2fhg8YhM4MC4qGNcW5dsOEh2fo25hGmFpSKF2inSZGh5xScG5JpUNVkTvYIrKtQ==
   dependencies:
     axios "^0.24.0"
     is-url "^1.2.4"
