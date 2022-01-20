@@ -12,6 +12,7 @@ import AppBase from './app';
 //Controls
 import View from './controls/view';
 import Text from './controls/text';
+import Uploader from './controls/uploader';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
 import Input from './controls/input';
@@ -40,7 +41,7 @@ export {
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification,
     Popconfirm, Dropdown,Menu, Alert,Button,
-    Affix, Drawer
+    Affix, Drawer, Uploader
 };
 
 //Sections
