@@ -64,6 +64,7 @@ import TextField from './fields/text';
 import MessageField from './fields/message';
 import CheckboxField from './fields/checkbox';
 import CheckboxGroupField from './fields/checkbox-group';
+import AlertField from './fields/alert';
 
 //Header Controls
 import PageHeaderMe from './controls/page/header/me';
@@ -139,6 +140,7 @@ export {
     TextField,
     MessageField,
     CheckboxField,
-    CheckboxGroupField
+    CheckboxGroupField,
+    AlertField
 }
 

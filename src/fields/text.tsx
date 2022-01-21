@@ -59,7 +59,9 @@ const FieldTextCSS = () => <style global={true} jsx={true}>{`
 
 const FieldText = (props: Record<string, any>) => {
 
-    const { label, disabled, type, note, minRows, maxRows, labelStyle, inputStyle, alwaysShowLabel, hideLabel, onPressEnter } = props;
+    const { label, disabled, type, wrapperStyle, note, minRows, 
+        maxRows, labelStyle, inputStyle, alwaysShowLabel, 
+        hideLabel, onPressEnter } = props;
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
@@ -120,7 +122,7 @@ const FieldText = (props: Record<string, any>) => {
             {...inputProps}
         />
     }
-    return <>
+    return <div className="flex flex-col w-full" style={wrapperStyle}>
         <FieldTextCSS />
         <Label text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
@@ -129,7 +131,7 @@ const FieldText = (props: Record<string, any>) => {
             {renderInput()}
         </div>
         <Note text={note} />
-    </>
+    </div>
 };
 
 FieldText.displayName = DISPLAY_NAME;

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import BasicModal from '../../controls/modals/basic';
-import {_window} from '../../util';
+import { _window } from '../../util';
 import Uploader from '../../controls/uploader';
-import {callAPI} from '../../context/auth-call-api';
+import { callAPI } from '../../context/auth-call-api';
 
-import { hasRole } from 'douhub-helper-util';
+import { hasRole, isObject, isNonEmptyString } from 'douhub-helper-util';
 import { isFunction, map } from 'lodash';
 import FormBase from '../form/base';
 import { useContextStore } from 'douhub-ui-store';
@@ -21,9 +21,9 @@ const UserProfileModal = (props: Record<string, any>) => {
     const context = JSON.parse(contextStore.data);
 
     const hasPermissionToChangeRole = (
-        hasRole(context,'ORG-ADMIN') || 
-        hasRole(context,'ROLE-ADMIN')
-    )?true:false;
+        hasRole(context, 'ORG-ADMIN') ||
+        hasRole(context, 'ROLE-ADMIN')
+    ) ? true : false;
 
 
     useEffect(() => {
@@ -87,7 +87,7 @@ const UserProfileModal = (props: Record<string, any>) => {
                     }
                 ]
             },
-            ... map(solution.roles, (r: Record<string,any>)=>{
+            ...map(solution.roles, (r: Record<string, any>) => {
                 return {
                     fields: [
                         {
@@ -106,6 +106,11 @@ const UserProfileModal = (props: Record<string, any>) => {
 
     const onSuccessUploadAvatar = (uploadResult: Record<string, any>) => {
         onChange({ ...data, avatar: uploadResult.cfSignedResult.signedUrl });
+    }
+
+    const onSubmitError = () => {
+        setError("Failed to update the user profile.");
+        if (isFunction(props.onProfileUpdateFailed)) props.onProfileUpdateFailed(data);
     }
 
     const renderContent = () => {
@@ -138,12 +143,14 @@ const UserProfileModal = (props: Record<string, any>) => {
         setError('');
         callAPI(solution, `${solution.apis.organization}update-user`, { data }, 'PUT')
             .then((newUser) => {
+                if (!(isObject(newUser) && isNonEmptyString(newUser.id))) {
+                    return onSubmitError();
+                }
                 if (isFunction(props.onProfileUpdateSuccess)) props.onProfileUpdateSuccess(newUser);
             })
             .catch((error) => {
                 console.error(error);
-                setError("Failed to update the user profile.");
-                if (isFunction(props.onProfileUpdateFailed)) props.onProfileUpdateFailed(data);
+                return onSubmitError();
             })
             .finally(() => {
                 setProcessing(null);
