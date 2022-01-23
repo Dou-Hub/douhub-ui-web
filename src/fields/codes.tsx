@@ -7,11 +7,11 @@ import Note from './note';
 // import dynamic from 'next/dynamic';
 import InputPassword from '../controls/antd/password';
 import Input from '../controls/antd/input';
+import CSS from '../controls/css';
 
-const DISPLAY_NAME = 'FieldCodes';
+const DISPLAY_NAME = 'CodesField';
 
-const FieldCodesCSS = () => <style global={true} jsx={true}>
-    {`
+const CODES_FIELD_CSS = `
     .field-codes {
         border-bottom: none !important; 
     }
@@ -25,10 +25,7 @@ const FieldCodesCSS = () => <style global={true} jsx={true}>
     .field-code-last-true {
         margin-right: 0px;
     }
-`}
-</style>
-FieldCodesCSS.displayName = 'FieldCodesCSS';
-
+`;
 
 const initValue = (count: number, value: string) => {
     const values = Array(count).fill('');
@@ -39,7 +36,7 @@ const initValue = (count: number, value: string) => {
     return values;
 }
 
-const FieldCodes = (props: Record<string, any>) => {
+const CodesField = (props: Record<string, any>) => {
 
     const { label, disabled, type, note } = props;
 
@@ -98,7 +95,7 @@ const FieldCodes = (props: Record<string, any>) => {
     }
 
     return <>
-        <FieldCodesCSS />
+        <CSS id="field-codes-css" content={CODES_FIELD_CSS}/>
         <Label text={label} disabled={disabled} />
         <div className={`field field-codes ${disabled ? 'field-disabled' : ''} ${type ? 'field-codes-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}>
             {renderCodes()}
@@ -107,5 +104,5 @@ const FieldCodes = (props: Record<string, any>) => {
     </>
 }
 
-FieldCodes.displayName = DISPLAY_NAME;
-export default FieldCodes;
+CodesField.displayName = DISPLAY_NAME;
+export default CodesField;

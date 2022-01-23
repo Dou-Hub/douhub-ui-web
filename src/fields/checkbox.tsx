@@ -4,9 +4,9 @@ import NoteField from './note';
 import SVG from '../controls/svg';
 import {isNonEmptyString} from 'douhub-helper-util';
 import {marked} from 'marked';
+import CSS from '../controls/css';
 
-const CheckboxFieldCSS = () => <style global jsx>
-{`
+const CHECKBOX_FIELD_CSS = `
     .field-checkbox
     {
         border-bottom: none !important;
@@ -19,7 +19,7 @@ const CheckboxFieldCSS = () => <style global jsx>
 
     .field-checkbox .checkbox 
     {
-        border: solid 1px #aaaaaa;
+        border: solid 1px #cccccc;
         margin-right: 10px;
         height: 30px;
         width: 30px;
@@ -104,8 +104,7 @@ const CheckboxFieldCSS = () => <style global jsx>
         cursor: not-allowed;
 
     }
-`}
-</style>
+`;
 
 const CheckboxField = (props: Record<string,any>) => {
 
@@ -131,7 +130,7 @@ const CheckboxField = (props: Record<string,any>) => {
     }
 
     return <>
-        <CheckboxFieldCSS/>
+        <CSS id="field-checkbox-css" content={CHECKBOX_FIELD_CSS}/>
         <div className={`field field-checkbox ${disabled?'field-disabled':''} field-checkbox-selected-${value} ${isNonEmptyString(note) ? 'field-note-true' : ''} ${isNonEmptyString(className) ? className : ''} `} 
             style={style}>
             <div className='checkbox' onClick={onClick}>

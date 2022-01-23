@@ -1,6 +1,8 @@
 import React from "react";
+import CSS from '../controls/css';
+
 console.log('Load FieldCSS');
-const FieldCSS = () => <style global={true} jsx={true}>{`
+const FieldCSS = () => <CSS id="field-css" content={`
     .field
     {
         display: flex;
@@ -119,6 +121,7 @@ const FieldCSS = () => <style global={true} jsx={true}>{`
     {
         color: #cccccc !important;
     } */
-`}</style>
+`}/>
+
 FieldCSS.displayName = 'FieldCSS';
 export default FieldCSS;

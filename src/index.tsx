@@ -15,6 +15,7 @@ import Text from './controls/text';
 import Uploader from './controls/uploader';
 import SVG from './controls/svg';
 import Logo from './controls/logo';
+import CSS from './controls/css';
 import Input from './controls/input';
 import Avatar from './controls/avatar';
 import TextArea from './controls/antd/textarea';
@@ -141,6 +142,7 @@ export {
     MessageField,
     CheckboxField,
     CheckboxGroupField,
-    AlertField
+    AlertField,
+    CSS
 }
 

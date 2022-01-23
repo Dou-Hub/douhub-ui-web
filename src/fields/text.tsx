@@ -8,11 +8,12 @@ import Note from './note';
 import InputPassword from '../controls/antd/password';
 import Input from '../controls/antd/input';
 import InputTextArea from '../controls/antd/textarea';
+import CSS from '../controls/css';
 
-const DISPLAY_NAME = 'FieldText';
+const DISPLAY_NAME = 'TextField';
 
 
-const FieldTextCSS = () => <style global={true} jsx={true}>{`
+const TEXT_FIELD_CSS = `
    
     .field-wrapper-input
     {
@@ -55,9 +56,9 @@ const FieldTextCSS = () => <style global={true} jsx={true}>{`
         background-color: #ffffff !important;
     }
 
-`}</style>
+`;
 
-const FieldText = (props: Record<string, any>) => {
+const TextField = (props: Record<string, any>) => {
 
     const { label, disabled, type, wrapperStyle, note, minRows, 
         maxRows, labelStyle, inputStyle, alwaysShowLabel, 
@@ -123,7 +124,7 @@ const FieldText = (props: Record<string, any>) => {
         />
     }
     return <div className="flex flex-col w-full" style={wrapperStyle}>
-        <FieldTextCSS />
+        <CSS id="field-text-css" content={TEXT_FIELD_CSS} />
         <Label text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
@@ -134,5 +135,5 @@ const FieldText = (props: Record<string, any>) => {
     </div>
 };
 
-FieldText.displayName = DISPLAY_NAME;
-export default FieldText;
+TextField.displayName = DISPLAY_NAME;
+export default TextField;

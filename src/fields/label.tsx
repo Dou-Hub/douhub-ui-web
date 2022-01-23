@@ -3,9 +3,9 @@ import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { marked } from 'marked';
 import FieldCSS from './css';
+import CSS from '../controls/css';
 
-const FieldLabelCSS = () => <style global={true} jsx={true}>
-    {`
+const LABEL_FIELD_CSS = `
     .field-label
     {
         font-size: 0.8rem !important;
@@ -31,8 +31,7 @@ const FieldLabelCSS = () => <style global={true} jsx={true}>
         font-size: 0.8rem;
         line-height: 1.1;
     }
-`}
-</style>
+`;
 
 const FieldLabel = (props: Record<string, any>) => {
     const { text, disabled, style, hidden } = props;
@@ -41,7 +40,7 @@ const FieldLabel = (props: Record<string, any>) => {
     }
     return (
         <>
-            <FieldLabelCSS />
+            <CSS id="field-label-css" content={LABEL_FIELD_CSS} />
             <FieldCSS/>
             {isNonEmptyString(text) && !hidden && <div style={style}
                 onClick={onClick}

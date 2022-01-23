@@ -1,48 +1,48 @@
 import React from 'react';
 import FieldCSS from './css';
-import {isFunction} from 'lodash';
+import { isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { marked } from 'marked';
+import CSS from '../controls/css';
 
-const FieldSectionCSS = () => <style global={true} jsx={true}>
-    {`
-    .field-section
-    {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        padding: 0.5rem 0;
-        border-left: none;
-        border-top: none;
-        border-right: none;
-    }
+const SECTION_FIELD_CSS = `
+.field-section
+{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: none !important;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column !important;
+    border-left: 5px dotted rgba(0,0,0,0.1) !important;
+}
 
-    .field-section p
-    {
-        margin-bottom: 0;
-    }
-
-`}
-</style>
-
+.field-section p
+{
+    margin-bottom: 0;
+}
+`;
 
 const FieldSection = (props: Record<string, any>) => {
     const { title, subTitle, disabled, style, className } = props;
 
-    const onClick = (e:any) => {
+    const onClick = (e: any) => {
         if (isFunction(props.onClick)) props.onClick(e);
     }
 
     return (
         <>
             <FieldCSS />
-            <FieldSectionCSS />
-            <div style={style} className={`text-left border border-b field-section ${disabled ? 'field-disabled' : ''} ${className?className:''}`} onClick={onClick}>
-                <div className="text-base" dangerouslySetInnerHTML={{ __html: marked(title) }} />
-                {isNonEmptyString(subTitle) && <div className="text-xs text-gray-500" dangerouslySetInnerHTML={{ __html: marked(subTitle) }} />}
+            <CSS id="field-section-css" content={SECTION_FIELD_CSS}/>
+            <div style={style} className={`px-3 py-2 text-left field-section ${disabled ? 'field-disabled' : ''} ${className ? className : ''}`} onClick={onClick}>
+                <div className="w-full text-base" dangerouslySetInnerHTML={{ __html: marked(title) }} />
+                {isNonEmptyString(subTitle) && <div className="w-full text-xs text-gray-500" dangerouslySetInnerHTML={{ __html: marked(subTitle) }} />}
             </div>
         </>
     )
 }
+
 
 FieldSection.displayName = 'FieldSection';
 export default FieldSection;

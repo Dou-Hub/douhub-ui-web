@@ -1,15 +1,13 @@
 import { isNonEmptyString,  _process, _track } from 'douhub-helper-util';
-import { assign } from 'lodash';
+import { assign, isNil } from 'lodash';
 import nookies from 'nookies';
 // import {  callAPIBase } from '../call-api';
 
-export const getServerSidePropsForPage = async (
-    baseProps: Record<string, any>,
-    pageProps?: Record<string, any>): Promise<Record<string, any>> => {
+export const getServerSidePropsForPage = async ( props: Record<string, any>): Promise<Record<string, any>> => {
 
     const { query, req, resolvedUrl,
-        locale, locales, settings
-    } = baseProps;
+        locale, locales, settings, pageProps
+    } = props;
 
     const city = req.headers['CloudFront-Viewer-City'.toLowerCase()];
     let country = req.headers['CloudFront-Viewer-Country'.toLowerCase()];
@@ -28,20 +26,22 @@ export const getServerSidePropsForPage = async (
     const cfIsMobile = req.headers['cloudfront-is-mobile-viewer'] == 'true';
     const cfIsTablet = req.headers['cloudfront-is-tablet-viewer'] == 'true';
 
-    const cookies = nookies.get(baseProps);
+    const cookies = nookies.get(props);
     const slug = query && query.slug ? query.slug.toLowerCase() : '';
     const entity = query && query.entity ? query.entity.toLowerCase() : '';
-    const hideHeader = baseProps.hideHeader || query.header == 'false';
-    const hideFooter = baseProps.hideFooter || query.footer == 'false';
+    const hideHeader = props.hideHeader || query.header == 'false';
+    const hideFooter = props.hideFooter || query.footer == 'false';
     const userAgent = req.headers['user-agent'];
 
-    let host = req.headers.host;
+    let host = req?.headers?.host;
     if (isNonEmptyString(host)) host = host.split(':')[0];
 
-    const solution = baseProps.solution;
+    const solution = props.solution;
 
+    if (isNil(solution)) console.error('solution os not provided.');
+    
     //let solution: Record<string, any> = { solutionId: settings.solutionId, host, country };
-    // const currentContext = isObject(baseProps.currentContext)?baseProps.currentContext: await callAPIBase(
+    // const currentContext = isObject(props.currentContext)?props.currentContext: await callAPIBase(
     //     getPlatformApiEndpoint(settings, 'context', ''),
     //     { solutionId: settings.solutionId }, 'GET'); //TODO: use us only for now
     // if (currentContext.type != 'error' && currentContext?.context?.solution) {
@@ -71,7 +71,7 @@ export const getServerSidePropsForPage = async (
         //this is for Google Insight Call to dev
         const queryPreReleaseCode = query['pre-release-code'];
         if (solution.version == queryPreReleaseCode) {
-            nookies.set(baseProps, 'pre-release-code', solution.version);
+            nookies.set(props, 'pre-release-code', solution.version);
         }
         else {
             return {

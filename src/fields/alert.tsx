@@ -2,10 +2,11 @@ import React from 'react';
 import {isFunction} from 'lodash';
 import SVG from '../controls/svg';
 import {isNonEmptyString} from 'douhub-helper-util';
+import CSS from '../controls/css';
 
-const DISPLAY_NAME = 'FieldAlert';
+const DISPLAY_NAME = 'AlertField';
 
-const FieldAlertCSS = () => <style global jsx>{`
+const ALERT_FIELD_CSS = `
     .field-alert
     {
         position: relative;
@@ -51,7 +52,7 @@ const FieldAlertCSS = () => <style global jsx>{`
     //     fill: #91d5ff;
     // }
 
-`}</style>
+`
 
 const AlertField = (props:Record<string,any>) => {
 
@@ -60,7 +61,7 @@ const AlertField = (props:Record<string,any>) => {
     const showCloseButton = isFunction(props.onClose);
 
     return <>
-        <FieldAlertCSS />
+        <CSS id="field-alert-css" content={ALERT_FIELD_CSS}/>
         <div className={`field field-alert field-alert-${type} ant-alert ant-alert-${type} close-${showCloseButton ? 'true' : 'false'}`} style={style}>
             <div className="ant-alert-content">
                 <div
