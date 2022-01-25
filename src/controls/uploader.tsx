@@ -4,7 +4,7 @@ import SVG from './svg';
 import { _window, _track } from '../util';
 import { callAPI } from '../context/auth-call-api';
 import { Upload } from 'antd';
-import { isFunction } from 'lodash';
+import { isFunction, isNil } from 'lodash';
 
 function getBase64(file: any) {
     return new Promise((resolve, reject) => {
@@ -36,13 +36,16 @@ const Uploader = (props: {
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
     const [value, setValue] = useState<string|undefined>(undefined);
+    const [previewValue, setPreviewValue] = useState<string|undefined>(undefined);
     const signedUrlSize = props.signedUrlSize?props.signedUrlSize:'raw';
 
     useEffect(()=>{
-        setValue(props.value)
+        setValue(props.value);
+        if (isNil(previewValue)) setPreviewValue(props.value);
     },[props.value])
 
-    const photoStyle = fileType=='Photo' && isNonEmptyString(value) ? {background:`url(${value})`,  backgroundSize:'cover'}:{};
+    const previewUrl = isNonEmptyString(previewValue)?previewValue:value;
+    const photoStyle = fileType=='Photo' && isNonEmptyString(previewUrl) ? {backgroundImage:`url(${previewUrl})`}:{};
    
     const onBeforeUpload = (file: Record<string, any>) => {
         setError('');
@@ -80,17 +83,27 @@ const Uploader = (props: {
                     cfSignedResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
                     { url },
                     'GET');
+
+                    //Because photo auto create tables time, the url to setValue should be the raw file
+                    if (signedUrlSize!='raw')
+                    {
+                        const rawUrl = `${solution.cloudFront.photo}${s3Setting.s3FileName}`;
+                        const cfSignedRawResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
+                        { url: rawUrl },
+                        'GET');
+                        setPreviewValue(cfSignedRawResult.signedUrl);
+                    }
+                    setValue(cfSignedResult.signedUrl);
                 }
                 else
                 {
-                    const url = `${solution.cloudFront.photo}${s3Setting.s3FileName}`;
+                    const url = `${solution.cloudFront[fileType.toLocaleLowerCase()]}${s3Setting.s3FileName}`;
                     cfSignedResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
                     { url },
                     'GET');
                 }
                 
-                setValue(cfSignedResult.signedUrl);
-
+               
                 if (_track) console.log({cfSignedResult});
 
                 
@@ -111,7 +124,7 @@ const Uploader = (props: {
 
     }
 
-    return <div className="flex flex-col h-full w-full content-center" 
+    return <div className="flex flex-col h-full w-full content-center bg-cover bg-center" 
         style={{ border: 'dashed 1px #cccccc', ...photoStyle, ...wrapperStyle }}>
         <div className="m-auto">
             <Upload
@@ -127,8 +140,8 @@ const Uploader = (props: {
                     {!isNonEmptyString(error) && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
                     {isNonEmptyString(error) && <span className="mt-1 text-xs text-red-600 p-2">{error}</span>}
                 </div>}
-                {uploading && <div className="flex flex-col items-center spinner p-2" style={{background:'rgba(255,255,255,0.8)'}}>
-                    <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
+                {uploading && <div className="flex flex-col items-center p-2" style={{background:'rgba(255,255,255,0.8)'}}>
+                    <SVG src="/icons/upload-to-cloud.svg" className="spinner" style={{ width: 30, height: 30 }} />
                 </div>
                 }
             </Upload>

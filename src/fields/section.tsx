@@ -15,7 +15,9 @@ const SECTION_FIELD_CSS = `
     position: relative;
     display: flex;
     flex-direction: column !important;
-    border-left: 5px dotted rgba(0,0,0,0.1) !important;
+    padding: 10px;
+    background: rgba(0,0,0,0.03);
+    border-left: 1px solid rgba(0,0,0,0.3);
 }
 
 .field-section p
@@ -34,8 +36,8 @@ const FieldSection = (props: Record<string, any>) => {
     return (
         <>
             <FieldCSS />
-            <CSS id="field-section-css" content={SECTION_FIELD_CSS}/>
-            <div style={style} className={`px-3 py-2 text-left field-section ${disabled ? 'field-disabled' : ''} ${className ? className : ''}`} onClick={onClick}>
+            <CSS id="field-section-css" content={SECTION_FIELD_CSS} />
+            <div style={style} className={`px-3 pb-2 pt-1 text-left field-section ${disabled ? 'field-disabled' : ''} ${className ? className : ''}`} onClick={onClick}>
                 <div className="w-full text-base" dangerouslySetInnerHTML={{ __html: marked(title) }} />
                 {isNonEmptyString(subTitle) && <div className="w-full text-xs text-gray-500" dangerouslySetInnerHTML={{ __html: marked(subTitle) }} />}
             </div>

@@ -46,12 +46,6 @@ const ALERT_FIELD_CSS = `
         height: 16px;
         cursor: pointer;
     }
-
-    // .field-alert .close svg
-    // {
-    //     fill: #91d5ff;
-    // }
-
 `
 
 const AlertField = (props:Record<string,any>) => {
@@ -66,11 +60,11 @@ const AlertField = (props:Record<string,any>) => {
             <div className="ant-alert-content">
                 <div
                     style={{ display: !isNonEmptyString(message) ? 'none' : 'block' }}
-                    className="ant-alert-message"
+                    className="ant-alert-message text-sm"
                     dangerouslySetInnerHTML={{ __html: message }} />
                 <div
                     style={{ display: !isNonEmptyString(description) ? 'none' : 'block' }}
-                    className="ant-alert-description"
+                    className="ant-alert-description text-xs mt-2"
                     dangerouslySetInnerHTML={{ __html: description }} />
             </div>
             {showCloseButton && <SVG src="/icons/x.svg" className="close" onClick={props.onClose} />}

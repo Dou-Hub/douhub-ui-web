@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, map, isNil, cloneDeep } from 'lodash';
-import  TextField  from '../../fields/text';
-import  CheckboxGroupField  from '../../fields/checkbox-group';
-import  SectionField  from '../../fields/section';
-import  CheckboxField  from '../../fields/checkbox';
+import TextField from '../../fields/text';
+import CheckboxGroupField from '../../fields/checkbox-group';
+import SectionField from '../../fields/section';
+import CheckboxField from '../../fields/checkbox';
 
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
@@ -54,19 +54,17 @@ const FormBase = observer((props: Record<string, any>) => {
                 switch (field.type) {
                     case 'checkbox':
                         {
-                            if (isNonEmptyString(field.groupValue))
-                            {
-                                return <CheckboxGroupField key={`${key}-${field.groupValue}`} {...field}  onChange={(v: string) => onChangeData(field, v)}/>
+                            if (isNonEmptyString(field.groupValue)) {
+                                return <CheckboxGroupField key={`${key}-${field.groupValue}`} {...field} onChange={(v: string) => onChangeData(field, v)} />
                             }
-                            else
-                            {
-                                return <CheckboxField key={key} {...field} onChange={(v: string) => onChangeData(field, v)}/>
+                            else {
+                                return <CheckboxField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
                             }
-                            
+
                         }
                     case 'section':
                         {
-                            return <SectionField key={key} {...field} onChange={(v: string) => onChangeData(field, v)}/>
+                            return <SectionField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
                         }
                     default:
                         {

@@ -12,7 +12,6 @@ import CSS from '../controls/css';
 
 const DISPLAY_NAME = 'TextField';
 
-
 const TEXT_FIELD_CSS = `
    
     .field-wrapper-input
