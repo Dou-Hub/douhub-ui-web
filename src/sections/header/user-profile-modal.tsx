@@ -50,7 +50,11 @@ const UserProfileModal = (props: Record<string, any>) => {
                         label: "First Name",
                         alwaysShowLabel: true,
                         value: data.firstName
-                    },
+                    }
+                ]
+            },
+            {
+                fields: [
                     {
                         name: 'lastName',
                         type: 'text',
@@ -117,8 +121,9 @@ const UserProfileModal = (props: Record<string, any>) => {
         if (!data?.id) return null;
 
         return <div className="flex flex-col">
-            <div className="flex b-2">
+            <div className="flex mb-6">
                 <Uploader
+                    uiFormat='photo'
                     value={data.avatar}
                     fileType="Photo"
                     entityName="User"
@@ -132,7 +137,7 @@ const UserProfileModal = (props: Record<string, any>) => {
                 <FormBase data={data} form={formFirstNameLastName} onChange={onChange}
                 />
             </div>
-            <div className="flex b-2">
+            <div className="flex">
                 <FormBase data={data} form={formInfo} onChange={onChange} />
             </div>
         </div>

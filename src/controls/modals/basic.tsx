@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
 import SVG from '../svg';
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isNonEmptyString, newGuid } from 'douhub-helper-util';
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
@@ -40,7 +40,7 @@ const BasicModal = (props: Record<string, any>) => {
         if (!isNil(processing)) return null;
        
         return map(buttons, (button) => {
-            const text = isNonEmptyString(button.cotextlor) ? button.text : '?';
+            const text = isNonEmptyString(button.text) ? button.text : newGuid();
             const disabled = button == button.disabled;
             switch (button.type) {
                 case 'warning': {

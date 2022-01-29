@@ -16,37 +16,42 @@ function getBase64(file: any) {
 }
 
 const Uploader = (props: {
-    entityName: string, 
-    fileType: 'Photo'|'Document'|'Video'|'Audio',
-    recordId: string, 
-    attributeName: string, 
-    wrapperStyle?:Record<string,any>, 
-    label?:string, 
-    signedUrlSize?:'raw'|120|240|480|960|1440,
-    signedUrlFormat?:'original'|'webp',
-    onSuccess?:any,
-    onError?:any,
-    value?: string
+    entityName: string,
+    fileType: 'Photo' | 'Document' | 'Video' | 'Audio',
+    recordId: string,
+    attributeName: string,
+    wrapperStyle?: Record<string, any>,
+    label?: string,
+    signedUrlSize?: 'raw' | 120 | 240 | 480 | 960 | 1440,
+    signedUrlFormat?: 'original' | 'webp',
+    onSuccess?: any,
+    onError?: any,
+    value?: string,
+    uiFormat: 'photo' | 'icon',
+    iconUrl?: string,
+    fileNamePrefix?: string
 }) => {
 
-    const {entityName, recordId, attributeName, wrapperStyle, label, signedUrlFormat, fileType } = props;
-    
+    const { entityName, recordId, attributeName, wrapperStyle, label,
+        fileNamePrefix,
+        signedUrlFormat, fileType, uiFormat, iconUrl } = props;
+
     const solution = _window.solution;
     const [files, setFiles] = useState<Array<any>>([]);
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [value, setValue] = useState<string|undefined>(undefined);
-    const [previewValue, setPreviewValue] = useState<string|undefined>(undefined);
-    const signedUrlSize = props.signedUrlSize?props.signedUrlSize:'raw';
+    const [value, setValue] = useState<string | undefined>(undefined);
+    const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
+    const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
 
-    useEffect(()=>{
+    useEffect(() => {
         setValue(props.value);
         if (isNil(previewValue)) setPreviewValue(props.value);
-    },[props.value])
+    }, [props.value])
 
-    const previewUrl = isNonEmptyString(previewValue)?previewValue:value;
-    const photoStyle = fileType=='Photo' && isNonEmptyString(previewUrl) ? {backgroundImage:`url(${previewUrl})`}:{};
-   
+    const previewUrl = isNonEmptyString(previewValue) ? previewValue : value;
+    const photoStyle = uiFormat=='photo' && fileType == 'Photo' && isNonEmptyString(previewUrl) ? { backgroundImage: `url(${previewUrl})` } : {};
+
     const onBeforeUpload = (file: Record<string, any>) => {
         setError('');
         if (!(file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png')) {
@@ -68,46 +73,44 @@ const Uploader = (props: {
 
                 let base64Data: any = await getBase64(result.file);
                 base64Data = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ""), 'base64');
- 
+                const fileName = fileNamePrefix ? `${fileNamePrefix}.${result.file.name}` : result.file.name;
+
                 const s3Setting = await callAPI(solution, `${solution.apis.file}upload-setting`,
-                    { fileName: result.file.name, entityName, recordId, attributeName },
+                    { fileName, entityName, recordId, attributeName },
                     'post');
 
                 if (_track) console.log({ s3Setting });
                 await uploadToS3(s3Setting.url, s3Setting.s3FileName, base64Data);
 
-                let  cfSignedResult = null;
-                if (fileType=='Photo')
-                {
-                    const url = `${solution.cloudFront.photo}${s3Setting.s3FileName}${signedUrlSize=='raw'?'':'.resized.' + signedUrlSize + '.jpg'}${signedUrlFormat=='original'?'':'.webp'}`;
+                let cfSignedResult = null;
+                if (fileType == 'Photo') {
+                    const url = `${solution.cloudFront.photo}${s3Setting.s3FileName}${signedUrlSize == 'raw' ? '' : '.resized.' + signedUrlSize + '.jpg'}${signedUrlFormat == 'original' ? '' : '.webp'}`;
                     cfSignedResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
-                    { url },
-                    'GET');
+                        { url },
+                        'GET');
 
                     //Because photo auto create tables time, the url to setValue should be the raw file
-                    if (signedUrlSize!='raw')
-                    {
+                    if (signedUrlSize != 'raw') {
                         const rawUrl = `${solution.cloudFront.photo}${s3Setting.s3FileName}`;
                         const cfSignedRawResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
-                        { url: rawUrl },
-                        'GET');
+                            { url: rawUrl },
+                            'GET');
                         setPreviewValue(cfSignedRawResult.signedUrl);
                     }
                     setValue(cfSignedResult.signedUrl);
                 }
-                else
-                {
+                else {
                     const url = `${solution.cloudFront[fileType.toLocaleLowerCase()]}${s3Setting.s3FileName}`;
                     cfSignedResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
-                    { url },
-                    'GET');
+                        { url },
+                        'GET');
                 }
-                
-               
-                if (_track) console.log({cfSignedResult});
 
-                
-                if (isFunction(props.onSuccess)) props.onSuccess({s3Setting, cfSignedResult});
+
+                if (_track) console.log({ cfSignedResult });
+
+
+                if (isFunction(props.onSuccess)) props.onSuccess({ s3Setting, cfSignedResult });
             }
             catch (error) {
                 console.error(error);
@@ -124,7 +127,37 @@ const Uploader = (props: {
 
     }
 
-    return <div className="flex flex-col h-full w-full content-center bg-cover bg-center" 
+    const renderPhotoUI = () => {
+        if (uiFormat != 'photo') return null;
+        return <>
+            {files.length == 0 && <div className="flex flex-col items-center p-2"
+                style={{ background: 'rgba(255,255,255,0.8)' }}>
+                <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
+                {!isNonEmptyString(error) && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
+                {isNonEmptyString(error) && <span className="mt-1 text-xs text-red-600 p-2">{error}</span>}
+            </div>}
+            {uploading && <div className="flex flex-col items-center p-2"
+                style={{ background: 'rgba(255,255,255,0.8)' }}>
+                <SVG src="/icons/upload-to-cloud.svg" className="spinner" style={{ width: 30, height: 30 }} />
+            </div>}
+        </>
+    }
+
+    const renderIconUI = () => {
+        if (uiFormat != 'icon') return null;
+        return <>
+            {files.length == 0 && !uploading && <div className="flex flex-col items-center">
+                <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={{ width: 20, height: 20 }} />
+            </div>
+            }
+            {uploading && <div className="flex flex-col items-center">
+                <SVG className="spinner" src="/icons/upload-to-cloud.svg" style={{ width: 20, height: 20 }} />
+            </div>
+            }
+        </>
+    }
+
+    return <div className="flex flex-col h-full w-full content-center bg-cover bg-center"
         style={{ border: 'dashed 1px #cccccc', ...photoStyle, ...wrapperStyle }}>
         <div className="m-auto">
             <Upload
@@ -135,15 +168,8 @@ const Uploader = (props: {
                 fileList={[]}
                 maxCount={1}
             >
-                {files.length == 0 && <div className="flex flex-col items-center p-2" style={{background:'rgba(255,255,255,0.8)'}}>
-                    <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
-                    {!isNonEmptyString(error) && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
-                    {isNonEmptyString(error) && <span className="mt-1 text-xs text-red-600 p-2">{error}</span>}
-                </div>}
-                {uploading && <div className="flex flex-col items-center p-2" style={{background:'rgba(255,255,255,0.8)'}}>
-                    <SVG src="/icons/upload-to-cloud.svg" className="spinner" style={{ width: 30, height: 30 }} />
-                </div>
-                }
+                {renderPhotoUI()}
+                {renderIconUI()}
             </Upload>
         </div>
     </div>

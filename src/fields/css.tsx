@@ -1,8 +1,5 @@
-import React from "react";
-import CSS from '../controls/css';
-
 console.log('Load FieldCSS');
-const FieldCSS = () => <CSS id="field-css" content={`
+export const FIELD_CSS = `
     .field
     {
         display: flex;
@@ -116,12 +113,4 @@ const FieldCSS = () => <CSS id="field-css" content={`
         font-size: 1rem !important;
     } 
 
-    /* 
-    .field-disabled
-    {
-        color: #cccccc !important;
-    } */
-`}/>
-
-FieldCSS.displayName = 'FieldCSS';
-export default FieldCSS;
+`

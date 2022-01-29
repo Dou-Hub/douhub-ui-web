@@ -2,7 +2,7 @@ import React from "react";
 import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { marked } from 'marked';
-import FieldCSS from './css';
+import {FIELD_CSS} from './css';
 import CSS from '../controls/css';
 
 const LABEL_FIELD_CSS = `
@@ -41,7 +41,7 @@ const FieldLabel = (props: Record<string, any>) => {
     return (
         <>
             <CSS id="field-label-css" content={LABEL_FIELD_CSS} />
-            <FieldCSS/>
+            <CSS id="field-css" content={FIELD_CSS} />
             {isNonEmptyString(text) && !hidden && <div style={style}
                 onClick={onClick}
                 className={`field-label ${disabled ? 'field-disabled' : ''}`}

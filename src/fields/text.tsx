@@ -40,9 +40,32 @@ const TEXT_FIELD_CSS = `
         font-size: 2.2rem !important;
         line-height: 1.2;
         font-weight: 700;
-        margin-bottom: 1rem;
+        min-height: 2.64rem !important;
     }
 
+    .field-text.h2
+    {
+        font-size: 1.8rem !important;
+        line-height: 1.2;
+        font-weight: 500;
+        min-height: 2.16rem !important;
+    }
+
+    .field-text.h3
+    {
+        font-size: 1.4rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+        min-height: 1.68rem !important;
+    }
+
+    .field-text.h4
+    {
+        font-size: 1.2rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+        min-height: 1.44rem !important;
+    }
 
     .field-text-password input
     {

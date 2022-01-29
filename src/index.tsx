@@ -38,10 +38,10 @@ import Affix from './controls/antd/affix';
 import Drawer from './controls/antd/drawer';
 
 export {
-    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox, 
+    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox,
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification,
-    Popconfirm, Dropdown,Menu, Alert,Button,
+    Popconfirm, Dropdown, Menu, Alert, Button,
     Affix, Drawer, Uploader
 };
 
@@ -60,12 +60,16 @@ import FormBase from './sections/form/base';
 import LabelField from './fields/label';
 import NoteField from './fields/note';
 import SectionField from './fields/section';
+import PicklistField from './fields/picklist';
 import CodesField from './fields/codes';
 import TextField from './fields/text';
 import MessageField from './fields/message';
 import CheckboxField from './fields/checkbox';
 import CheckboxGroupField from './fields/checkbox-group';
 import AlertField from './fields/alert';
+import PlaceholderField from './fields/placeholder';
+import HtmlField from './fields/html';
+import HtmlFieldCode from './fields/html-code';
 
 //Header Controls
 import PageHeaderMe from './controls/page/header/me';
@@ -74,9 +78,10 @@ import PageHeaderMenuItems from './controls/page/header/menu-items';
 import PageHeaderMenuPosts from './controls/page/header/menu-posts';
 import PageHeaderMenuActions from './controls/page/header/meun-actions';
 import PageHeaderNotification from './controls/page/header/notification';
-import UserProfileMeModal  from './sections/header/user-profile-me-modal';
-import UserProfileModal  from './sections/header/user-profile-modal';
-import PageLoader  from './controls/page/loader';
+import UserProfileMeModal from './sections/header/user-profile-me-modal';
+import UserProfileModal from './sections/header/user-profile-modal';
+import PageLoader from './controls/page/loader';
+
 //Pages
 import PageBase from './pages/base';
 import PageHead from './pages/head';
@@ -87,6 +92,10 @@ export { callAPI } from './context/auth-call-api';
 export { signIn, getAuth, signInCognito, getCurrentPoolUser, signOut, useCurrentContext } from './context/auth-cognito';
 
 export { SignInFields } from './sections/auth/helper';
+
+export { ARTICLE_CSS } from './fields/article-css';
+export { HTML_FIELD_CSS } from './fields/html-css';
+export { HTML_FIELD_CODE_CSS } from './fields/html-code-css';
 
 export {
     getLocalStorage,
@@ -101,6 +110,11 @@ export {
     _track
 } from './util';
 
+export {
+    getFirstMarkFromSelectedHTMLSegment,
+    getTextFromSelectedHTMLSegment
+
+} from './fields/html-helper';
 
 export {
     PageBase, PageHead, AppBase, SignInPageBody
@@ -137,12 +151,16 @@ export {
     LabelField,
     NoteField,
     SectionField,
+    PicklistField,
     CodesField,
     TextField,
     MessageField,
     CheckboxField,
     CheckboxGroupField,
     AlertField,
+    PlaceholderField,
+    HtmlField,
+    HtmlFieldCode,
     CSS
 }
 

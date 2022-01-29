@@ -1,7 +1,4 @@
-import React from 'react';
-// import 'antd/dist/antd.min.css';
-const AntdCSS = () => <style global={true} jsx={true}>
-{`
+export const ANT_CSS = `
     html {
         --antd-wave-shadow-color: none !important;
     }
@@ -25,8 +22,4 @@ const AntdCSS = () => <style global={true} jsx={true}>
         color: rgba(0,0,0,0.3) !important;
         background: #ffffff;
     }
-}`}
-</style>
-
-AntdCSS.displayName = 'AntdCSS';
-export default AntdCSS;
+`
