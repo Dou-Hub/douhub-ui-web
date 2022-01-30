@@ -1,4 +1,4 @@
-import { isNonEmptyString,  _process, _track } from 'douhub-helper-util';
+import { isNonEmptyString,  _process, _track, isObject } from 'douhub-helper-util';
 import { assign, isNil } from 'lodash';
 import nookies from 'nookies';
 // import {  callAPIBase } from '../call-api';
@@ -48,8 +48,11 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
     //     solution = { ...currentContext?.context?.solution, host, country };
     // }
 
+    const site = solution?.site?solution.site:{};
+    if (!isObject(site.host)) site.host = {};
+   
     solution.stage = settings.stage;
-    solution.host = host;
+    solution.host = isNonEmptyString(site.host[host])?site.host[host]:host;
     solution.country = country;
 
     const passPreReleaseCode = !solution.preReleaseMode || solution.preReleaseMode && cookies && cookies['pre-release-code'] == solution.version;
