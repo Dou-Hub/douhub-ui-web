@@ -37,14 +37,6 @@ import Button from './controls/antd/button';
 import Affix from './controls/antd/affix';
 import Drawer from './controls/antd/drawer';
 
-export {
-    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox,
-    Table, Tooltip, Slider, Switch, Select, SelectOption,
-    InputPassword, InputNumber, Notification,
-    Popconfirm, Dropdown, Menu, Alert, Button,
-    Affix, Drawer, Uploader
-};
-
 //Sections
 import LogosSection from './sections/logos';
 import SignInSection from './sections/auth/sign-in';
@@ -96,6 +88,19 @@ export { SignInFields } from './sections/auth/helper';
 export { ARTICLE_CSS } from './fields/article-css';
 export { HTML_FIELD_CSS } from './fields/html-css';
 export { HTML_FIELD_CODE_CSS } from './fields/html-code-css';
+
+export { SPLITTER_CSS } from './controls/splitter-css';
+import Splitter from './controls/splitter';
+
+
+export {
+    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox,
+    Table, Tooltip, Slider, Switch, Select, SelectOption,
+    InputPassword, InputNumber, Notification, Splitter,
+    Popconfirm, Dropdown, Menu, Alert, Button,
+    Affix, Drawer, Uploader
+};
+
 
 export {
     getLocalStorage,
