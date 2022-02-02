@@ -39,7 +39,6 @@ export const HTML_FIELD_CSS = `
 { 
     outline: none !important;
     width: 100%;
-    font-size: 0.9rem;
 }
 
 .field-html .ProseMirror mark

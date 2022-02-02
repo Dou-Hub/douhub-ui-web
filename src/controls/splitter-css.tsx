@@ -1,6 +1,5 @@
 export const SPLITTER_CSS = `
 .splitter-layout {
-    position: absolute;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -10,6 +9,7 @@ export const SPLITTER_CSS = `
   
   .splitter-layout .layout-pane {
     position: relative;
+    flex: 0 0 auto;
     overflow: auto;
   }
   
@@ -20,10 +20,8 @@ export const SPLITTER_CSS = `
   .splitter-layout > .layout-splitter {
     flex: 0 0 auto;
     width: 4px;
-    height: 100%;
     cursor: col-resize;
     background-color: transparent;
-    border-right: solid 1px #e5e7eb;
   }
   
   .splitter-layout .layout-splitter:hover {

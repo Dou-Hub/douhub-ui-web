@@ -14,6 +14,7 @@ import View from './controls/view';
 import Text from './controls/text';
 import Uploader from './controls/uploader';
 import SVG from './controls/svg';
+import Triangle from './controls/triangle';
 import Logo from './controls/logo';
 import CSS from './controls/css';
 import Input from './controls/input';
@@ -96,7 +97,7 @@ import Splitter from './controls/splitter';
 export {
     View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox,
     Table, Tooltip, Slider, Switch, Select, SelectOption,
-    InputPassword, InputNumber, Notification, Splitter,
+    InputPassword, InputNumber, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
     Affix, Drawer, Uploader
 };
