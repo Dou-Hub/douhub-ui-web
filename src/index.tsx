@@ -37,6 +37,7 @@ import Alert from './controls/antd/alert';
 import Button from './controls/antd/button';
 import Affix from './controls/antd/affix';
 import Drawer from './controls/antd/drawer';
+import Tree from './controls/antd/tree';
 
 //Sections
 import LogosSection from './sections/logos';
@@ -99,7 +100,7 @@ export {
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
-    Affix, Drawer, Uploader
+    Affix, Drawer, Uploader, Tree
 };
 
 
