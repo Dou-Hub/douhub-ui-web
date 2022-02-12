@@ -1,6 +1,6 @@
 
 import _ from '../../../shared/util/base';
-import FieldText from '../fields/text';
+import TextField from '../fields/text';
 import ParagraphSectionCSS from './paragraph-css';
 import marked from 'marked';
 import FieldHtml from '../fields/html';
@@ -29,7 +29,7 @@ const AreaEditMode = (props) => {
     return (
         <>
 
-            {section.supportMedia && <FieldText
+            {section.supportMedia && <TextField
                 className="media"
                 value={media}
                 onChange={(v) => onChangeForm(`media`, v)}

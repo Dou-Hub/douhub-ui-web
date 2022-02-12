@@ -40,36 +40,6 @@ const processServerlessOfflineError = (message: string): Record<string, any> | n
     // }
 }
 
-const processServerlessOfflineResult = (data: string) => {
-    try {
-        return JSON.parse(data);
-
-        // data = data
-        //     .replace('statusCode=', '"statusCode":')
-        //     .replace('headers=', '"headers":"')
-        //     .replace('body=', '", "body":');
-        // const dataJSON: Record<string, any> = JSON.parse(data);
-        // const headers = dataJSON?.headers?.replace('{', '').replace('}', '').split(',');
-
-        // dataJSON.headers = without(map(headers, (header) => {
-        //     const headerPair = header.split('=');
-        //     const newHeader: Record<string, any> = {};
-        //     if (headerPair.length > 1 && headerPair[0].trim().length > 0) {
-        //         newHeader[headerPair[0].trim()] = headerPair[1].trim();
-        //         return newHeader;
-        //     }
-        //     else {
-        //         return null;
-        //     }
-        // }), null);
-        // return dataJSON;
-    }
-    catch
-    {
-        console.error({ error: 'Failed to process the result from the offline API.', data });
-        return null;
-    }
-}
 
 export type APISettings = {
     apiToken?: string,
@@ -132,10 +102,19 @@ export const callAPIBase = (
                 if (_track) console.log({ callAPIBaseResult: result });
 
                 let data = result.data;
+                let body:Record<string,any> = {};
 
-                if (localAPI && data && isNonEmptyString(data?.body)) {
-                    const processResult = processServerlessOfflineResult(data?.body);
-                    if (isObject(processResult)) resolve(processResult);
+                if (isNonEmptyString(data?.body))
+                {
+                    try
+                    {
+                        body = JSON.parse(data?.body);
+                        resolve(body);
+                    }
+                    catch
+                    {
+                        body = {};
+                    }
                 }
 
                 if (isObject(data) && (data.errorType || data.errorMessage)) {

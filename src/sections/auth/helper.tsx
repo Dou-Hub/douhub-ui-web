@@ -1,5 +1,5 @@
 import React from "react";
-import FieldText from '../../fields/text';
+import TextField from '../../fields/text';
 import FieldCodes from '../../fields/codes';
 import AntCheckbox from '../../controls/antd/checkbox';
 import { isObject, isFunction } from 'lodash';
@@ -35,7 +35,7 @@ export const SignInFields = (props: Record<string,any>) => {
             value={isNonEmptyString(data.verificationCode) ? data.verificationCode : ''}
             alwaysShowLabel={alwaysShowLabel}
             label="Your verification codes" />}
-        <FieldText
+        <TextField
             onChange={(v:string) => onChangeForm('email', v)}
             onPressEnter={onPressEnterEmail}
             disabled={disabled} 
@@ -44,7 +44,7 @@ export const SignInFields = (props: Record<string,any>) => {
             value={isNonEmptyString(data.email) ? data.email : ''}
             alwaysShowLabel={alwaysShowLabel}
             label="Your email address" />
-        <FieldText
+        <TextField
             onPressEnter={onPressEnterPassword}
             onChange={(v:string) => onChangeForm('password', v)}
             disabled={disabled}

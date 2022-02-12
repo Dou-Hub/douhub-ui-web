@@ -82,7 +82,7 @@ const TEXT_FIELD_CSS = `
 
 const TextField = (props: Record<string, any>) => {
 
-    const { label, disabled, type, wrapperStyle, note, minRows, 
+    const { label, disabled, type, wrapperStyle, note, minRows,  inputWrapperStyle,
         maxRows, labelStyle, inputStyle, alwaysShowLabel, 
         hideLabel, onPressEnter } = props;
 
@@ -150,7 +150,7 @@ const TextField = (props: Record<string, any>) => {
         <Label text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        <div className={`field-wrapper-input field-note-${isNonEmptyString(note) ? 'true' : 'false'}`}>
+        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) ? 'true' : 'false'}`}>
             {renderInput()}
         </div>
         <Note text={note} />

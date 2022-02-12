@@ -13,7 +13,7 @@ const PageHeaderMe = observer((props: Record<string, any>) => {
     const context = JSON.parse(contextStore.data);
     const user = context.user;
 
-    if (_track) console.log({ user })
+    // if (_track) console.log({ user })
 
     const solution = _window.solution;
     const router = useRouter();

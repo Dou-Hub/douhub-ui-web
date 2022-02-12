@@ -48,7 +48,7 @@ const Avatar = (props: Record<string, any>) => {
         if (display.split(' ').length > 1) lastName = display.split(' ')[1];
     }
 
-    if (_track) console.log({ data })
+    //if (_track) console.log({ data })
 
     const renderName = () => {
         if (isNonEmptyString(data.avatar)) return null;
