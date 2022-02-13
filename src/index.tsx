@@ -74,6 +74,8 @@ import PageHeaderMenuActions from './controls/page/header/meun-actions';
 import PageHeaderNotification from './controls/page/header/notification';
 import UserProfileMeModal from './sections/header/user-profile-me-modal';
 import UserProfileModal from './sections/header/user-profile-modal';
+import AppHeaderSearch from './sections/header/search';
+
 import PageLoader from './controls/page/loader';
 
 //Pages
@@ -136,7 +138,8 @@ export {
     PageHeaderNotification,
     PageLoader,
     UserProfileMeModal,
-    UserProfileModal
+    UserProfileModal,
+    AppHeaderSearch
 };
 
 export {
