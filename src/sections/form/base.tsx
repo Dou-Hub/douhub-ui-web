@@ -13,7 +13,6 @@ import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
-
 const DISPLAY_NAME = 'FormBase';
 const FormBase = observer((props: Record<string, any>) => {
 
