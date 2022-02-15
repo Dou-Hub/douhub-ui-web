@@ -52,6 +52,7 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
     if (!isObject(site.host)) site.host = {};
    
     solution.stage = settings.stage;
+    solution.version = settings.version?settings.version:'';
     solution.host = isNonEmptyString(site.host[host])?site.host[host]:host;
     solution.country = country;
 
