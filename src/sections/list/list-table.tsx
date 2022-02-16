@@ -1,17 +1,18 @@
 import Table from '../../controls/antd/table';
 import { _window } from '../../util';
 import React from 'react';
-import { isFunction } from 'lodash';
+import { isFunction, isNumber } from 'lodash';
 
 const ListTable = (props: {
     height: number,
+    width?: number,
     columns: any,
     selectionType?: 'checkbox' | 'radio',
     onRowSelected?: (selectedIds: React.Key[], selectedRecords: Record<string, any>[]) => void,
     data: any
 }) => {
 
-    const { columns, height, data, selectionType } = props;
+    const { columns, height, width, data, selectionType } = props;
 
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: Record<string, any>[]) => {
@@ -25,7 +26,7 @@ const ListTable = (props: {
             type: selectionType,
             ...rowSelection,
         }}
-        scroll={{ y: height }}
+        scroll={isNumber(width) ? { x: width, y: height } : { y: height }}
         sticky={{ offsetHeader: 0 }}
         pagination={false}
         columns={columns}

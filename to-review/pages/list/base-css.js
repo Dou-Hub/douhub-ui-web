@@ -10,6 +10,7 @@ const ListBaseCSS = () => <style global={true} jsx={true}>{`
         width: 100%;
         position: relative;
     }
+    
 
     .page-list h1
     {

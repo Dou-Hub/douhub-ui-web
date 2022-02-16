@@ -38,19 +38,40 @@ export const LIST_CSS = `
     {
        padding-left: 16px;
     }
-   
-    .douhub-list-title .ant-select-selector
+
+    .douhub-list-header .ant-select-selector
     {
         padding: 0 !important;
+        line-height: 1;
     }
 
-    .douhub-list-title .ant-select-selection-item
+    .douhub-list-header .ant-select
     {
-        font-weight: bold !important;
-        font-size: larger;
+        height: 32px;
+    }
+
+    .douhub-list-header .ant-select-selection-item
+    {
         padding-right: 36px !important;
     }
 
+    .douhub-list-header .douhub-list-title .ant-select-selection-item
+    {
+        font-weight: bold !important;
+        font-size: 1.2rem;
+        line-height: 1.4 !important;
+    }
+
+    .douhub-list-header .douhub-list-title h1
+    {
+        font-weight: bold !important;
+        font-size: 1.2rem;
+        line-height: 1.6 !important;
+        margin-bottom: 0;
+        height: 32px;
+        margin-right: 20px;
+    }
+       
     .douhub-list-sidepanel-hidden .layout-pane-primary,
     .douhub-list-sidepanel-hidden .layout-splitter,
     .douhub-list-full .layout-pane-primary,

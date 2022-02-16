@@ -18,6 +18,7 @@ import Triangle from './controls/triangle';
 import Logo from './controls/logo';
 import CSS from './controls/css';
 import Input from './controls/input';
+import Div from './controls/div';
 import Avatar from './controls/avatar';
 import TextArea from './controls/antd/textarea';
 import Checkbox from './controls/antd/checkbox';
@@ -102,7 +103,7 @@ export {
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
-    Affix, Drawer, Uploader, Tree
+    Affix, Drawer, Uploader, Tree, Div
 };
 
 //List
@@ -110,8 +111,9 @@ export { renderIconButtonColumn, DEFAULT_COLUMNS, DEFAULT_EDIT_COLUMN, DEFAULT_E
 export {LIST_CSS}  from './sections/list/list-css';
 import ListTable from './sections/list/list-table';
 import ListFormResizer from './sections/list/list-resizer';
+import ListHeader from './sections/list/list-header';
 
-export {ListTable, ListFormResizer}
+export {ListTable, ListFormResizer, ListHeader}
 
 export {
     getLocalStorage,
