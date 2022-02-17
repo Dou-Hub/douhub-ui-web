@@ -9,10 +9,10 @@ const ListTable = (props: {
     columns: any,
     selectionType?: 'checkbox' | 'radio',
     onRowSelected?: (selectedIds: React.Key[], selectedRecords: Record<string, any>[]) => void,
-    data: any
+    data: Record<string, any>[]
 }) => {
 
-    const { columns, height, width, data, selectionType } = props;
+    const { columns, height, width, selectionType, data } = props;
 
     const rowSelection = {
         onChange: (selectedRowKeys: React.Key[], selectedRows: Record<string, any>[]) => {
@@ -30,7 +30,7 @@ const ListTable = (props: {
         sticky={{ offsetHeader: 0 }}
         pagination={false}
         columns={columns}
-        dataSource={data} />
+        dataSource={[...data]} />
 }
 
 export default ListTable;

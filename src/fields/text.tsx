@@ -40,7 +40,7 @@ const TEXT_FIELD_CSS = `
         font-size: 2.2rem !important;
         line-height: 1.2;
         font-weight: 700;
-        min-height: 2.64rem !important;
+        min-height: 3.2rem !important;
     }
 
     .field-text.h2
@@ -48,7 +48,7 @@ const TEXT_FIELD_CSS = `
         font-size: 1.8rem !important;
         line-height: 1.2;
         font-weight: 500;
-        min-height: 2.16rem !important;
+        min-height: 2.62rem !important;
     }
 
     .field-text.h3
@@ -56,7 +56,7 @@ const TEXT_FIELD_CSS = `
         font-size: 1.4rem !important;
         font-weight: 500;
         line-height: 1.2;
-        min-height: 1.68rem !important;
+        min-height: 2.03rem !important;
     }
 
     .field-text.h4
@@ -64,7 +64,7 @@ const TEXT_FIELD_CSS = `
         font-size: 1.2rem !important;
         font-weight: 500;
         line-height: 1.2;
-        min-height: 1.44rem !important;
+        min-height: 1.74rem !important;
     }
 
     .field-text-password input

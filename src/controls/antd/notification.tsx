@@ -1,20 +1,24 @@
 
 import { notification } from 'antd';
+import { isNonEmptyString } from 'douhub-helper-util';
 import React, { useEffect } from 'react';
 import { _track } from '../../util';
 if (_track) console.log('Load Ant Notification');
 
-const AntNotification = (props: Record<string,any>) => {
+const AntNotification = (props: {id:string, message?:string, description?:string, type?:string, placement?:string}) => {
 
-    const { message, description, type, placement } = props;
+    const { message, description, type, placement, id } = props;
 
     useEffect(() => {
-        notification[type ? type : 'info']({
-            message,
-            description,
-            placement: placement ? placement : 'topRight'
-        });
-    }, [message, description, type])
+        if (isNonEmptyString(message) || isNonEmptyString(description))
+        {
+            notification[type ? type : 'info']({
+                message,
+                description,
+                placement: placement ? placement : 'topRight'
+            });
+        }
+    }, [message, description, type, placement, id])
 
     return <></>
 }
