@@ -107,7 +107,12 @@ export {
 };
 
 //List
-export { renderIconButtonColumn, DEFAULT_COLUMNS, DEFAULT_EDIT_COLUMN, DEFAULT_EMAIL_COLUMN, rendeActionButtonColumn} from './sections/list/list-helper';
+export { renderIconButtonColumn, 
+    DEFAULT_COLUMNS, 
+    DEFAULT_EDIT_COLUMN, 
+    DEFAULT_ACTION_COLUMN,
+    DEFAULT_EMAIL_COLUMN, 
+    rendeActionButtonColumn} from './sections/list/list-helper';
 export {LIST_CSS}  from './sections/list/list-css';
 import ListTable from './sections/list/list-table';
 import ListFormResizer from './sections/list/list-resizer';

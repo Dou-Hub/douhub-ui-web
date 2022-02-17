@@ -26,7 +26,6 @@ const FormBase = observer((props: Record<string, any>) => {
     useEffect(() => {
         if (isEmpty(props.data)) return;
         const newData = isObject(props.data) ? { ...props.data } : {}
-        console.log({ newData, data: props.data })
         setData(newData);
     }, [props.data])
 
