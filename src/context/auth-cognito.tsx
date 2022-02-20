@@ -64,7 +64,10 @@ export const signIn = async (
                 type == 'mobile' ? { mobile: data?.mobile } : { email: data?.email },
                 isNonEmptyString(verificationCode) ? { verificationCode } : {}
             ),
-            'GET');
+            'GET',
+            {
+                solutionId: solution.id
+            });
 
         let users = without(map(userOrgs, (user) => {
             return (type == 'email' && user.emailVerifiedOn || type == 'mobile' && user.mobileVerifiedOn)

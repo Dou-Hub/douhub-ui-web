@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction, isNumber } from 'lodash';
 import Label from './label';
@@ -110,7 +110,7 @@ const TextField = (props: Record<string, any>) => {
     }
 
     const renderInput = () => {
-
+        const inputControl = useRef(null);
         let InputControl = null;
         const inputProps: Record<string, any> = {};
         switch (type) {
@@ -133,7 +133,20 @@ const TextField = (props: Record<string, any>) => {
                 break;
         }
 
+        const curInput: any = inputControl?.current;
+        const style = curInput?.resizableTextArea?.textArea?.style;
+        
+        useEffect(()=>{
+            const curInput: any = inputControl?.current;
+            const style = curInput?.resizableTextArea?.textArea?.style;
+            if (style && style.height=='') 
+            {
+                setTimeout(()=>{style.height = '0px'},500);
+            }
+        }, [style && style.height])
+
         return <InputControl
+            ref={inputControl}
             style={inputStyle}
             disabled={disabled}
             defaultValue={defaultValue}

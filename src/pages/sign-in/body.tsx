@@ -58,7 +58,6 @@ const SignInPageBody = (props: Record<string, any>) => {
         (async () => {
 
             try {
-
                 setErrorMessage('');
                 setDoing('Processing ...');
                 //try sign in by the user
@@ -68,7 +67,7 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 if (result.error) {
 
-                    if (_track) console.error({error: result.error});
+                    console.error({error: result.error});
 
                     switch (result.error) {
                         case 'ERROR_API_AUTH_USER_ORGS_VERIFICATION_FAILED':

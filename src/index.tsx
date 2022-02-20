@@ -20,7 +20,6 @@ import CSS from './controls/css';
 import Input from './controls/input';
 import Div from './controls/div';
 import Avatar from './controls/avatar';
-import TextArea from './controls/antd/textarea';
 import Checkbox from './controls/antd/checkbox';
 import Table from './controls/antd/table';
 import Tooltip from './controls/antd/tooltip';
@@ -28,6 +27,7 @@ import Switch from './controls/antd/switch';
 import Slider from './controls/antd/slider';
 import InputPassword from './controls/antd/password';
 import InputNumber from './controls/antd/number';
+import InputTextArea from './controls/antd/textarea';
 import Select from './controls/antd/select';
 import SelectOption from './controls/antd/select-option';
 import Notification from './controls/antd/notification';
@@ -43,6 +43,7 @@ import Tree from './controls/antd/tree';
 //Sections
 import LogosSection from './sections/logos';
 import SignInSection from './sections/auth/sign-in';
+import SignUpSection from './sections/auth/sign-up';
 import SocialIconsSection from './sections/social-icons';
 import FooterColumnSection from './sections/footer/column';
 
@@ -50,6 +51,7 @@ import FooterColumnSection from './sections/footer/column';
 import BasicModal from './controls/modals/basic';
 
 import FormBase from './sections/form/base';
+import DefaultForm from './sections/form/default';
 
 //Fields
 import LabelField from './fields/label';
@@ -88,7 +90,7 @@ export { abortCallAPI, callAPIBase, APISettings } from './call-api';
 export { callAPI } from './context/auth-call-api';
 export { signIn, getAuth, signInCognito, getCurrentPoolUser, signOut, useCurrentContext } from './context/auth-cognito';
 
-export { SignInFields } from './sections/auth/helper';
+export { SignInFields, SignUpFields } from './sections/auth/helper';
 
 export { ARTICLE_CSS } from './fields/article-css';
 export { HTML_FIELD_CSS } from './fields/html-css';
@@ -99,7 +101,7 @@ import Splitter from './controls/splitter';
 
 
 export {
-    View, Text, SVG, Logo, Avatar, Input, TextArea, Checkbox,
+    View, Text, SVG, Logo, Avatar, Input, InputTextArea, Checkbox,
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
@@ -159,6 +161,7 @@ export {
 export {
     LogosSection,
     SignInSection,
+    SignUpSection,
     SocialIconsSection,
     FooterColumnSection
 }
@@ -168,7 +171,7 @@ export {
 }
 
 export {
-    FormBase
+    FormBase, DefaultForm
 }
 
 export {

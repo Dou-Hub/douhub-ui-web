@@ -4,14 +4,14 @@ import CSS from '../css';
 import {ANT_CSS} from './css';
 
 console.log('Load Ant Input');
-const AntInput = (props: Record<string,any>) => {
+const AntInput = React.forwardRef((props: Record<string,any>, ref:any) => {
     return (
         <>
             <CSS id='antd-css' content={ANT_CSS} />
-            <Input {...props} />
+            <Input {...props} ref={ref} />
         </>
     )
-}
+})
 
 AntInput.displayName = 'AntInput';
 export default AntInput;

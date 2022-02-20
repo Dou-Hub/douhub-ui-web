@@ -58,3 +58,41 @@ export const SignInFields = (props: Record<string,any>) => {
         {renderRememberMe()}
     </>
 }
+
+export const SignUpFields = (props: Record<string,any>) => {
+
+    const { onChangeForm, disabled, alwaysShowLabel } = props;
+    const data:Record<string,any> = isObject(props.data) ? props.data : {};
+
+    const onPressEnterPassword=()=>{
+        if (isFunction(props.onSubmitPassword)) props.onSubmitPassword(data);
+    }
+
+    const onPressEnterEmail=()=>{
+        if (isFunction(props.onSubmitEmail)) props.onSubmitEmail(data);
+    }
+
+
+    return <>
+        <TextField
+            onChange={(v:string) => onChangeForm('email', v)}
+            onPressEnter={onPressEnterEmail}
+            disabled={disabled} 
+            type="email"
+            placeholder="Type your email here"
+            value={isNonEmptyString(data.email) ? data.email : ''}
+            alwaysShowLabel={alwaysShowLabel}
+            label="Your email address" />
+        <TextField
+            onPressEnter={onPressEnterPassword}
+            onChange={(v:string) => onChangeForm('password', v)}
+            disabled={disabled}
+            type="password"
+            placeholder="Type your password here"
+            label="Your password"
+            alwaysShowLabel={alwaysShowLabel}
+            value={isNonEmptyString(data.password) ? data.password : ''}
+            note="Require combination of number, special character (!@#$%^&*), uppercase letter and lowercase letter. Minimum 8 characters."
+        />
+    </>
+}

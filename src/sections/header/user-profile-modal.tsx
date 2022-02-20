@@ -144,7 +144,7 @@ const UserProfileModal = (props: Record<string, any>) => {
     }
 
     const onSubmit = () => {
-        setProcessing("Updating the user profile ...");
+        setProcessing("Updating ...");
         setError('');
         callAPI(solution, `${solution.apis.organization}update-user`, { data }, 'PUT')
             .then((newUser) => {

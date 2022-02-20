@@ -93,8 +93,8 @@ const Avatar = (props: Record<string, any>) => {
             >
                 <Menu.Items className="origin-top-right absolute z-30 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
-                        {map(menu, (item) => {
-                            return <Menu.Item key={item.title}>
+                        {map(menu, (item, index:number) => {
+                            return <Menu.Item key={`${item.title}-${index}`}>
                                 {({ active }) => (
                                     <div
                                         onClick={item.onClick}

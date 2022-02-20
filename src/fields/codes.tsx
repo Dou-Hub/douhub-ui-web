@@ -87,7 +87,7 @@ const CodesField = (props: Record<string, any>) => {
                 defaultValue={defaultValue}
                 className={`field-code field-code-first-${i == 1 ? 'true' : 'false'} field-code-last-${i == value.length ? 'true' : 'false'}`}
                 placeholder={placeholder}
-                onChange={(e) => onChange(e, i)}
+                onChange={(e:any) => onChange(e, i)}
                 value={value[i]} />)
         }
 

@@ -18,15 +18,16 @@ export const rendeActionButtonColumn = (
         title: '',
         id: 'id',
         dataIndex: 'id',
+        key: 'action-button',
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
         render: (id: string, record: Record<string, any>) => {
             const r = { id, ...record };
-            const menu = <Menu>{map(menuItems, (menuItem: any) => {
+            const menu = <Menu>{map(menuItems, (menuItem: any, index: number) => {
 
                 return <Menu.Item
-
+                    key={`action-button-menu-${index}`}
                     className="w-full"
                     onClick={() => { !isNonEmptyString(menuItem.confirmation) && onClick(r, menuItem.action, entity) }}>
                     {isNonEmptyString(menuItem.confirmation) ?
@@ -77,6 +78,7 @@ export const renderIconButtonColumn = (
         title: '',
         id: 'id',
         dataIndex: 'id',
+        key: `icon-col-${action}`,
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
@@ -168,6 +170,7 @@ export const DEFAULT_COLUMNS = (
             title: '',
             dataIndex: 'display',
             id: 'display',
+            key: 'default-display',
             render: (v: string, data: Record<string, any>) => {
                 const text = data.highlight?.searchDisplay ? data.highlight?.searchDisplay : v;
                 const searchDetail = data.highlight?.searchContent ? data.highlight?.searchContent : [];

@@ -2733,10 +2733,10 @@ douhub-helper-util@1.0.40:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
-douhub-helper-util@^1.0.55:
-  version "1.0.55"
-  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.55.tgz#960d00da62c47ad135d27c1e839157cd531116df"
-  integrity sha512-zuqIEHh6NoIIweRI8w9XhI7SDB8p//Pn6Z/n8AdKmWzXHT8g7ASSkn5gLntmbgKqm0t/TPoPq1P6EFmLmXuH9g==
+douhub-helper-util@1.0.56:
+  version "1.0.56"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.56.tgz#0cf3ed4370a46d4293e286eba156f1fbca40d456"
+  integrity sha512-xVUpfeerZAjbw7sU6QP3uoySegH7zxhs+4AgHw+SdsUR6A4BmLvVkBJl/zUql58QRcLaUMGjOnRiBmp9H9dDRg==
   dependencies:
     axios "^0.24.0"
     is-url "^1.2.4"
@@ -2746,7 +2746,7 @@ douhub-helper-util@^1.0.55:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
-douhub-ui-store@^1.0.49:
+douhub-ui-store@1.0.49:
   version "1.0.49"
   resolved "https://registry.yarnpkg.com/douhub-ui-store/-/douhub-ui-store-1.0.49.tgz#30fee591cfbfee7ea3cb04275eb8ba830d8f2ba3"
   integrity sha512-RjJRe37liniaV0i+p1IlsqR/yh2Usr3yfC3dSYublYoBC2Tlar1NQ1e8pmAFZk5we6FvfO0H1CQ28QLGCcJQ9A==
