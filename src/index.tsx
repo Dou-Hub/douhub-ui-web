@@ -84,7 +84,7 @@ import PageLoader from './controls/page/loader';
 //Pages
 import PageBase from './pages/base';
 import PageHead from './pages/head';
-import SignInPageBody from './pages/sign-in/body';
+import SignInPageBody from './pages/auth/sign-in';
 
 export { abortCallAPI, callAPIBase, APISettings } from './call-api';
 export { callAPI } from './context/auth-call-api';

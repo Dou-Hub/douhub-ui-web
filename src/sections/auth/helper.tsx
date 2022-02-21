@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from '../../fields/text';
-import FieldCodes from '../../fields/codes';
+import CodesField from '../../fields/codes';
+import MessageField from '../../fields/message';
 import AntCheckbox from '../../controls/antd/checkbox';
 import { isObject, isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
@@ -22,6 +23,10 @@ export const SignInFields = (props: Record<string,any>) => {
         if (isFunction(props.onChangeRememberMe)) props.onChangeRememberMe(data);
     }
 
+    const onClickResentCodes = ()=>{
+        if (isFunction(props.onClickResentCodes)) props.onClickResentCodes(data);
+    }
+
     const renderRememberMe=()=>{
         if (!isFunction(props.onChangeRememberMe)) return null;
         // if (!AntCheckbox) AntCheckbox = logDynamic(dynamic(() => import('../../../controls/antd/checkbox'), { ssr: false }), '../../../controls/antd/checkbox','Helper.SignInFields');
@@ -29,12 +34,18 @@ export const SignInFields = (props: Record<string,any>) => {
     }
 
     return <>
-        {askForVerification && <FieldCodes
+        {askForVerification && <CodesField
             onChange={(v:string) => onChangeForm('verificationCode', v)}
             disabled={disabled}
             value={isNonEmptyString(data.verificationCode) ? data.verificationCode : ''}
             alwaysShowLabel={alwaysShowLabel}
             label="Your verification codes" />}
+
+        {askForVerification && <MessageField
+                                className="underline-offset-2 cursor-pointer mb-6"
+                                content="Click here to resent the verification codes."
+                                type="info" onClick={onClickResentCodes} />}
+
         <TextField
             onChange={(v:string) => onChangeForm('email', v)}
             onPressEnter={onPressEnterEmail}

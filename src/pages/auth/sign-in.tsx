@@ -47,6 +47,11 @@ const SignInPageBody = (props: Record<string, any>) => {
         if (isFunction(props.onClickResetPassword)) props.onClickResetPassword();
     }
 
+
+    const onClickResentCodes = () => {
+        if (isFunction(props.onClickResentCodes)) props.onClickResentCodes(form);
+    }
+
     const onCreateError = (error: string) => {
         setDoing('');
         setErrorMessage(error);
@@ -67,7 +72,7 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 if (result.error) {
 
-                    console.error({error: result.error});
+                    console.error({ error: result.error });
 
                     switch (result.error) {
                         case 'ERROR_API_AUTH_USER_ORGS_VERIFICATION_FAILED':
@@ -115,11 +120,11 @@ const SignInPageBody = (props: Record<string, any>) => {
                 if (isFunction(props.onSuccess)) props.onSuccess(form);
             }
             catch (error) {
-                if (_track) console.error({error});
+                if (_track) console.error({ error });
                 setDoing('');
                 return onCreateError('Failed to sign in.');
             }
-            
+
         })();
 
     }
@@ -184,6 +189,7 @@ const SignInPageBody = (props: Record<string, any>) => {
                         }>
                             <SignInSection
                                 data={form}
+                                onClickResentCodes={onClickResentCodes}
                                 onChangeForm={onChangeForm}
                                 solution={solution}
                                 alwaysShowLabel={true}
@@ -199,8 +205,13 @@ const SignInPageBody = (props: Record<string, any>) => {
                                 <button className="my-10 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 " onClick={onSubmit}>
                                     Sign in
                                 </button>}
-                            <MessageField style={{ fontSize: '0.85rem', lineHeight: 1, marginBottom: 10, marginTop: 30 }} content="Do not have a user account? Click here to sign up." type="info" onClick={onClickSignUp} />
-                            <MessageField style={{ fontSize: '0.85rem', lineHeight: 1 }} content="Forgot your password? Click here to reset." type="info" onClick={onClickResetPassword} />
+                            <MessageField
+                                className="underline-offset-2 cursor-pointer"
+                                content="Do not have a user account? Click here to sign up."
+                                type="info" onClick={onClickSignUp} />
+                            <MessageField className="underline-offset-2 cursor-pointer"
+                                content="Forgot your password? Click here to reset."
+                                type="info" onClick={onClickResetPassword} />
                         </div>
 
 

@@ -52,6 +52,9 @@ const SignInSection = (props: Record<string, any>) => {
         if (isFunction(props.onSubmitModal)) props.onSubmitModal(form);
     }
 
+    const onClickResentCodes = () => {
+        if (isFunction(props.onClickResentCodes)) props.onClickResentCodes(form);
+    }
 
     const renderForm = () => {
         return <>
@@ -61,6 +64,7 @@ const SignInSection = (props: Record<string, any>) => {
                     type="info" />
             }
             <SignInFields
+                onClickResentCodes={onClickResentCodes}
                 onChangeRememberMe={onChangeRememberMe}
                 onSubmitPassword={onSubmitPassword}
                 onSubmitEmail={onSubmitEmail}
