@@ -2733,10 +2733,10 @@ douhub-helper-util@1.0.40:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
-douhub-helper-util@1.0.56:
-  version "1.0.56"
-  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.56.tgz#0cf3ed4370a46d4293e286eba156f1fbca40d456"
-  integrity sha512-xVUpfeerZAjbw7sU6QP3uoySegH7zxhs+4AgHw+SdsUR6A4BmLvVkBJl/zUql58QRcLaUMGjOnRiBmp9H9dDRg==
+douhub-helper-util@1.0.58:
+  version "1.0.58"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.58.tgz#b2f5620f2d3621817e1c0e65633c708662ab9a1a"
+  integrity sha512-vv5OVA3Q52lLFQn/yPxYE6BC3WCVQOAlbAMke72wv7MwSa7ycjJPETel6qqKPNQCe/yX2Iu17rQISCZ5/NQV+Q==
   dependencies:
     axios "^0.24.0"
     is-url "^1.2.4"

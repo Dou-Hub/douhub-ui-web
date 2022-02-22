@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
 import { callAPI } from '../context/auth-call-api';
-import { assign, each, without, map, isFunction, isBoolean } from 'lodash';
+import { each, without, map, isFunction, isBoolean } from 'lodash';
 import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject } from 'douhub-helper-util';
 import { _window, _track } from "../util";
 import { useRouter } from 'next/router';
@@ -38,7 +38,7 @@ export const signIn = async (
 
     const auth = await getAuth(solution);
     let user: any = null;
-    const { password, verificationCode } = data;
+    const { password, codes } = data;
 
     if (!isEmail(data?.email) && !isPhoneNumber(data?.mobile)) {
         return { error: 'ERROR_SIGNIN_NEED_EMAIL' };
@@ -49,7 +49,7 @@ export const signIn = async (
         return { error: 'ERROR_SIGNIN_NEED_PASSWORD' };
     }
 
-    if (isNonEmptyString(verificationCode) && verificationCode.length != 8) {
+    if (isNonEmptyString(codes) && codes.length != 8) {
         return { error: 'ERROR_SIGNIN_NEED_VERIFY' };
     }
 
@@ -59,11 +59,8 @@ export const signIn = async (
         const type = settings.type == 'mobile' ? settings.type : 'email';
 
         const userOrgs: Record<string, any> = await callAPIBase(
-            `${solution.apis.context}user-orgs`,
-            assign(
-                type == 'mobile' ? { mobile: data?.mobile } : { email: data?.email },
-                isNonEmptyString(verificationCode) ? { verificationCode } : {}
-            ),
+            `${solution.apis.organization}user-orgs`,
+            {type, value: type == 'mobile' ? data?.mobile:data?.email},
             'GET',
             {
                 solutionId: solution.id

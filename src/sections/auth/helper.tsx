@@ -8,8 +8,9 @@ import { isNonEmptyString } from 'douhub-helper-util';
 
 export const SignInFields = (props: Record<string,any>) => {
 
-    const { onChangeForm, disabled, askForVerification, alwaysShowLabel } = props;
+    const { onChangeForm, disabled,  alwaysShowLabel } = props;
     const data:Record<string,any> = isObject(props.data) ? props.data : {};
+    const showCodes = data.action=='activate-with-password' || data.action=='activate-without-password';
 
     const onPressEnterPassword=()=>{
         if (isFunction(props.onSubmitPassword)) props.onSubmitPassword(data);
@@ -23,8 +24,8 @@ export const SignInFields = (props: Record<string,any>) => {
         if (isFunction(props.onChangeRememberMe)) props.onChangeRememberMe(data);
     }
 
-    const onClickResentCodes = ()=>{
-        if (isFunction(props.onClickResentCodes)) props.onClickResentCodes(data);
+    const onClickResendCodes = ()=>{
+        if (isFunction(props.onClickResendCodes)) props.onClickResendCodes(data);
     }
 
     const renderRememberMe=()=>{
@@ -34,17 +35,24 @@ export const SignInFields = (props: Record<string,any>) => {
     }
 
     return <>
-        {askForVerification && <CodesField
-            onChange={(v:string) => onChangeForm('verificationCode', v)}
+
+        {data.codeSent && <MessageField style={{ color: 'green'}}
+                    content={`Thank you! The verification code has been sent to your ${data?.type=='mobile'?'mobile phone':'email address'}.`}
+                    type="info" />}
+
+        {showCodes && <CodesField
+            onChange={(v:string) => onChangeForm('codes', v)}
             disabled={disabled}
-            value={isNonEmptyString(data.verificationCode) ? data.verificationCode : ''}
+            value={isNonEmptyString(data.codes) ? data.codes : ''}
             alwaysShowLabel={alwaysShowLabel}
             label="Your verification codes" />}
 
-        {askForVerification && <MessageField
-                                className="underline-offset-2 cursor-pointer mb-6"
-                                content="Click here to resent the verification codes."
-                                type="info" onClick={onClickResentCodes} />}
+        {showCodes && <MessageField
+                        style={{marginBottom: '4rem'}}
+                        className="underline-offset-2 cursor-pointer"
+                        content="Click here to resent the verification codes."
+                        type="info" 
+                        onClick={onClickResendCodes} />}
 
         <TextField
             onChange={(v:string) => onChangeForm('email', v)}
@@ -66,6 +74,16 @@ export const SignInFields = (props: Record<string,any>) => {
             value={isNonEmptyString(data.password) ? data.password : ''}
             note="Require combination of number, special character (!@#$%^&*), uppercase letter and lowercase letter. Minimum 8 characters."
         />
+        {data.action=='activate-without-password' && <TextField
+            onPressEnter={onPressEnterPassword}
+            onChange={(v:string) => onChangeForm('confirmPassword', v)}
+            disabled={disabled}
+            type="password"
+            placeholder="Confirm your password here"
+            label="Confirm your password"
+            alwaysShowLabel={alwaysShowLabel}
+            value={isNonEmptyString(data.password) ? data.password : ''}
+        />}
         {renderRememberMe()}
     </>
 }

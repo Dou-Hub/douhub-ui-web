@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail, isNonEmptyString } from 'douhub-helper-util';
+import { isEmail, isObject } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
 import { _window, _track } from "../../util";
 import {
@@ -11,17 +11,15 @@ import { cloneDeep, isNil, isFunction } from 'lodash';
 
 const SignInPageBody = (props: Record<string, any>) => {
 
-    const { solution, supportSSO } = props;
+    const { solution, supportSSO} = props;
     const [doing, setDoing] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [form, setForm] = useState<Record<string, any>>({});
-    const [askForVerification, setAskForVerification] = useState(false);
-
+    const [form, setForm] = useState<Record<string, any>>(isObject(props.data)?props.data:{});
+   
     useEffect(() => {
         const newForm = { email: getCookie('sign-in-email'), ...props.data };
         if (isNil(newForm.rememberMe)) newForm.rememberMe = isEmail(newForm.email);
         setForm(newForm);
-        setAskForVerification(isNonEmptyString(newForm.verificationCode))
     }, [props.data])
 
     const onChangeForm = (newForm: Record<string, any>) => {
@@ -48,8 +46,8 @@ const SignInPageBody = (props: Record<string, any>) => {
     }
 
 
-    const onClickResentCodes = () => {
-        if (isFunction(props.onClickResentCodes)) props.onClickResentCodes(form);
+    const onClickResendCodes = () => {
+        if (isFunction(props.onClickResendCodes)) props.onClickResendCodes(form);
     }
 
     const onCreateError = (error: string) => {
@@ -77,12 +75,12 @@ const SignInPageBody = (props: Record<string, any>) => {
                     switch (result.error) {
                         case 'ERROR_API_AUTH_USER_ORGS_VERIFICATION_FAILED':
                             {
-                                setAskForVerification(true);
+                                onChangeForm({...form, action:'activate-with-password'});
                                 return onCreateError(`The email verification failed. Please provide a correct verification code above.`);
                             }
                         case 'ERROR_SIGNIN_NEED_VERIFY':
                             {
-                                setAskForVerification(true);
+                                onChangeForm({...form, action:'activate-with-password'});
                                 return onCreateError(`The user's email was not verified yet. Please provide your verification code above.`);
                             }
                         case 'ERROR_SIGNIN_NEED_EMAIL':
@@ -189,11 +187,10 @@ const SignInPageBody = (props: Record<string, any>) => {
                         }>
                             <SignInSection
                                 data={form}
-                                onClickResentCodes={onClickResentCodes}
+                                onClickResendCodes={onClickResendCodes}
                                 onChangeForm={onChangeForm}
                                 solution={solution}
                                 alwaysShowLabel={true}
-                                askForVerification={askForVerification}
                                 errorMessage={errorMessage}
                                 onSubmitPassword={onSubmit}
                                 onChangeRememberMe={onChangeRememberMe}

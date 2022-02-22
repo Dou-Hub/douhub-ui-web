@@ -48,7 +48,7 @@ const SignUpPageBody = (props: Record<string, any>) => {
                 //try sign in by the user
                 // const result = await signIn(solution, form, {});
 
-                const result = await callAPIBase(`${solution.apis.organization}/sign-up`, form, 'POST', { solutionId: solution.id });
+                const result = await callAPIBase(`${solution.apis.organization}sign-up`, form, 'POST', { solutionId: solution.id });
 
                 setDoing('');
 
