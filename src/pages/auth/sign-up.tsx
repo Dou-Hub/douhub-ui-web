@@ -1,10 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
-import { _window, _track } from "../../util";
-import { SignUpSection, MessageField, getCookie, callAPIBase } from '../../index';
+import {
+    callAPIBase, SignUpSection, MessageField,
+    getCookie, _window
+} from '../../index';
 import { isNil, isFunction } from 'lodash';
+import { isEmail } from 'douhub-helper-util';
 
 const SignUpPageBody = (props: Record<string, any>) => {
 
@@ -12,7 +14,7 @@ const SignUpPageBody = (props: Record<string, any>) => {
     const [doing, setDoing] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [form, setForm] = useState<Record<string, any>>({});
-
+  
     useEffect(() => {
         const newForm = { email: getCookie('sign-in-email'), ...props.data };
         if (isNil(newForm.rememberMe)) newForm.rememberMe = isEmail(newForm.email);
@@ -28,9 +30,6 @@ const SignUpPageBody = (props: Record<string, any>) => {
         if (isFunction(props.onClickSignIn)) props.onClickSignIn();
     }
 
-    const onClickResetPassword = () => {
-        if (isFunction(props.onClickResetPassword)) props.onClickResetPassword();
-    }
 
     const onCreateError = (error: string) => {
         setDoing('');
@@ -43,18 +42,24 @@ const SignUpPageBody = (props: Record<string, any>) => {
         (async () => {
 
             try {
+
+                if (form.password != form.confirmPassword) {
+                    return setErrorMessage('Your password and confirmation password do not match.');
+                }
+
                 setErrorMessage('');
                 setDoing('Processing ...');
                 //try sign in by the user
                 // const result = await signIn(solution, form, {});
 
-                const result = await callAPIBase(`${solution.apis.organization}sign-up`, form, 'POST', { solutionId: solution.id });
+
+                const result = await callAPIBase(`http://localhost:3000/prod/sign-up`, form, 'POST', {solutionId:solution.id});
 
                 setDoing('');
 
                 if (result.error) {
 
-                    console.error({ error: result.error });
+                    console.error({error: result.error});
 
                     switch (result.error) {
                         case 'ERROR_SIGNIN_NEED_EMAIL':
@@ -84,11 +89,11 @@ const SignUpPageBody = (props: Record<string, any>) => {
                 if (isFunction(props.onSuccess)) props.onSuccess(form);
             }
             catch (error) {
-                console.error({ error });
+                console.error({error});
                 setDoing('');
                 return onCreateError('Failed to sign up.');
             }
-
+            
         })();
 
     }
@@ -109,7 +114,7 @@ const SignUpPageBody = (props: Record<string, any>) => {
                         <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Sign up your organization/team</h2>
                     </div>
                     <div className="mt-8">
-
+                     
                         <div className="py-6">
                             <SignUpSection
                                 data={form}
@@ -126,14 +131,7 @@ const SignUpPageBody = (props: Record<string, any>) => {
                                 <button className="my-10 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 " onClick={onSubmit}>
                                     Sign Up
                                 </button>}
-                            <MessageField
-                                className="underline-offset-2 cursor-pointer"
-                                content="Have a user account already? Click here to sign in."
-                                type="info" onClick={onClickSignIn} />
-                            <MessageField className="underline-offset-2 cursor-pointer"
-                                content="Forgot your password? Click here to reset."
-                                type="info" onClick={onClickResetPassword} />
-
+                            <MessageField style={{ fontSize: '0.85rem', lineHeight: 1, marginBottom: 10, marginTop: 30 }} content="Have a user account already? Click here to sign in." type="info" onClick={onClickSignIn} />
                         </div>
 
 

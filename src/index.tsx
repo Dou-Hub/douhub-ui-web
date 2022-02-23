@@ -14,6 +14,7 @@ import View from './controls/view';
 import Text from './controls/text';
 import Uploader from './controls/uploader';
 import SVG from './controls/svg';
+import Tags from './controls/tags';
 import Triangle from './controls/triangle';
 import Logo from './controls/logo';
 import CSS from './controls/css';
@@ -85,6 +86,7 @@ import PageLoader from './controls/page/loader';
 import PageBase from './pages/base';
 import PageHead from './pages/head';
 import SignInPageBody from './pages/auth/sign-in';
+import SignUpPageBody from './pages/auth/sign-up';
 
 export { abortCallAPI, callAPIBase, APISettings } from './call-api';
 export { callAPI } from './context/auth-call-api';
@@ -101,7 +103,7 @@ import Splitter from './controls/splitter';
 
 
 export {
-    View, Text, SVG, Logo, Avatar, Input, InputTextArea, Checkbox,
+    View, Text, SVG, Logo, Avatar, Input, InputTextArea, Checkbox, Tags,
     Table, Tooltip, Slider, Switch, Select, SelectOption,
     InputPassword, InputNumber, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
@@ -142,7 +144,7 @@ export {
 } from './fields/html-helper';
 
 export {
-    PageBase, PageHead, AppBase, SignInPageBody
+    PageBase, PageHead, AppBase, SignInPageBody, SignUpPageBody
 };
 
 export {

@@ -1,26 +1,48 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail, isObject } from 'douhub-helper-util';
+import { isEmail,  isObject } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
-import { _window, _track } from "../../util";
-import {
-    signIn, SignInSection, MessageField,
-    SVG, getCookie, removeCookie, setCookie,
-} from '../../index';
 import { cloneDeep, isNil, isFunction } from 'lodash';
+import {
+    signIn, SignInSection, MessageField, _track, callAPIBase,
+    SVG, getCookie, removeCookie, setCookie, _window
+} from '../../index';
+
 
 const SignInPageBody = (props: Record<string, any>) => {
 
-    const { solution, supportSSO} = props;
+    const { solution, supportSSO } = props;
     const [doing, setDoing] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [form, setForm] = useState<Record<string, any>>(isObject(props.data)?props.data:{});
-   
+    const [form, setForm] = useState<Record<string, any>>(isObject(props.form) ? props.form : {});
+    const type = form.type == 'mobile' ? 'mobile' : 'email';
+
+    console.log({ form })
+
     useEffect(() => {
-        const newForm = { email: getCookie('sign-in-email'), ...props.data };
+        const newForm = { email: getCookie('sign-in-email'), ...props.form };
         if (isNil(newForm.rememberMe)) newForm.rememberMe = isEmail(newForm.email);
         setForm(newForm);
-    }, [props.data])
+    }, [props.form])
+
+
+    const getButtonTitle = () => {
+        switch (form.action) {
+            case 'reset-password': return 'Send password reset code';
+            default: return 'Submit';
+        }
+    }
+
+    const getTitle = () => {
+        console.log({ form })
+        switch (form.action) {
+            case 'activate-with-password': return "Activate your account";
+            case 'activate-without-password': return "Activate your account";
+            case 'activate-reset-password': return "Reset your password";
+            case 'reset-password': return "Reset your password";
+            default: return "Sign in to your account";
+        }
+    }
 
     const onChangeForm = (newForm: Record<string, any>) => {
         setForm(newForm);
@@ -42,21 +64,143 @@ const SignInPageBody = (props: Record<string, any>) => {
     }
 
     const onClickResetPassword = () => {
+        setForm({ ...form, action: 'reset-password' });
         if (isFunction(props.onClickResetPassword)) props.onClickResetPassword();
     }
 
 
-    const onClickResendCodes = () => {
-        if (isFunction(props.onClickResendCodes)) props.onClickResendCodes(form);
+    const onClickResendCodes = (form: Record<string, any>) => {
+        sendVerificationToken(form.action, 'Sending new verification code ...', 'Failed to send new verification code.');
     }
 
-    const onCreateError = (error: string) => {
+    const onSignInError = (error: string) => {
         setDoing('');
         setErrorMessage(error);
-        if (isFunction(props.onCreateError)) props.onChangeRememberMe(error);
+        if (isFunction(props.onSignInError)) props.onChangeRememberMe(error);
     }
 
     const onSubmit = () => {
+
+        setForm({...form,codeSent:''});
+
+        switch (form.action) {
+            case 'activate-with-password':
+                {
+                    onActivateUserWithPassword();
+                    break;
+                }
+            case 'activate-without-password':
+                {
+                    onActivateUserWithoutPassword();
+                    break;
+                }
+            case 'activate-reset-password':
+                {
+                    onActivateUserWithPassword();
+                    break;
+                }
+            case 'reset-password':
+                {
+                    sendVerificationToken('activate-reset-password','Sending password reset code ...', 'Failed to send password reset code.');
+                    break;
+                }
+            default:
+                {
+                    onSignIn();
+                    break;
+                }
+        }
+    }
+
+    const sendVerificationToken = (action: string, doingMessage: string, errorMessage: string) => {
+        (async () => {
+
+            if (!isEmail(form.email)) {
+                return setErrorMessage(`Please provide a valid email.`);
+            }
+            setErrorMessage('');
+            setDoing(doingMessage);
+            try {
+                await callAPIBase(`http://localhost:3000/prod/send-verification-token`, {
+                    type: form.type,
+                    email: form.email,
+                    action
+                }, 'POST', { solutionId: solution.id });
+                setForm({ ...form, codeSent: 'reset-password' })
+                setDoing('');
+            }
+            catch (error) {
+                if (_track) console.error({ error });
+                setDoing('');
+                setErrorMessage(errorMessage);
+            }
+            finally {
+                setDoing('');
+            }
+        })();
+    }
+
+    const onActivateUserWithoutPassword = () => {
+        (async () => {
+            try {
+
+                if (!form.codes || form.codes && form.codes.length != 8) {
+                    return setErrorMessage('Please provide valid verification codes.');
+                }
+
+                setErrorMessage('');
+                setDoing('Processing ...');
+                if ((await callAPIBase(`http://localhost:3000/prod/activate-user`, form, 'POST', 
+                { solutionId: solution.id })).result) {
+                    onSignIn();
+                }
+                else {
+                    return setErrorMessage('Please provide valid verification codes.');
+                }
+
+            }
+            catch (error) {
+                if (_track) console.error({ error });
+                setErrorMessage('Failed to activate user.');
+            }
+            finally {
+                setDoing('');
+            }
+        })();
+    }
+
+    const onActivateUserWithPassword = () => {
+        (async () => {
+            try {
+                if (!form.codes || form.codes && form.codes.length != 8) {
+                    return setErrorMessage('Please provide valid verification codes.');
+                }
+
+                if (form.password != form.confirmPassword) {
+                    return setErrorMessage('Your password and confirmation password do not match.');
+                }
+
+                setErrorMessage('');
+                setDoing('Processing ...');
+                if ((await callAPIBase(`http://localhost:3000/prod/change-user-password`, form, 'POST', 
+                { solutionId: solution.id })).result) {
+                    onSignIn();
+                }
+                else {
+                    return setErrorMessage('Please provide valid verification codes.');
+                }
+
+            }
+            catch (error) {
+                if (_track) console.error({ error });
+                setErrorMessage('Failed to activate user.');
+            }
+            finally {
+                setDoing('');
+            }
+        })();
+    }
+    const onSignIn = () => {
 
         (async () => {
 
@@ -64,44 +208,38 @@ const SignInPageBody = (props: Record<string, any>) => {
                 setErrorMessage('');
                 setDoing('Processing ...');
                 //try sign in by the user
-                const result = await signIn(solution, form, {});
+                const result = await signIn(solution, form, { type });
 
                 setDoing('');
 
                 if (result.error) {
 
-                    console.error({ error: result.error });
-
                     switch (result.error) {
                         case 'ERROR_API_AUTH_USER_ORGS_VERIFICATION_FAILED':
                             {
-                                onChangeForm({...form, action:'activate-with-password'});
-                                return onCreateError(`The email verification failed. Please provide a correct verification code above.`);
+                                setForm({ ...form, action: 'activate-with-password' });
+                                return onSignInError(`The email verification failed. Please provide a correct verification code above.`);
                             }
                         case 'ERROR_SIGNIN_NEED_VERIFY':
                             {
-                                onChangeForm({...form, action:'activate-with-password'});
-                                return onCreateError(`The user's email was not verified yet. Please provide your verification code above.`);
+                                setForm({ ...form, action: 'activate-with-password' });
+                                return onSignInError(`The user's email was not verified yet. Please provide your verification code above.`);
                             }
                         case 'ERROR_SIGNIN_NEED_EMAIL':
                             {
-                                setDoing('');
-                                return onCreateError(`Please provide a valid email.`);
+                                return onSignInError(`Please provide a valid email.`);
                             }
                         case 'ERROR_SIGNIN_NEED_PASSWORD':
                             {
-                                setDoing('');
-                                return onCreateError(`Please provide a valid password.`);
+                                return onSignInError(`Please provide a valid password.`);
                             }
                         case 'ERROR_SIGNIN_USERNOTFOUND':
                             {
-                                setDoing('');
-                                return onCreateError('The user does not exist.');
+                                return onSignInError('The user does not exist.');
                             }
                         default:
                             {
-                                setDoing('');
-                                return onCreateError('Failed to sign in.');
+                                return onSignInError('Failed to sign in.');
                             }
                     }
                 }
@@ -119,10 +257,11 @@ const SignInPageBody = (props: Record<string, any>) => {
             }
             catch (error) {
                 if (_track) console.error({ error });
-                setDoing('');
-                return onCreateError('Failed to sign in.');
+                onSignInError('Failed to sign in.');
             }
-
+            finally {
+                setDoing('');
+            }
         })();
 
     }
@@ -151,6 +290,9 @@ const SignInPageBody = (props: Record<string, any>) => {
         </>
     }
 
+
+    console.log({ errorMessage })
+
     return <>
         <div className="min-h-full flex max-w-screen-xl mx-auto py-10 px-4 sm:px-6  lg:px-8">
             <div className="hidden lg:block relative w-0 flex-1">
@@ -163,7 +305,7 @@ const SignInPageBody = (props: Record<string, any>) => {
             <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
                 <div className="mx-auto w-full max-w-md lg:w-96">
                     <div>
-                        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+                        <h2 className="mt-6 text-3xl font-extrabold text-gray-900">{getTitle()}</h2>
                     </div>
                     <div className="mt-8">
                         {renderSSO()}
@@ -200,15 +342,15 @@ const SignInPageBody = (props: Record<string, any>) => {
                                     {doing}
                                 </button> :
                                 <button className="my-10 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 " onClick={onSubmit}>
-                                    Sign in
+                                    {getButtonTitle()}
                                 </button>}
                             <MessageField
                                 className="underline-offset-2 cursor-pointer"
                                 content="Do not have a user account? Click here to sign up."
                                 type="info" onClick={onClickSignUp} />
-                            <MessageField className="underline-offset-2 cursor-pointer"
+                            {form.action != 'reset-password' && <MessageField className="underline-offset-2 cursor-pointer"
                                 content="Forgot your password? Click here to reset."
-                                type="info" onClick={onClickResetPassword} />
+                                type="info" onClick={onClickResetPassword} />}
                         </div>
 
 

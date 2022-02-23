@@ -34,7 +34,7 @@ const HtmlField = (props: Record<string, any>) => {
 
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
-        name,
+        name, wrapperStyle, 
         hideLabel, hideH1, hideH2, hideH3,
         hideH4, record } = props;
 
@@ -42,6 +42,7 @@ const HtmlField = (props: Record<string, any>) => {
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState(isNonEmptyString(props.value) ? props.value : defaultValue);
     const [id] = useState(newGuid());
+    const layoutClassName = props.layoutClassName?props.layoutClassName:'';
 
     if (!_window?.HtmlFields) _window.HtmlFields = {};
 
@@ -180,14 +181,14 @@ const HtmlField = (props: Record<string, any>) => {
         })
     }
 
-    return <div className="field ">
+    return <div className="flex flex-col w-full" style={wrapperStyle}>
         <CSS id="html-field-css" content={HTML_FIELD_CSS} />
         <CSS id="html-field-code-css" content={HTML_FIELD_CODE_CSS} />
         <CSS id="html-field-article-css" content={ARTICLE_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        <div className={`w-full field-html field-html-${id} article`} style={style}>
+        <div className={`w-full field-html field-html-${id} ${layoutClassName}`} style={style}>
             {editor && <FloatingMenu editor={editor}>
                 <button
                     onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}

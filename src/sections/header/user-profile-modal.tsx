@@ -5,7 +5,7 @@ import Uploader from '../../controls/uploader';
 import { callAPI } from '../../context/auth-call-api';
 
 import { hasRole, isObject, isNonEmptyString } from 'douhub-helper-util';
-import { isFunction, map } from 'lodash';
+import { isArray, isFunction, map, uniq } from 'lodash';
 import FormBase from '../form/base';
 import { useContextStore } from 'douhub-ui-store';
 
@@ -27,7 +27,10 @@ const UserProfileModal = (props: Record<string, any>) => {
 
 
     useEffect(() => {
-        setData(props.user ? props.user : {});
+        const newData = props.user ? {...props.user} : {};
+        if (!isArray(newData.roles)) newData.roles=[];
+        if (hasRole(context, 'ORG-ADMIN')) newData.roles.push('ORG-ADMIN');
+        setData({...newData, roles: uniq(newData.roles)});
     }, [props.user]);
 
     const onClose = () => {
@@ -146,7 +149,7 @@ const UserProfileModal = (props: Record<string, any>) => {
     const onSubmit = () => {
         setProcessing("Updating ...");
         setError('');
-        callAPI(solution, `${solution.apis.organization}update-user`, { data }, 'PUT')
+        callAPI(solution, `${solution.apis.user}update`, { data }, 'PUT')
             .then((newUser) => {
                 if (!(isObject(newUser) && isNonEmptyString(newUser.id))) {
                     return onSubmitError();

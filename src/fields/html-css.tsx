@@ -1,6 +1,9 @@
 
 export const HTML_FIELD_CSS = `
-
+.field-html 
+{
+    margin-top: 0.5rem;
+}
 .field-html ol
 {
     display: block;
@@ -39,6 +42,7 @@ export const HTML_FIELD_CSS = `
 { 
     outline: none !important;
     width: 100%;
+    text-align: left;
 }
 
 .field-html .ProseMirror mark

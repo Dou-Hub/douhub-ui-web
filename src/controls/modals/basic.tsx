@@ -6,7 +6,7 @@ import { isNonEmptyString, newGuid } from 'douhub-helper-util';
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
-    const { show, title, content, Content, icon, titleClassName } = props;
+    const { show, title, content, Content, icon, titleClassName, className, style } = props;
     const buttons = isArray(props.buttons) ? props.buttons : [];
     const [processing, setProcessing] = useState<string|null>(null);
     const [error, setError] = useState<string|null>(null);
@@ -125,7 +125,10 @@ const BasicModal = (props: Record<string, any>) => {
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
-                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                        <div 
+                            className={`inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6 ${className?className:''}`}
+                            style={style}
+                            >
                             <div>
                                 {isNonEmptyString(icon) && <div className="mx-auto flex items-center justify-center">
                                     <SVG src={icon} size={20} />

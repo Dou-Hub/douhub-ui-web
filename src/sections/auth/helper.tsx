@@ -10,8 +10,8 @@ export const SignInFields = (props: Record<string,any>) => {
 
     const { onChangeForm, disabled,  alwaysShowLabel } = props;
     const data:Record<string,any> = isObject(props.data) ? props.data : {};
-    const showCodes = data.action=='activate-with-password' || data.action=='activate-without-password';
-
+    const showCodes = data.action=='activate-with-password' || data.action=='activate-without-password' || data.action=='activate-reset-password';
+    console.log({SignInFields: data});
     const onPressEnterPassword=()=>{
         if (isFunction(props.onSubmitPassword)) props.onSubmitPassword(data);
     }
@@ -29,15 +29,19 @@ export const SignInFields = (props: Record<string,any>) => {
     }
 
     const renderRememberMe=()=>{
-        if (!isFunction(props.onChangeRememberMe)) return null;
+        if (!isFunction(props.onChangeRememberMe) || data.action=='reset-password') return null;
         // if (!AntCheckbox) AntCheckbox = logDynamic(dynamic(() => import('../../../controls/antd/checkbox'), { ssr: false }), '../../../controls/antd/checkbox','Helper.SignInFields');
         return <AntCheckbox style={{marginBottom: '1rem'}} disabled={disabled} checked={data.rememberMe==true} onChange={onChangeRememberMe}>Remember me</AntCheckbox>
     }
 
     return <>
 
-        {data.codeSent && <MessageField style={{ color: 'green'}}
+        {data.codeSent =='verification' && <MessageField style={{ color: 'green'}}
                     content={`Thank you! The verification code has been sent to your ${data?.type=='mobile'?'mobile phone':'email address'}.`}
+                    type="info" />}
+
+        {data.codeSent =='reset-password' && <MessageField style={{ color: 'green'}}
+                    content={`Thank you! The password reset link has been sent to your ${data?.type=='mobile'?'mobile phone':'email address'}.`}
                     type="info" />}
 
         {showCodes && <CodesField
@@ -63,7 +67,7 @@ export const SignInFields = (props: Record<string,any>) => {
             value={isNonEmptyString(data.email) ? data.email : ''}
             alwaysShowLabel={alwaysShowLabel}
             label="Your email address" />
-        <TextField
+        {data.action!='reset-password' && <TextField
             onPressEnter={onPressEnterPassword}
             onChange={(v:string) => onChangeForm('password', v)}
             disabled={disabled}
@@ -73,8 +77,8 @@ export const SignInFields = (props: Record<string,any>) => {
             alwaysShowLabel={alwaysShowLabel}
             value={isNonEmptyString(data.password) ? data.password : ''}
             note="Require combination of number, special character (!@#$%^&*), uppercase letter and lowercase letter. Minimum 8 characters."
-        />
-        {data.action=='activate-without-password' && <TextField
+        />}
+        {(data.action=='activate-without-password' || data.action=='activate-reset-password' ) && <TextField
             onPressEnter={onPressEnterPassword}
             onChange={(v:string) => onChangeForm('confirmPassword', v)}
             disabled={disabled}
@@ -82,7 +86,7 @@ export const SignInFields = (props: Record<string,any>) => {
             placeholder="Confirm your password here"
             label="Confirm your password"
             alwaysShowLabel={alwaysShowLabel}
-            value={isNonEmptyString(data.password) ? data.password : ''}
+            value={isNonEmptyString(data.confirmPassword) ? data.confirmPassword : ''}
         />}
         {renderRememberMe()}
     </>
@@ -122,6 +126,16 @@ export const SignUpFields = (props: Record<string,any>) => {
             alwaysShowLabel={alwaysShowLabel}
             value={isNonEmptyString(data.password) ? data.password : ''}
             note="Require combination of number, special character (!@#$%^&*), uppercase letter and lowercase letter. Minimum 8 characters."
+        />
+         <TextField
+            onPressEnter={onPressEnterPassword}
+            onChange={(v:string) => onChangeForm('confirmPassword', v)}
+            disabled={disabled}
+            type="password"
+            placeholder="Confirm your password here"
+            label="Confirm your password"
+            alwaysShowLabel={alwaysShowLabel}
+            value={isNonEmptyString(data.confirmPassword) ? data.confirmPassword : ''}
         />
     </>
 }

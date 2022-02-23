@@ -67,11 +67,6 @@ const TEXT_FIELD_CSS = `
         min-height: 1.74rem !important;
     }
 
-    .field-text-password input
-    {
-        font-size: 1rem !important;
-    }
-
     .field-text:-internal-autofill-selected,
     .field-text-password input:-internal-autofill-selected
     {
