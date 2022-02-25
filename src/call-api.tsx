@@ -11,7 +11,7 @@ export const abortCallAPI = () => {
 const processServerlessOfflineError = (message: string): Record<string, any> | null => {
     try {
         const result = JSON.parse(message);
-        const error: Record<string, any> = JSON.parse(result.body).error;
+        const error: Record<string, any> = JSON.parse(result.body);
         return error;
     }
     catch

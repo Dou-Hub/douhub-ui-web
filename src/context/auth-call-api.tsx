@@ -31,20 +31,18 @@ export const callAPI = async (
                     settings.headers.Authorization = cognito.signInUserSession.idToken.jwtToken;
                     settings.headers.AccessToken = cognito.signInUserSession.accessToken.jwtToken;
                 }
-
+                if (_track) console.log('getCurrentPoolUser->yes->callAPIBase');
                 callAPIBase(url, data, method, settings)
                     .then(resolve)
                     .catch((error: any) => {
-                        console.error(error);
                         reject(error);
                     });
             })
-            .catch((error: any) => {
-                console.error({ error });
+            .catch(() => {
+                if (_track) console.log('getCurrentPoolUser->no->callAPIBase');
                 callAPIBase(url, data, method, settings)
                     .then(resolve)
                     .catch((error: any) => {
-                        console.error(error);
                         reject(error);
                     });
             });

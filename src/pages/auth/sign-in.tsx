@@ -121,7 +121,7 @@ const SignInPageBody = (props: Record<string, any>) => {
             setErrorMessage('');
             setDoing(doingMessage);
             try {
-                await callAPIBase(`http://localhost:3000/prod/send-verification-token`, {
+                await callAPIBase(`${solution.apis.organization}/send-verification-token`, {
                     type: form.type,
                     email: form.email,
                     action
@@ -150,7 +150,7 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 setErrorMessage('');
                 setDoing('Processing ...');
-                if ((await callAPIBase(`http://localhost:3000/prod/activate-user`, form, 'POST', 
+                if ((await callAPIBase(`${solution.apis.organization}activate-user`, form, 'POST', 
                 { solutionId: solution.id })).result) {
                     onSignIn();
                 }
@@ -182,7 +182,7 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 setErrorMessage('');
                 setDoing('Processing ...');
-                if ((await callAPIBase(`http://localhost:3000/prod/change-user-password`, form, 'POST', 
+                if ((await callAPIBase(`${solution.apis.organization}change-user-password`, form, 'POST', 
                 { solutionId: solution.id })).result) {
                     onSignIn();
                 }

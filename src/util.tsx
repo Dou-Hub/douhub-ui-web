@@ -1,7 +1,7 @@
 
 import nookies from 'nookies';
 import { isObject, isNonEmptyString, ttl } from 'douhub-helper-util';
-import { isNil, isInteger, isNumber } from 'lodash';
+import { isNil, isInteger, isNumber, isArray } from 'lodash';
 
 import getConfig from "next/config";
 const { publicRuntimeConfig } = getConfig();
@@ -44,7 +44,7 @@ export const logDynamic = (object: Record<string, any>, url: string, name: strin
     return object;
 }
 
-export const getLocalStorage = (key:string, defaultValue:any) => {
+export const getLocalStorage = (key: string, defaultValue: any) => {
 
     if (!isNonEmptyString(key)) return null;
 
@@ -83,4 +83,9 @@ export const setLocalStorage = (key: string, data: any, expireMinutes: number) =
 export const removeLocalStorage = (key: string) => {
     localStorage.removeItem(key);
 };
+
+export const hasErrorType = (error: Record<string, any>, type: string): boolean => {
+    if (!isArray(error?.types) || isNonEmptyString(type)) return false;
+    return (`,${error.types.join(',')},`).toUpperCase().indexOf(`,${type.toUpperCase()},`) >= 0
+}
 

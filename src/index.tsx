@@ -128,6 +128,7 @@ export {
     getLocalStorage,
     setLocalStorage,
     removeLocalStorage,
+    hasErrorType,
     getCookie,
     setCookie,
     removeCookie,
