@@ -44,7 +44,7 @@ export const logDynamic = (object: Record<string, any>, url: string, name: strin
     return object;
 }
 
-export const getLocalStorage = (key: string, defaultValue: any) => {
+export const getLocalStorage = (key: string, defaultValue?: any) => {
 
     if (!isNonEmptyString(key)) return null;
 
@@ -54,23 +54,23 @@ export const getLocalStorage = (key: string, defaultValue: any) => {
         data = JSON.parse(storageData ? storageData : '{}');
         if (isObject(data) && isInteger(data.ttl) && Date.now() > data.ttl * 1000) //ttl in seconds
         {
-            return defaultValue ? defaultValue : null;
+            return !isNil(defaultValue) ? defaultValue : null;
         }
     }
     catch (error) {
         data = storageData;
     }
 
-    return data ? data : (defaultValue ? defaultValue : null);
+    return !isNil(data) ? data : (!isNil(defaultValue) ? defaultValue : null);
 };
 
 
-export const setLocalStorage = (key: string, data: any, expireMinutes: number) => {
+export const setLocalStorage = (key: string, data: any, expireMinutes?: number) => {
 
     if (!isNonEmptyString(key)) return null;
     if (isNil(data)) return _window.localStorage.removeItem(key);
 
-    if (isInteger(expireMinutes) && expireMinutes > 0) {
+    if (expireMinutes && isInteger(expireMinutes) && expireMinutes > 0) {
         const storageData = { data, ttl: ttl(expireMinutes) };
         _window.localStorage.setItem(key, JSON.stringify(storageData));
     }

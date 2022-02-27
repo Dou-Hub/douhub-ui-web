@@ -1,4 +1,4 @@
-import { isNonEmptyString, isObject, isObjectString } from 'douhub-helper-util';
+import { isNonEmptyString, isObject, isObjectString, getWebLocation } from 'douhub-helper-util';
 import { isNil, isEmpty } from 'lodash';
 import axios, { Method } from 'axios';
 import { _window, _track } from "./util";
@@ -69,6 +69,13 @@ export const callAPIBase = (
 
     if (isNonEmptyString(settings?.apiToken)) {
         headers.apiToken = settings?.apiToken;
+    }
+
+    const webL = getWebLocation(`${_window.location}`);
+    if (webL && webL.host)
+    {
+        const port = !isNonEmptyString(webL.port) || webL.port=='80'?'':`:${webL.port}`;
+        headers.domain = `${webL.host}${port}`;
     }
 
     const config: Record<string, any> = {

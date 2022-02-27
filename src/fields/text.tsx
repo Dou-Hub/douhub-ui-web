@@ -84,8 +84,7 @@ const TextField = (props: Record<string, any>) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     let mask = type == 'mask' && props.mask || type == 'phone-number' && '+0(000)0000000';
-    if (type == 'phone-number' && props.mask)
-    {
+    if (type == 'phone-number' && props.mask) {
         mask = props.mask;
     }
 
@@ -108,10 +107,6 @@ const TextField = (props: Record<string, any>) => {
 
     const onChange = (newValue: string) => {
         switch (type) {
-            case 'mask':
-                {
-
-                }
             case 'password':
                 {
                     if (!isPassword(newValue, passwordRules)) {
@@ -120,16 +115,18 @@ const TextField = (props: Record<string, any>) => {
                     else {
                         setErrorMessage('');
                     }
+                    break;
                 }
             case 'email':
                 {
-                    console.log({email: newValue})
+                    newValue = newValue.trim().toLowerCase().replace(/[ ]{2,}/gi, '');
                     if (!isEmail(newValue)) {
                         setErrorMessage('Invalid Email');
                     }
                     else {
                         setErrorMessage('');
                     }
+                    break;
                 }
         }
         setValue(newValue);
@@ -160,9 +157,11 @@ const TextField = (props: Record<string, any>) => {
                     break;
                 }
             default:
-                // if (!Input) Input = logDynamic(dynamic(() => import('../../controls/antd/input'), { ssr: false }), '../controls/antd/input', DISPLAY_NAME);
-                InputControl = InputText;
-                break;
+                {
+                    // if (!Input) Input = logDynamic(dynamic(() => import('../../controls/antd/input'), { ssr: false }), '../controls/antd/input', DISPLAY_NAME);
+                    InputControl = InputText;
+                    break;
+                }
         }
 
         const curInput: any = inputControl?.current;
@@ -203,7 +202,7 @@ const TextField = (props: Record<string, any>) => {
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage)? 'true' : 'false'}`}>
+        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage) ? 'true' : 'false'}`}>
             {renderInput()}
         </div>
         <NoteField text={note} />

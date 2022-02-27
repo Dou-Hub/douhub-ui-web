@@ -34,7 +34,6 @@ const SignInPageBody = (props: Record<string, any>) => {
     }
 
     const getTitle = () => {
-        console.log({ form })
         switch (form.action) {
             case 'activate-with-password': return "Activate your account";
             case 'activate-without-password': return "Activate your account";

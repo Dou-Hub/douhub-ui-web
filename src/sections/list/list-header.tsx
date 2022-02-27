@@ -1,33 +1,39 @@
 import { Menu, Dropdown, SVG, Select, SelectOption, _window } from '../../index';
 import React, { useEffect, useState } from 'react';
-import { isArray, isFunction, map, find } from 'lodash';
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isArray, isFunction, map, find, isInteger } from 'lodash';
+import { isNonEmptyString, shortenString } from 'douhub-helper-util';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { sidePanel, queries, entity, maxWidth, defaultQueryName, menuForCreateButton } = props;
+    const { sidePanel, queries, entity, maxWidth, defaultQueryId, menuForCreateButton } = props;
     const [defaultValue, setDefaultValue] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
+    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength)?props.queryTitleMaxLength:0;
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
             let newDefaultValue: Record<string, any> | null = null;
-            if (isNonEmptyString(defaultQueryName)) {
-                newDefaultValue = find(queries, (query) => { return query.value == defaultQueryName });
-
+            if (isNonEmptyString(defaultQueryId)) {
+                newDefaultValue = find(queries, (query) => { return query.id == defaultQueryId });
             }
-            newDefaultValue = newDefaultValue ? newDefaultValue : queries[0];
-            console.log({ newDefaultValue })
+            if (!newDefaultValue) newDefaultValue = queries[0];
+            newDefaultValue = { 
+                value: newDefaultValue?.id, 
+                key: newDefaultValue?.id, 
+                label: queryTitleMaxLength>15?shortenString(newDefaultValue?.title,queryTitleMaxLength): queryTitleMaxLength
+                
+            };
             setDefaultValue(newDefaultValue);
         }
 
-    }, [queries, defaultQueryName])
+    }, [queries, defaultQueryId])
 
     const onToggleSidePanel = () => {
         if (isFunction(props.onToggleSidePanel)) props.onToggleSidePanel();
     }
 
     const onChangeQuery = (curQuery: Record<string, any>) => {
+        console.log({ curQuery });
         if (isFunction(props.onChangeQuery)) props.onChangeQuery(curQuery);
     }
 
@@ -71,12 +77,13 @@ const ListHeader = (props: Record<string, any>) => {
         <div className={`douhub-list-title ${sidePanel != 'none' ? 'ml-2' : ''}`}>
             {isArray(queries) && queries.length > 0 ?
                 <Select
+                    style={{ minWidth: 150 }}
                     labelInValue
                     bordered={false}
                     value={defaultValue}
                     onChange={onChangeQuery}
                 >
-                    {map(queries, (query, index:number) => <SelectOption key={`${query.value}-${index}`} value={query.value}>{query.name}</SelectOption>)}
+                    {map(queries, (query, index: number) => <SelectOption key={query.id?query.id:index} value={query.id}>{query.title}</SelectOption>)}
                 </Select>
                 :
                 <h1>{entity.uiCollectionName}</h1>
