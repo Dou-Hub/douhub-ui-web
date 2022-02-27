@@ -1,14 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isNonEmptyString, isPassword, isEmail } from 'douhub-helper-util';
 import { isFunction, isNumber } from 'lodash';
-import Label from './label';
-import Note from './note';
-// import dynamic from 'next/dynamic';
-// import { logDynamic } from '../util';
-import InputPassword from '../controls/antd/password';
-import Input from '../controls/antd/input';
-import InputTextArea from '../controls/antd/textarea';
-import CSS from '../controls/css';
+import { _window, LabelField, NoteField, CSS, InputPassword, InputTextArea, InputText } from '../index';
+import { IMaskInput } from 'react-imask';
 
 const DISPLAY_NAME = 'TextField';
 
@@ -77,14 +71,23 @@ const TEXT_FIELD_CSS = `
 
 const TextField = (props: Record<string, any>) => {
 
-    const { label, disabled, type, wrapperStyle, note, minRows,  inputWrapperStyle,
-        maxRows, labelStyle, inputStyle, alwaysShowLabel, 
+    const { label, disabled, type, wrapperStyle, note, minRows, inputWrapperStyle,
+        maxRows, labelStyle, inputStyle, alwaysShowLabel,
         hideLabel, onPressEnter } = props;
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState('');
     const className = isNonEmptyString(props.className) ? props.className : '';
+    const solution = _window.solution;
+    const passwordRules = props.passwordRules ? props.passwordRules : solution?.auth?.passwordRules;
+    const [errorMessage, setErrorMessage] = useState('');
+
+    let mask = type == 'mask' && props.mask || type == 'phone-number' && '+0(000)0000000';
+    if (type == 'phone-number' && props.mask)
+    {
+        mask = props.mask;
+    }
 
     useEffect(() => {
         const newValue = isNonEmptyString(props.value) ? props.value : defaultValue;
@@ -99,7 +102,36 @@ const TextField = (props: Record<string, any>) => {
         onChange(e.target.value);
     }
 
+    const onChangeMaskValue = (newValue: any) => {
+        onChange(newValue);
+    }
+
     const onChange = (newValue: string) => {
+        switch (type) {
+            case 'mask':
+                {
+
+                }
+            case 'password':
+                {
+                    if (!isPassword(newValue, passwordRules)) {
+                        setErrorMessage('Invalid Password');
+                    }
+                    else {
+                        setErrorMessage('');
+                    }
+                }
+            case 'email':
+                {
+                    console.log({email: newValue})
+                    if (!isEmail(newValue)) {
+                        setErrorMessage('Invalid Email');
+                    }
+                    else {
+                        setErrorMessage('');
+                    }
+                }
+        }
         setValue(newValue);
         if (isFunction(props.onChange)) props.onChange(newValue);
     }
@@ -115,6 +147,11 @@ const TextField = (props: Record<string, any>) => {
                     InputControl = InputPassword;
                     break;
                 }
+            case 'email':
+                {
+                    InputControl = InputText;
+                    break;
+                }
             case 'textarea':
                 {
                     // if (!InputTextArea) InputTextArea = logDynamic(dynamic(() => import('../../controls/antd/textarea'), { ssr: false }), '../controls/antd/textarea', DISPLAY_NAME);
@@ -124,29 +161,37 @@ const TextField = (props: Record<string, any>) => {
                 }
             default:
                 // if (!Input) Input = logDynamic(dynamic(() => import('../../controls/antd/input'), { ssr: false }), '../controls/antd/input', DISPLAY_NAME);
-                InputControl = Input;
+                InputControl = InputText;
                 break;
         }
 
         const curInput: any = inputControl?.current;
         const style = curInput?.resizableTextArea?.textArea?.style;
-        
-        useEffect(()=>{
+
+        useEffect(() => {
             const curInput: any = inputControl?.current;
             const style = curInput?.resizableTextArea?.textArea?.style;
-            if (style && style.height=='') 
-            {
-                setTimeout(()=>{style.height = '0px'},500);
+            if (style && style.height == '') {
+                setTimeout(() => { style.height = '0px' }, 500);
             }
         }, [style && style.height])
 
-        return <InputControl
+        return mask ? <IMaskInput
+            mask={mask}
+            value={isNonEmptyString(value) ? value : ''}
+            unmask={true} // true|false|'typed'
+            ref={inputControl}
+            disabled={disabled}
+            className={`field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
+            onAccept={onChangeMaskValue}
+            placeholder={placeholder}
+        /> : <InputControl
             ref={inputControl}
             style={inputStyle}
             disabled={disabled}
             defaultValue={defaultValue}
             onPressEnter={onPressEnter}
-            className={`field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
+            className={`ant-input field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
             placeholder={placeholder}
             onChange={onChangeText}
             value={isNonEmptyString(value) ? value : ''}
@@ -155,13 +200,14 @@ const TextField = (props: Record<string, any>) => {
     }
     return <div className="flex flex-col w-full" style={wrapperStyle}>
         <CSS id="field-text-css" content={TEXT_FIELD_CSS} />
-        <Label text={label} disabled={disabled} style={labelStyle}
+        <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) ? 'true' : 'false'}`}>
+        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage)? 'true' : 'false'}`}>
             {renderInput()}
         </div>
-        <Note text={note} />
+        <NoteField text={note} />
+        {isNonEmptyString(errorMessage) && <NoteField text={errorMessage} type="error" />}
     </div>
 };
 

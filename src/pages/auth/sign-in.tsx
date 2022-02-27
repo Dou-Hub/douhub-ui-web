@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail,  isObject } from 'douhub-helper-util';
+import { isEmail, isObject } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
 import { cloneDeep, isNil, isFunction } from 'lodash';
 import {
@@ -81,7 +81,7 @@ const SignInPageBody = (props: Record<string, any>) => {
 
     const onSubmit = () => {
 
-        setForm({...form,codeSent:''});
+        setForm({ ...form, codeSent: '' });
 
         switch (form.action) {
             case 'activate-with-password':
@@ -101,7 +101,7 @@ const SignInPageBody = (props: Record<string, any>) => {
                 }
             case 'reset-password':
                 {
-                    sendVerificationToken('activate-reset-password','Sending password reset code ...', 'Failed to send password reset code.');
+                    sendVerificationToken('activate-reset-password', 'Sending password reset code ...', 'Failed to send password reset code.');
                     break;
                 }
             default:
@@ -150,8 +150,8 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 setErrorMessage('');
                 setDoing('Processing ...');
-                if ((await callAPIBase(`${solution.apis.organization}activate-user`, form, 'POST', 
-                { solutionId: solution.id })).result) {
+                if ((await callAPIBase(`${solution.apis.organization}activate-user-without-password`, form, 'POST',
+                    { solutionId: solution.id })).result) {
                     onSignIn();
                 }
                 else {
@@ -182,8 +182,8 @@ const SignInPageBody = (props: Record<string, any>) => {
 
                 setErrorMessage('');
                 setDoing('Processing ...');
-                if ((await callAPIBase(`${solution.apis.organization}change-user-password`, form, 'POST', 
-                { solutionId: solution.id })).result) {
+                if ((await callAPIBase(`${solution.apis.organization}activate-user-with-password`, form, 'POST',
+                    { solutionId: solution.id })).result) {
                     onSignIn();
                 }
                 else {

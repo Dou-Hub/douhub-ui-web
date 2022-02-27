@@ -3,8 +3,6 @@
 //  This source code is licensed under the MIT license.
 //  The detail information can be found in the LICENSE file in the root directory of this source tree.
 
-
-
 export { getServerSidePropsForPage } from './pages/server';
 
 import AppBase from './app';
@@ -26,11 +24,13 @@ import Table from './controls/antd/table';
 import Tooltip from './controls/antd/tooltip';
 import Switch from './controls/antd/switch';
 import Slider from './controls/antd/slider';
+import InputText from './controls/antd/input';
 import InputPassword from './controls/antd/password';
 import InputNumber from './controls/antd/number';
 import InputTextArea from './controls/antd/textarea';
 import Select from './controls/antd/select';
 import SelectOption from './controls/antd/select-option';
+import SelectProps from './controls/antd/select-props';
 import Notification from './controls/antd/notification';
 import Popconfirm from './controls/antd/popconfirm';
 import Dropdown from './controls/antd/dropdown';
@@ -59,6 +59,7 @@ import LabelField from './fields/label';
 import NoteField from './fields/note';
 import SectionField from './fields/section';
 import PicklistField from './fields/picklist';
+import LookupField from './fields/lookup';
 import CodesField from './fields/codes';
 import TextField from './fields/text';
 import MessageField from './fields/message';
@@ -82,6 +83,9 @@ import AppHeaderSearch from './sections/header/search';
 
 import PageLoader from './controls/page/loader';
 
+//Modals
+import SendInvitationModal from './sections/modals/user-invitation-modal';
+
 //Pages
 import PageBase from './pages/base';
 import PageHead from './pages/head';
@@ -104,8 +108,8 @@ import Splitter from './controls/splitter';
 
 export {
     View, Text, SVG, Logo, Avatar, Input, InputTextArea, Checkbox, Tags,
-    Table, Tooltip, Slider, Switch, Select, SelectOption,
-    InputPassword, InputNumber, Notification, Splitter, Triangle,
+    Table, Tooltip, Slider, Switch, Select, SelectOption, SelectProps,
+    InputPassword, InputNumber, InputText, Notification, Splitter, Triangle,
     Popconfirm, Dropdown, Menu, Alert, Button,
     Affix, Drawer, Uploader, Tree, Div
 };
@@ -156,6 +160,7 @@ export {
     PageHeaderMenuActions,
     PageHeaderNotification,
     PageLoader,
+    SendInvitationModal,
     UserProfileMeModal,
     UserProfileModal,
     AppHeaderSearch
@@ -182,6 +187,7 @@ export {
     NoteField,
     SectionField,
     PicklistField,
+    LookupField,
     CodesField,
     TextField,
     MessageField,

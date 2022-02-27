@@ -8,37 +8,38 @@ const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
     const { show, title, content, Content, icon, titleClassName, className, style } = props;
     const buttons = isArray(props.buttons) ? props.buttons : [];
-    const [processing, setProcessing] = useState<string|null>(null);
-    const [error, setError] = useState<string|null>(null);
+    const [processing, setProcessing] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const overlayClosable: any = props.overlayClosable == true ? true : false;
 
-    useEffect(()=>{
+    useEffect(() => {
         setProcessing(props.processing);
-    },[props.processing]);
+    }, [props.processing]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setError(props.error);
-    },[props.error]);
+    }, [props.error]);
 
-    const onClose = () => {
-        if (isFunction(props.onClose)) props.onClose();
+    const onClose = (fromOverlay: boolean) => {
+        if (isFunction(props.onClose)) props.onClose(fromOverlay);
     }
 
     const onSubmit = () => {
         if (isFunction(props.onSubmit)) props.onSubmit();
     }
 
-    const renderProcessing = ()=>{
+    const renderProcessing = () => {
         if (isNil(processing)) return null;
-       
+
         return <div className="flex">
             <span className="mr-2 text-blue-400">{processing}</span>
-            <SVG src="/icons/loading.svg" className="spinner" color="rgb(96 165 250)" style={{ width: 20, height:20 }} />
+            <SVG src="/icons/loading.svg" className="spinner" color="rgb(96 165 250)" style={{ width: 20, height: 20 }} />
         </div>
     }
 
     const renderButtons = () => {
         if (!isNil(processing)) return null;
-       
+
         return map(buttons, (button) => {
             const text = isNonEmptyString(button.text) ? button.text : newGuid();
             const disabled = button == button.disabled;
@@ -98,7 +99,10 @@ const BasicModal = (props: Record<string, any>) => {
 
     return <>
         <Transition.Root show={show} as={Fragment}>
-            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={onClose}>
+            <Dialog
+                as="div"
+                className="fixed z-10 inset-0 overflow-y-auto"
+                onClose={() => overlayClosable && onClose(true)}>
                 <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <Transition.Child
                         as={Fragment}
@@ -125,10 +129,10 @@ const BasicModal = (props: Record<string, any>) => {
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
-                        <div 
-                            className={`inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6 ${className?className:''}`}
+                        <div
+                            className={`inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6 ${className ? className : ''}`}
                             style={style}
-                            >
+                        >
                             <div>
                                 {isNonEmptyString(icon) && <div className="mx-auto flex items-center justify-center">
                                     <SVG src={icon} size={20} />

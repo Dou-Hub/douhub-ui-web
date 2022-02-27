@@ -57,6 +57,11 @@ export const FIELD_CSS = `
         text-align: left;
     } 
 
+    .field-note-error
+    {
+        color: red !important;
+    }
+
     .field-recaptcha {
         border-bottom: none !important;
     }

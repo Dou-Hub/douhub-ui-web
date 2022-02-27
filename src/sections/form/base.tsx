@@ -8,6 +8,7 @@ import AlertField from '../../fields/alert';
 import PicklistField from '../../fields/picklist';
 import PlaceholderField from '../../fields/placeholder';
 import HtmlField from '../../fields/html';
+import LookupField from '../../fields/lookup';
 
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
@@ -33,16 +34,26 @@ const FormBase = observer((props: Record<string, any>) => {
         setError(props.error);
     }, [props.error])
 
-    const updateData = (newWebPageData: Record<string, any>) => {
-        setData(newWebPageData);
-        if (isFunction(props.onChange)) props.onChange(newWebPageData);
+    const updateData = (newData: Record<string, any>) => {
+        setData(newData);
+        if (isFunction(props.onChange)) props.onChange(newData);
     }
 
     const onChangeData = (field: Record<string, any>, value: any) => {
-        const newWebPageData = { ...data };
-        newWebPageData[field.name] = value;
-        console.log({ data, newWebPageData })
-        updateData(newWebPageData);
+        const newData = { ...data };
+        newData[field.name] = value;
+        updateData(newData);
+    }
+
+    const onChangeLookupData = (field: Record<string, any>, value: any, record:Record<string,any>) => {
+        const newData = { ...data };
+        newData[field.name] = value;
+        if (isObject(record)) 
+        {
+            const {id, _ts, display, stateCode} = record;
+            newData[`${field.name}_data`] = {id, _ts, display, stateCode};
+        }
+        updateData(newData);
     }
 
     const renderError = () => {
@@ -70,6 +81,10 @@ const FormBase = observer((props: Record<string, any>) => {
                     case 'html':
                         {
                             return <HtmlField key={key} {...field} onChange={(v: string) => onChangeData(field, v)}  />
+                        }
+                    case 'lookup':
+                        {
+                            return <LookupField key={key} {...field} onChange={(id: string, record:Record<string,any>) => onChangeLookupData(field, id, record)}  />
                         }
                     case 'placeholder':
                         {
