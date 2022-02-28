@@ -1,45 +1,65 @@
 import { Menu, Dropdown, SVG, Select, SelectOption, _window } from '../../index';
 import React, { useEffect, useState } from 'react';
-import { isArray, isFunction, map, find, isInteger } from 'lodash';
+import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
 import { isNonEmptyString, shortenString } from 'douhub-helper-util';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { sidePanel, queries, entity, maxWidth, defaultQueryId, menuForCreateButton } = props;
-    const [defaultValue, setDefaultValue] = useState<Record<string, any> | null>(null);
+    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId, statusId, menuForCreateButton } = props;
+    const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
-    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength)?props.queryTitleMaxLength:0;
+    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : 0;
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
-            let newDefaultValue: Record<string, any> | null = null;
-            if (isNonEmptyString(defaultQueryId)) {
-                newDefaultValue = find(queries, (query) => { return query.id == defaultQueryId });
+            let newQuery: Record<string, any> | null = null;
+            if (isNonEmptyString(queryId)) {
+                newQuery = find(queries, (query) => { return `${query.id}` == `${queryId}` });
             }
-            if (!newDefaultValue) newDefaultValue = queries[0];
-            newDefaultValue = { 
-                value: newDefaultValue?.id, 
-                key: newDefaultValue?.id, 
-                label: queryTitleMaxLength>15?shortenString(newDefaultValue?.title,queryTitleMaxLength): queryTitleMaxLength
-                
+            if (!newQuery) newQuery = queries[0];
+            newQuery = {
+                value: newQuery?.id,
+                key: newQuery?.id,
+                label: queryTitleMaxLength > 15 ? shortenString(newQuery?.title, queryTitleMaxLength) : queryTitleMaxLength
+
             };
-            setDefaultValue(newDefaultValue);
+            setQuery(newQuery);
         }
 
-    }, [queries, defaultQueryId])
+    }, [queries, queryId])
+
+    useEffect(() => {
+       
+        if (isArray(statusCodes) && statusCodes.length > 0) {
+            let newStatus: Record<string, any> | null = null;
+            if (isNonEmptyString(statusId)) {
+                newStatus = find(statusCodes, (s) => { return `${s.id}` == `${statusId}`});
+            }
+            if (!newStatus) newStatus = statusCodes[0];
+            newStatus = {
+                value: newStatus?.id,
+                key: newStatus?.id,
+                label: newStatus?.title
+            };
+            setStatus(newStatus);
+        }
+
+    }, [statusCodes, statusId])
 
     const onToggleSidePanel = () => {
         if (isFunction(props.onToggleSidePanel)) props.onToggleSidePanel();
     }
 
     const onChangeQuery = (curQuery: Record<string, any>) => {
-        console.log({ curQuery });
-        if (isFunction(props.onChangeQuery)) props.onChangeQuery(curQuery);
+        const newQuery = { ...curQuery, id: curQuery.key, title: curQuery.label };
+        setQuery(newQuery);
+        if (isFunction(props.onChangeQuery)) props.onChangeQuery(newQuery);
     }
 
     const onChangeStatus = (curStatus: Record<string, any>) => {
-        setStatus(curStatus)
-        if (isFunction(props.onChangeStatus)) props.onChangeStatus(curStatus);
+        const newStatus = { ...curStatus, value: curStatus.key, name: curStatus.label };
+        setStatus(newStatus);
+        if (isFunction(props.onChangeStatus)) props.onChangeStatus(newStatus);
     }
 
     const onClickCreateRecord = () => {
@@ -80,26 +100,25 @@ const ListHeader = (props: Record<string, any>) => {
                     style={{ minWidth: 150 }}
                     labelInValue
                     bordered={false}
-                    value={defaultValue}
+                    value={query}
                     onChange={onChangeQuery}
                 >
-                    {map(queries, (query, index: number) => <SelectOption key={query.id?query.id:index} value={query.id}>{query.title}</SelectOption>)}
+                    {map(queries, (query, index: number) => <SelectOption key={!isNil(query.id) ? query.id : index} value={query.id}>{query.title}</SelectOption>)}
                 </Select>
                 :
                 <h1>{entity.uiCollectionName}</h1>
             }
         </div>
 
-        {isArray(entity.statusCode) && entity.statusCode.length > 0 && <Select
-            style={{ minWidth: 80 }}
+        {isArray(statusCodes) && statusCodes.length > 0 && <Select
+            style={{ minWidth: 100 }}
             labelInValue
             placeholder="Status"
             bordered={false}
             value={status}
             onChange={onChangeStatus}
         >
-            {map(entity.statusCode,
-                (query) => <SelectOption value={query.value}>{query.name}</SelectOption>)}
+            {map(statusCodes, (statusCode, index: number) => <SelectOption key={!isNil(statusCode.id) ? statusCode.id : index} value={statusCode.id}>{statusCode.title}</SelectOption>)}
         </Select>}
 
         <div className="flex flex-1 flex-cols justify-end">

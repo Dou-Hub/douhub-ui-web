@@ -104,8 +104,8 @@ const SignUpPageBody = (props: Record<string, any>) => {
             <div className="hidden lg:block relative w-0 flex-1">
                 <img
                     className="absolute inset-0 h-full w-full object-cover"
-                    src="/misc/drawing.jpeg"
-                    alt="/misc/drawing.jpeg"
+                    src="/images/cover.jpeg"
+                    alt="/images/cover.jpeg"
                 />
             </div>
             <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
