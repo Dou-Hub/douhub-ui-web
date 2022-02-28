@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, map, isEmpty } from 'lodash';
+import { isFunction, map, isEmpty, cloneDeep } from 'lodash';
 import TextField from '../../fields/text';
 import CheckboxGroupField from '../../fields/checkbox-group';
 import SectionField from '../../fields/section';
@@ -9,7 +9,7 @@ import PicklistField from '../../fields/picklist';
 import PlaceholderField from '../../fields/placeholder';
 import HtmlField from '../../fields/html';
 import LookupField from '../../fields/lookup';
-
+import TagsField from '../../fields/tags';
 import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
@@ -40,8 +40,14 @@ const FormBase = observer((props: Record<string, any>) => {
     }
 
     const onChangeData = (field: Record<string, any>, value: any) => {
-        const newData = { ...data };
+        const newData: any = cloneDeep(data);
         newData[field.name] = value;
+        updateData(newData);
+    }
+
+    const onChangeTags = (field: Record<string, any>, value: any) => {
+        const newData: any = cloneDeep(data);
+        newData[field.name] = cloneDeep(value);
         updateData(newData);
     }
 
@@ -89,6 +95,10 @@ const FormBase = observer((props: Record<string, any>) => {
                     case 'placeholder':
                         {
                             return <PlaceholderField key={key} {...field} />
+                        }
+                    case 'tags':
+                        {
+                            return <TagsField key={key} {...field} onChange={(v:Array<Record<string,any>>) => onChangeTags(field, v)}/>
                         }
                     case 'alert-info':
                         {

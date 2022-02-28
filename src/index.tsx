@@ -12,7 +12,7 @@ import View from './controls/view';
 import Text from './controls/text';
 import Uploader from './controls/uploader';
 import SVG from './controls/svg';
-import Tags from './controls/tags';
+import Tags from './fields/tags';
 import Triangle from './controls/triangle';
 import Logo from './controls/logo';
 import CSS from './controls/css';
@@ -56,6 +56,7 @@ import DefaultForm from './sections/form/default';
 
 //Fields
 import LabelField from './fields/label';
+import TagsField from './fields/tags';
 import TreeField from './fields/tree';
 import NoteField from './fields/note';
 import SectionField from './fields/section';
@@ -206,6 +207,7 @@ export {
     PlaceholderField,
     HtmlField,
     HtmlFieldCode,
+    TagsField,
     CSS
 }
 

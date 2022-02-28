@@ -5,7 +5,6 @@ import { isNonEmptyString } from 'douhub-helper-util';
 import { TAGS_CSS } from './tags-css';
 import { ReactSortable } from "react-sortablejs";
 
-
 const TagItem = (props: Record<string, any>) => {
     const { text } = props;
     const onRemove = () => {
@@ -30,7 +29,7 @@ const processValue = (value: Array<string>, defaultValue?: Array<string>): Array
 
 const TagsField = React.forwardRef((props: Record<string, any>) => {
 
-    const { label, disabled, note, supportUrl, labelStyle,
+    const { label, disabled, note, supportUrl, labelStyle, wrapperStyle,
         inputStyle, alwaysShowLabel, hideLabel, supportAutoSearch } = props;
 
     const defaultValue = isArray(props.defaultValue) ? props.defaultValue : [];
@@ -172,7 +171,7 @@ const TagsField = React.forwardRef((props: Record<string, any>) => {
     const count = isArray(value) ? value.length : 0;
     const showLabel = !hideLabel && (alwaysShowLabel || count > 0 || !isNonEmptyString(placeholder));
 
-    return <>
+    return <div className="flex flex-col w-full" style={wrapperStyle}>
         <CSS id='field-tags-css' content={TAGS_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle} hidden={!showLabel} />
         <div className={`field field-tags field-tags-auto-search-${autoSearch} field-tags-${count} ${className} ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`} onClick={onClickBase}>
@@ -183,7 +182,7 @@ const TagsField = React.forwardRef((props: Record<string, any>) => {
         </div>
         {renderAutoSearch()}
         <NoteField text={note} />
-    </>
+    </div>
 });
 
 export default TagsField;

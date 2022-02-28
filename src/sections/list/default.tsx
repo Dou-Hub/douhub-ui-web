@@ -12,7 +12,6 @@ import ListFilters from './list-filters';
 import ListFormHeader from './list-form-header';
 import { useRouter } from 'next/router';
 
-
 const DefaultList = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
@@ -32,7 +31,7 @@ const DefaultList = (props: Record<string, any>) => {
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
     const Form = props.Form ? props.Form : DefaultForm;
-
+    const formHeightAdjust = isNumber(props.formHeightAdjust)?props.formHeightAdjust:85;
     const Header = props.Header ? props.Header : ListHeader;
 
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
@@ -397,7 +396,7 @@ const DefaultList = (props: Record<string, any>) => {
                             onClickDeleteRecord={onClickDeleteRecordFromForm}
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-6 pt-2 pb-6 overflow-hidden overflow-y-auto"
-                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 78, height: height - 85 }}>
+                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 78, height: height - formHeightAdjust }}>
                             <Form data={currentRecord} onChange={onChangeCurrentRecord} />
                         </div>}
                     </div>
