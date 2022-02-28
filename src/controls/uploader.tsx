@@ -134,7 +134,7 @@ const Uploader = (props: {
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
                 <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
                 {!isNonEmptyString(error) && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
-                {isNonEmptyString(error) && <span className="mt-1 text-xs text-red-600 p-2">{error}</span>}
+                {isNonEmptyString(error) && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
             </div>}
             {uploading && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>

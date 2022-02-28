@@ -1,7 +1,7 @@
 {
   "name": "douhub-ui-web",
   "licence": "MIT",
-  "version": "1.2.75",
+  "version": "1.2.77",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/esm/index.d.ts",
@@ -46,6 +46,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-imask": "^6.4.2",
+    "react-resize-detector": "^7.0.0",
     "react-sortablejs": "^6.1.1",
     "react-svg": "^14.1.9",
     "sortablejs": "^1.14.0"
