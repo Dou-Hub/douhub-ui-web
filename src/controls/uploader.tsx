@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { isNonEmptyString, uploadToS3 } from 'douhub-helper-util';
-import SVG from './svg';
-import { _window, _track } from '../util';
-import { callAPI } from '../context/auth-call-api';
+import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-util';
+import { SVG, _window, _track, callAPI } from '../index';
 import { Upload } from 'antd';
 import { isFunction, isNil } from 'lodash';
+
+//NOTE: 
+//If you run into "The bucket does not allow ACLs" error when uploading the file
+//Go to the "Edit Object Ownership" page of S3 bucket settings from the url below
+//https://s3.console.aws.amazon.com/s3/bucket/bandup-us-prod-document/property/oo/edit?region=us-east-1
+//Enable ACL
 
 function getBase64(file: any) {
     return new Promise((resolve, reject) => {
@@ -27,14 +31,16 @@ const Uploader = (props: {
     onSuccess?: any,
     onError?: any,
     value?: string,
-    uiFormat: 'photo' | 'icon',
+    uiFormat?: 'photo' | 'icon',
     iconUrl?: string,
-    fileNamePrefix?: string
+    accept?: string,
+    fileNamePrefix?: string,
+    hideLabel?:boolean
 }) => {
 
     const { entityName, recordId, attributeName, wrapperStyle, label,
         fileNamePrefix,
-        signedUrlFormat, fileType, uiFormat, iconUrl } = props;
+        signedUrlFormat, fileType,  iconUrl } = props;
 
     const solution = _window.solution;
     const [files, setFiles] = useState<Array<any>>([]);
@@ -43,6 +49,8 @@ const Uploader = (props: {
     const [value, setValue] = useState<string | undefined>(undefined);
     const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
+    const hideLabel = props.hideLabel==true?true:false;
+    const uiFormat = props.uiFormat=='photo'?'photo':'icon';
 
     useEffect(() => {
         setValue(props.value);
@@ -63,6 +71,11 @@ const Uploader = (props: {
         }
     }
 
+    const getAccept=()=>{
+        if (isNonEmptyString(props.accept)) return props.accept;
+        return getAcceptExtention(fileType);
+    }
+
     const onAfterUpload = (result: Record<string, any>) => {
 
         (async () => {
@@ -70,9 +83,16 @@ const Uploader = (props: {
             try {
 
                 setUploading(true);
+                setError('');
 
                 let base64Data: any = await getBase64(result.file);
-                base64Data = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+
+                //NOTE: Need to replace the data:xxx;base64 for other type of documents
+                base64Data = base64Data.replace(/^data:image\/\w+;base64,/, "");
+                base64Data = base64Data.replace(/^data:text\/\w+;base64,/, "");
+
+                base64Data = Buffer.from(base64Data, 'base64');
+              
                 const fileName = fileNamePrefix ? `${fileNamePrefix}.${result.file.name}` : result.file.name;
 
                 const s3Setting = await callAPI(solution, `${solution.apis.file}upload-setting`,
@@ -133,8 +153,8 @@ const Uploader = (props: {
             {files.length == 0 && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
                 <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
-                {!isNonEmptyString(error) && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
-                {isNonEmptyString(error) && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
+                {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
+                {isNonEmptyString(error)  && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
             </div>}
             {uploading && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
@@ -147,11 +167,13 @@ const Uploader = (props: {
         if (uiFormat != 'icon') return null;
         return <>
             {files.length == 0 && !uploading && <div className="flex flex-col items-center">
-                <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={{ width: 20, height: 20 }} />
+                <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={{ width: 30, height: 30 }} color={error?'#ff0000':'#000000'}/>
+                {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
+                {isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
             </div>
             }
             {uploading && <div className="flex flex-col items-center">
-                <SVG className="spinner" src="/icons/upload-to-cloud.svg" style={{ width: 20, height: 20 }} />
+                <SVG className="spinner" src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
             </div>
             }
         </>
@@ -161,6 +183,7 @@ const Uploader = (props: {
         style={{ border: 'dashed 1px #cccccc', ...photoStyle, ...wrapperStyle }}>
         <div className="m-auto">
             <Upload
+                accept={getAccept()}
                 listType="text"
                 onChange={onAfterUpload}
                 disabled={files.length > 0}
