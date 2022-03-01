@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-util';
 import { SVG, _window, _track, callAPI } from '../index';
 import { Upload } from 'antd';
-import { isFunction, isNil } from 'lodash';
+import { isFunction, isNil, assign } from 'lodash';
+
 //NOTE: 
 //If you run into "The bucket does not allow ACLs" error when uploading the file
 //Go to the "Edit Object Ownership" page of S3 bucket settings from the url below
