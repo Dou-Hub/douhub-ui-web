@@ -3,7 +3,6 @@ import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-
 import { SVG, _window, _track, callAPI } from '../index';
 import { Upload } from 'antd';
 import { isFunction, isNil } from 'lodash';
-
 //NOTE: 
 //If you run into "The bucket does not allow ACLs" error when uploading the file
 //Go to the "Edit Object Ownership" page of S3 bucket settings from the url below
@@ -19,6 +18,15 @@ function getBase64(file: any) {
     });
 }
 
+function getContent(file: any) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 const Uploader = (props: {
     entityName: string,
     fileType: 'Photo' | 'Document' | 'Video' | 'Audio',
@@ -28,6 +36,7 @@ const Uploader = (props: {
     label?: string,
     signedUrlSize?: 'raw' | 120 | 240 | 480 | 960 | 1440,
     signedUrlFormat?: 'original' | 'webp',
+    onStart?:any,
     onSuccess?: any,
     onError?: any,
     value?: string,
@@ -35,7 +44,8 @@ const Uploader = (props: {
     iconUrl?: string,
     accept?: string,
     fileNamePrefix?: string,
-    hideLabel?:boolean
+    hideLabel?:boolean,
+    onSuccessWithFileContent?:boolean
 }) => {
 
     const { entityName, recordId, attributeName, wrapperStyle, label,
@@ -50,6 +60,7 @@ const Uploader = (props: {
     const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
     const hideLabel = props.hideLabel==true?true:false;
+    const onSuccessWithFileContent = props.onSuccessWithFileContent==true?true:false;
     const uiFormat = props.uiFormat=='photo'?'photo':'icon';
 
     useEffect(() => {
@@ -61,14 +72,8 @@ const Uploader = (props: {
     const photoStyle = uiFormat=='photo' && fileType == 'Photo' && isNonEmptyString(previewUrl) ? { backgroundImage: `url(${previewUrl})` } : {};
 
     const onBeforeUpload = (file: Record<string, any>) => {
-        setError('');
-        if (!(file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png')) {
-            setError('Require a jpeg, jpg or png file.');
-            return false;
-        }
-        else {
-            return false;
-        }
+        if (isFunction(props.onStart)) props.onStart(file);
+        return false;
     }
 
     const getAccept=()=>{
@@ -90,9 +95,9 @@ const Uploader = (props: {
                 //NOTE: Need to replace the data:xxx;base64 for other type of documents
                 base64Data = base64Data.replace(/^data:image\/\w+;base64,/, "");
                 base64Data = base64Data.replace(/^data:text\/\w+;base64,/, "");
-
+                
                 base64Data = Buffer.from(base64Data, 'base64');
-              
+
                 const fileName = fileNamePrefix ? `${fileNamePrefix}.${result.file.name}` : result.file.name;
 
                 const s3Setting = await callAPI(solution, `${solution.apis.file}upload-setting`,
@@ -129,8 +134,8 @@ const Uploader = (props: {
 
                 if (_track) console.log({ cfSignedResult });
 
-
-                if (isFunction(props.onSuccess)) props.onSuccess({ s3Setting, cfSignedResult });
+                const fileContent = !onSuccessWithFileContent?null: await getContent(result.file);
+                if (isFunction(props.onSuccess)) props.onSuccess(assign({ s3Setting, cfSignedResult }, fileContent?{content:fileContent}:{}));
             }
             catch (error) {
                 console.error(error);
@@ -199,4 +204,3 @@ const Uploader = (props: {
 };
 
 export default Uploader;
-
