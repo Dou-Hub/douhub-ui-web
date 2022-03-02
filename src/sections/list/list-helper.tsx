@@ -6,7 +6,7 @@ import { isNonEmptyString } from 'douhub-helper-util';
 
 export const rendeActionButtonColumn = (
     menuItems: Array<{ title: string, action: string, confirmation?: string }>,
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -22,19 +22,18 @@ export const rendeActionButtonColumn = (
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
-        render: (id: string, record: Record<string, any>) => {
+        render: (id: string, record: Record<string, any>, rowIndex:number) => {
             const r = { id, ...record };
             const menu = <Menu>{map(menuItems, (menuItem: any, index: number) => {
-
                 return <Menu.Item
                     key={`action-button-menu-${index}`}
                     className="w-full"
-                    onClick={() => { !isNonEmptyString(menuItem.confirmation) && onClick(r, menuItem.action, entity) }}>
+                    onClick={() => { !isNonEmptyString(menuItem.confirmation) && onClick(r, menuItem.action, entity, rowIndex) }}>
                     {isNonEmptyString(menuItem.confirmation) ?
                         <Popconfirm
                             placement="left"
                             title={menuItem.confirmation}
-                            onConfirm={() => { onClick(r, menuItem.action, entity) }}
+                            onConfirm={() => { onClick(r, menuItem.action, entity, rowIndex) }}
                             okText="Yes"
                             cancelText="No"
                         >
@@ -67,7 +66,7 @@ export const rendeActionButtonColumn = (
 export const renderIconButtonColumn = (
     iconUrl: string,
     action: string,
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -82,7 +81,7 @@ export const renderIconButtonColumn = (
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
-        render: (id: string, record: Record<string, any>) => {
+        render: (id: string, record: Record<string, any>, rowIndex:number) => {
 
             const r = { id, ...record };
             const wrapperClassName = isFunction(onRenderWrapperClassName) ? onRenderWrapperClassName(r) : '';
@@ -93,7 +92,7 @@ export const renderIconButtonColumn = (
 
             return <div className={`w-full flex justify-center ${record.uiDisabled ? 'cursor-not-allowed' : 'cursor-pointer'} ${wrapperClassName}`}
                 style={wrapperStyle}
-                onClick={() => !record.uiDisabled && onClick(r, action, entity)} >
+                onClick={() => !record.uiDisabled && onClick(r, action, entity, rowIndex)} >
                 <SVG id={`list-col-icon-${iconUrl}-${id}`} color={record.uiDisabled ? '#cccccc' : iconColor} src={iconUrl} className={`h-4 w-4 ${iconClassName}`} />
             </div>
         }
@@ -101,7 +100,7 @@ export const renderIconButtonColumn = (
 }
 
 export const DEFAULT_EDIT_COLUMN = (
-    onClick: (record: Record<string, any>, action: string) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -120,7 +119,7 @@ export const DEFAULT_EDIT_COLUMN = (
 
 
 export const DEFAULT_EMAIL_COLUMN = (
-    onClick: (record: Record<string, any>, action: string) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -138,7 +137,7 @@ export const DEFAULT_EMAIL_COLUMN = (
 }
 
 export const DEFAULT_ACTION_COLUMN = (
-    onClick: (record: Record<string, any>, action: string) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity?: Record<string, any>,
     menuItems?: Array<{ title: string, action: string, confirmation?: string }>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
@@ -162,7 +161,7 @@ export const DEFAULT_ACTION_COLUMN = (
 }
 
 export const DEFAULT_COLUMNS = (
-    onClick: (record: Record<string, any>, action: string) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
     entity: Record<string, any>
 ) => {
     return without([
