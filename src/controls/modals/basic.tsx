@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
 import SVG from '../svg';
-import { isNonEmptyString, newGuid } from 'douhub-helper-util';
+import { isNonEmptyString } from 'douhub-helper-util';
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
@@ -31,7 +31,7 @@ const BasicModal = (props: Record<string, any>) => {
     const renderProcessing = () => {
         if (isNil(processing)) return null;
 
-        return <div className="flex">
+        return <div className="flex py-2">
             <span className="mr-2 text-blue-400">{processing}</span>
             <SVG src="/icons/loading.svg" className="spinner" color="rgb(96 165 250)" style={{ width: 20, height: 20 }} />
         </div>
@@ -39,9 +39,9 @@ const BasicModal = (props: Record<string, any>) => {
 
     const renderButtons = () => {
         if (!isNil(processing)) return null;
-
-        return map(buttons, (button) => {
-            const text = isNonEmptyString(button.text) ? button.text : newGuid();
+        const totalButtons = buttons.length;
+        return map(buttons, (button, index: number) => {
+            const text = isNonEmptyString(button.text) ? button.text : '...';
             const disabled = button == button.disabled;
             switch (button.type) {
                 case 'warning': {
@@ -50,7 +50,7 @@ const BasicModal = (props: Record<string, any>) => {
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none mx-2 inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:ring-orange-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:ring-orange-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
@@ -62,7 +62,7 @@ const BasicModal = (props: Record<string, any>) => {
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none mx-2 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:ring-red-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:ring-red-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
@@ -74,7 +74,7 @@ const BasicModal = (props: Record<string, any>) => {
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none mx-2 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-400 text-base font-medium text-white hover:bg-gray-600 focus:ring-gray-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-50 text-base font-medium text-gray-800 hover:bg-gray-100 focus:ring-gray-100 sm:text-sm disabled:text-gray-200 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
@@ -87,7 +87,7 @@ const BasicModal = (props: Record<string, any>) => {
                             key={text}
                             type="button"
                             disabled={disabled}
-                            className={`outline-none mx-2 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:ring-blue-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed ${button.className ? button.className : ''}`}
+                            className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:ring-blue-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed ${button.className ? button.className : ''}`}
                             onClick={button.onClick}
                         >
                             {button.text}

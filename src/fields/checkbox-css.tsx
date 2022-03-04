@@ -3,6 +3,8 @@ export const CHECKBOX_FIELD_CSS = `
     .field-checkbox
     {
         border-bottom: none !important;
+        display: flex;
+        flex-direction: row;
     }
 
     .field-checkbox.field-note-true
@@ -18,17 +20,13 @@ export const CHECKBOX_FIELD_CSS = `
         width: 30px;
         display: flex;
         cursor: pointer;
+        min-width: 30px;
     }
 
     .field-checkbox.small .checkbox 
     {
         height: 16px;
         width: 16px;
-    }
-
-    .field-checkbox.field-disabled .checkbox 
-    {
-        border: solid 1px rgba(0,0,0,0.3);
     }
 
     .field-checkbox .checkmark 
@@ -78,11 +76,13 @@ export const CHECKBOX_FIELD_CSS = `
     .field-checkbox .text .label
     {
         font-size: 0.9rem;
+        text-align: left;
     }
 
     .field-checkbox.small .text .label
     {
         font-size: 0.7rem;
+        text-align: left;
     }
 
     .field-checkbox .text .sub-label
@@ -90,6 +90,7 @@ export const CHECKBOX_FIELD_CSS = `
         font-size: 0.75rem;
         color: #666666;
         line-height: 1.1;
+        text-align: left;
     }
 
     .field-checkbox.small .text .sub-label
@@ -117,19 +118,20 @@ export const CHECKBOX_FIELD_CSS = `
         display:none;
     }
 
-    .field-checkbox-selected-true .checkmark svg 
+    .field-checkbox-selected-true .checkmark svg,
+    .field-checkbox-selected-true .checkmark svg path
     {
-        fill: #333333;
+        fill: #333333 !important;
     }
 
-    .field-checkbox-selected-true.field-disabled .checkmark svg 
+    .field-checkbox-selected-true.field-disabled .checkmark svg,
+    .field-checkbox-selected-true.field-disabled .checkmark svg path
     {
-        fill: rgba(0,0,0,0.3);
+        fill: #eeeeee !important;
     }
-
     .field-checkbox.field-disabled .checkbox
     {
         cursor: not-allowed;
-
+        border: solid 1px #eeeeee;
     }
 `;

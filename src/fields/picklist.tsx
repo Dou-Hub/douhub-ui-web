@@ -17,7 +17,6 @@ const PICKLIST_FIELD_CSS = `
         width: 100% !important;
     }
 
-
     .field-picklist .ant-select-selector,
     .field-picklist .ant-select-selection-search,
     .field-picklist .ant-select-selection-item
@@ -29,6 +28,11 @@ const PICKLIST_FIELD_CSS = `
         font-size: 0.9rem;
     }
 
+    .field-picklist .ant-select-selection-item
+    {
+        padding-left: 5px !important;
+        padding-right: 30px !important;
+    }
 
     .field-picklist.ant-select-focused .ant-select-selector
     {

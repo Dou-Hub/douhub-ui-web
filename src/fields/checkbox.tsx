@@ -15,6 +15,8 @@ const CheckboxField = (props: Record<string,any>) => {
     const [value, setValue] = useState<boolean|undefined|null>(isBoolean(props.value) ? props.value : defaultValue);
     const showInfo = isFunction(props.onClickInfo);
     const small = size && size?.toLowerCase()=='small'?true:false;
+    const hideCheckboxWhenDisabled = props.hideCheckboxWhenDisabled==true;
+    const hideCheckboxWhenNotDisabled = props.hideCheckboxWhenNotDisabled==true;
    
     useEffect(() => {
         const newValue = isBoolean(props.value) ? props.value : defaultValue;
@@ -35,9 +37,9 @@ const CheckboxField = (props: Record<string,any>) => {
         <CSS id="field-checkbox-css" content={CHECKBOX_FIELD_CSS}/>
         <div className={`field field-checkbox ${small?'small':''} ${disabled?'field-disabled':''} field-checkbox-selected-${value?'true':'false'} ${isNonEmptyString(note) ? 'field-note-true' : ''} ${isNonEmptyString(className) ? className : ''} `} 
             style={style}>
-            <div className='checkbox' onClick={onClick}>
+            { !(disabled && hideCheckboxWhenDisabled || !disabled && hideCheckboxWhenNotDisabled) && <div className='checkbox' onClick={onClick}>
                 <SVG id={`field-checkbox-${id}-${name}`} className="checkmark" src="/icons/checkmark.svg" />
-            </div>
+            </div>}
             <div className={`text info-${showInfo?'true':'false'}`}>
                 <div className='label' dangerouslySetInnerHTML={{ __html: label && marked(label) }} />
                 {isNonEmptyString(subLabel) && <div className='sub-label' dangerouslySetInnerHTML={{ __html: subLabel && marked(subLabel) }} />}
