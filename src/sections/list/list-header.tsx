@@ -1,14 +1,15 @@
-import { Menu, Dropdown, SVG, Select, SelectOption, _window } from '../../index';
+import { Menu, Dropdown, SVG, Select, SelectOption, _window, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
 import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
-import { isNonEmptyString, shortenString } from 'douhub-helper-util';
+import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId, statusId, menuForCreateButton } = props;
+    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId, statusId, menuForCreateButton, allowCreate, allowUpload, regardingId } = props;
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
     const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : 0;
+    const [showUploadModal, setShowUploadModal] = useState<string | null>(null);
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
@@ -29,11 +30,11 @@ const ListHeader = (props: Record<string, any>) => {
     }, [queries, queryId])
 
     useEffect(() => {
-       
+
         if (isArray(statusCodes) && statusCodes.length > 0) {
             let newStatus: Record<string, any> | null = null;
             if (isNonEmptyString(statusId)) {
-                newStatus = find(statusCodes, (s) => { return `${s.id}` == `${statusId}`});
+                newStatus = find(statusCodes, (s) => { return `${s.id}` == `${statusId}` });
             }
             if (!newStatus) newStatus = statusCodes[0];
             newStatus = {
@@ -74,6 +75,10 @@ const ListHeader = (props: Record<string, any>) => {
         if (isFunction(props.onToggleSidePanel)) props.onClickRefresh();
     }
 
+    const onClickUpload = () => {
+        setShowUploadModal(newGuid());
+    }
+
     const menu = menuForCreateButton ? menuForCreateButton : isFunction(props.onClickUploadRecords) && <Menu>
         <Menu.Item key="create">
             <div onClick={onClickCreateRecord}>
@@ -85,6 +90,7 @@ const ListHeader = (props: Record<string, any>) => {
                 Upload {entity.uiCollectionName}
             </div>
         </Menu.Item></Menu>
+    
 
     return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
@@ -123,24 +129,35 @@ const ListHeader = (props: Record<string, any>) => {
 
         <div className="flex flex-1 flex-cols justify-end">
 
-            {menu ? <Dropdown overlay={menu} className="hidden sm:block">
-                <div className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                    Create {entity.uiName}
-                </div>
-            </Dropdown> :
-                <div onClick={onClickCreateRecord}
-                    className="hidden sm:block cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                    Create {entity.uiName}
-                </div>}
+            {allowUpload && allowCreate && <div
+                onClick={onClickUpload}
+                className={`flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700'}`}>
+                <SVG id="upload-icon" src="/icons/upload-to-cloud.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                <span className="hidden sm:block sm:ml-2">Upload</span>
+            </div>}
 
-            {menu ? <Dropdown overlay={menu} className="block sm:hidden">
-                <div className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-2 py-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+            {menu && allowCreate && <Dropdown overlay={menu}>
+                <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                    <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                    <span className="hidden sm:block sm:ml-2">New</span>
+                </div>
+            </Dropdown>}
+
+            {!menu && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700"
+                onClick={onClickCreateRecord}
+            >
+                <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                <span className="hidden sm:block sm:ml-2">New</span>
+            </div>}
+
+            {/* {menu ? <Dropdown overlay={menu} className="block sm:hidden">
+                <div className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                     +
                 </div>
             </Dropdown> : <div onClick={onClickCreateRecord}
                 className="block sm:hidden cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-2 py-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                 +
-            </div>}
+            </div>} */}
 
             {props.children}
 
@@ -149,8 +166,13 @@ const ListHeader = (props: Record<string, any>) => {
                 <SVG id="list-refresh-icon" src="/icons/refresh.svg" style={{ width: 22 }} color="#333333" />
             </div>
         </div>
+        <UploadModal
+            regardingId={regardingId}
+            onSubmitSucceed={() => { }}
+            entity={entity}
+            show={showUploadModal}
+            onClose={() => { setShowUploadModal(null) }} />
     </div>
 };
 
 export default ListHeader;
-

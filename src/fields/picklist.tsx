@@ -48,7 +48,7 @@ const PicklistField = (props: Record<string, any>) => {
 
     const defaultValue = isNonEmptyString(props.defaultValue) || isInteger(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
-    const [value, setValue] = useState<string | number | undefined | null>(isNil(props.value)?placeholder:props.value);
+    const [value, setValue] = useState<string | number | undefined | null>(isNil(props.value)?defaultValue:props.value);
     const className = isNonEmptyString(props.className) ? props.className : '';
 
     const onChange = (newValue:any) => {
@@ -61,7 +61,7 @@ const PicklistField = (props: Record<string, any>) => {
     }
 
     useEffect(() => {
-       setValue(isNil(props.value)?placeholder:props.value);
+       setValue(isNil(props.value)?defaultValue:props.value);
     }, [props.value]);
 
     const renderSelect = () => {

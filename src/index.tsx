@@ -87,6 +87,7 @@ import PageLoader from './controls/page/loader';
 
 //Modals
 import SendInvitationModal from './sections/modals/user-invitation-modal';
+import UploadModal from './sections/modals/upload-modal';
 
 //Pages
 import PageBase from './pages/base';
@@ -130,10 +131,11 @@ import ListFormResizer from './sections/list/list-resizer';
 import ListFormHeader from './sections/list/list-form-header';
 import ListFilters from './sections/list/list-filters';
 import ListCategoriesTags from './sections/list/list-categories-tags';
+import ListBase from './sections/list/list-base';
 import DefaultList from './sections/list/default';
 
 export {
-    ListTable, ListFormResizer, ListHeader, DefaultList,
+    ListTable, ListFormResizer, ListHeader, ListBase, DefaultList,
     ListFilters, ListFormHeader, ListCategoriesTags
 }
 
@@ -170,6 +172,7 @@ export {
     PageHeaderNotification,
     PageLoader,
     SendInvitationModal,
+    UploadModal,
     UserProfileMeModal,
     UserProfileModal,
     AppHeaderSearch
