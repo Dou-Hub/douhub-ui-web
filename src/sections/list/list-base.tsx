@@ -1,7 +1,7 @@
 import {
     callAPI, SVG, DEFAULT_COLUMNS, _window, AlertField, CSS,
     Notification, DefaultForm, setLocalStorage,
-    ListCategoriesTags,ListFilters, ListFormHeader,
+    ListCategoriesTags, ListFilters, ListFormHeader,
     Splitter, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage
 } from '../../index';
 import React, { useEffect, useState } from 'react';
@@ -9,18 +9,18 @@ import { getRecordDisplay, isNonEmptyString, newGuid, setWebQueryValue } from 'd
 import { without, throttle, isObject, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
-import ListHeader from  './list-header';
+import ListHeader from './list-header';
 
 const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
-    const { height, entity, search, hideListCategoriesTags, selectionType,  width, allowCreate, allowUpload, regardingId } = props;
+    const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, regarding } = props;
     // const deleteConfirmation = entity?.deleteConfirmation ? entity?.deleteConfirmation : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
     const sidePanelCacheKey = `list-sidePanel-${entity?.entityName}-${entity?.entityType}`;
-    const sidePanelCacheValue = getLocalStorage(sidePanelCacheKey,true);
-    const [sidePanel, setSidePanel] = useState(!isNil(sidePanelCacheValue)?sidePanelCacheValue:true);
+    const sidePanelCacheValue = getLocalStorage(sidePanelCacheKey, true);
+    const [sidePanel, setSidePanel] = useState(!isNil(sidePanelCacheValue) ? sidePanelCacheValue : true);
     const [firstLoadError, setFirstLoadError] = useState('');
     const [reload, setReload] = useState('');
     const [recordSaving, setRecordSaving] = useState('');
@@ -30,7 +30,7 @@ const ListBase = (props: Record<string, any>) => {
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
     const Form = props.Form ? props.Form : DefaultForm;
-    const formHeightAdjust = isNumber(props.formHeightAdjust)?props.formHeightAdjust:85;
+    const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 85;
     const Header = props.Header ? props.Header : ListHeader;
 
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
@@ -38,27 +38,26 @@ const ListBase = (props: Record<string, any>) => {
     const maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : 800;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
-   
+
     const showSidePanel = sidePanel && !currentRecord && areaWidth >= 650 && !hideListCategoriesTags;
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
 
-    const queries = isArray(entity.queries) && entity.queries.length>0? [
+    const queries = isArray(entity.queries) && entity.queries.length > 0 ? [
         {
             title: `All ${entity.uiCollectionName}`,
             id: 'default-all'
-        },...entity.queries
-    ]: [];
-    const queryId = props.queryId?props.queryId:(queries.length>0 && queries[0].id);
-    const curQuery = isNonEmptyString(queryId) && find(queries, (q)=>q.id==queryId);
+        }, ...entity.queries
+    ] : [];
+    const queryId = props.queryId ? props.queryId : (queries.length > 0 && queries[0].id);
 
-    const statusCodes = isArray(entity.statusCodes) && entity.statusCodes.length>0? [
+    const statusCodes = isArray(entity.statusCodes) && entity.statusCodes.length > 0 ? [
         {
             title: `All Status`,
             id: 'default-all'
-        },...entity.statusCodes
-    ]: [];
-    const statusId = props.statusId?props.statusId:(statusCodes.length>0 && entity.statusCodes[0].id);
-    const curStatusCode = isNonEmptyString(statusId) && find(statusCodes, (s)=>{return s.id==statusId});
+        }, ...entity.statusCodes
+    ] : [];
+    const statusId = props.statusId ? props.statusId : (statusCodes.length > 0 && entity.statusCodes[0].id);
+    const curStatusCode = isNonEmptyString(statusId) && find(statusCodes, (s) => { return s.id == statusId });
 
     const filters = without([
         isNonEmptyString(search) ? { type: 'search', search } : null
@@ -81,14 +80,13 @@ const ListBase = (props: Record<string, any>) => {
 
 
     const onChangeQuery = (curQuery: Record<string, any>) => {
-        console.log({curQuery})
-       router.push(setWebQueryValue(`${_window.location}`, 'query', curQuery.id));
+        router.push(setWebQueryValue(`${_window.location}`, 'query', curQuery.id));
     }
 
     const onChangeStatus = (curStatus: Record<string, any>) => {
-        console.log({curStatus})
+        console.log({ curStatus })
         router.push(setWebQueryValue(`${_window.location}`, 'status', curStatus.value));
-     }
+    }
 
     const onResizeFormDetector = (width?: number) => {
         setAreaWidth(width ? width : 0);
@@ -106,10 +104,10 @@ const ListBase = (props: Record<string, any>) => {
             orderBy: [{ "type": "desc", "attribute": "_ts" }],
             conditions: []
         };
-
+        const curQuery = isNonEmptyString(queryId) && find(queries, (q) => q.id == queryId);
         if (curQuery && isArray(curQuery.conditions)) query.conditions = [...query.conditions, ...curQuery.conditions];
         if (curStatusCode && isArray(curStatusCode.conditions)) query.conditions = [...query.conditions, ...curStatusCode.conditions];
-       
+
         let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}query`;
         if (isNonEmptyString(search)) {
             apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}search`;
@@ -127,7 +125,7 @@ const ListBase = (props: Record<string, any>) => {
             .finally(() => {
                 setFirstLoading(false);
             })
-    }, [entity, reload, search])
+    }, [entity, reload, search, queryId])
 
     const onClickCreateRecord = () => {
         const newRecord: Record<string, any> = { id: newGuid(), entityName: entity.entityName };
@@ -241,7 +239,7 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const onClickSaveRecord = (closeForm: any) => {
-       
+
         const op = !currentRecord?._rid ? 'create' : 'update'
 
         if (isArray(entity.requiredFields) && entity.requiredFields.length > 0) {
@@ -262,13 +260,12 @@ const ListBase = (props: Record<string, any>) => {
 
         const apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}${op}`;
 
-        
-        callAPI(solution, apiEndpoint, { data: currentRecord }, op=='create' ? 'post' : 'put')
+
+        callAPI(solution, apiEndpoint, { data: currentRecord }, op == 'create' ? 'post' : 'put')
             .then((newRecord: any) => {
                 const newResult: Record<string, any> = { ...result };
 
-                if (!find(newResult.data, (r:any)=>r.id==newRecord.id))
-                {
+                if (!find(newResult.data, (r: any) => r.id == newRecord.id)) {
                     newResult.data.unshift(newRecord);
                     newResult.count = newResult.count + 1;
                 }
@@ -282,13 +279,11 @@ const ListBase = (props: Record<string, any>) => {
                 if (closeForm) onClickCloseForm();
             })
             .catch((error: any) => {
-                console.log({error})
-                if (hasErrorType(error, 'ERROR_API_USEREXISTS'))
-                {
+                console.log({ error })
+                if (hasErrorType(error, 'ERROR_API_USEREXISTS')) {
                     setNotification({ id: newGuid(), message: 'Error', description: `Sorry, there's already a user with the same email.`, type: 'error' });
                 }
-                else
-                {
+                else {
                     setNotification({ id: newGuid(), message: 'Error', description: `Sorry, it was failed to ${op} the ${entity.uiName}.`, type: 'error' });
                 }
             })
@@ -306,7 +301,7 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const onToggleSidePanel = () => {
-        setLocalStorage(sidePanelCacheKey,!sidePanel)
+        setLocalStorage(sidePanelCacheKey, !sidePanel)
         setSidePanel(!sidePanel);
     }
 
@@ -325,7 +320,7 @@ const ListBase = (props: Record<string, any>) => {
         </div>
     }
 
-    console.log({statusCodes, statusId})
+    console.log({ statusCodes, statusId })
 
     const renderListSection = () => {
         return <div
@@ -333,7 +328,7 @@ const ListBase = (props: Record<string, any>) => {
             style={{ display: !currentRecord ? 'block' : 'none' }}>
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
-                regardingId={regardingId}
+                regarding={regarding}
                 allowCreate={allowCreate}
                 allowUpload={allowUpload}
                 sidePanel={hideListCategoriesTags || areaWidth < 650 ? 'none' : sidePanel}

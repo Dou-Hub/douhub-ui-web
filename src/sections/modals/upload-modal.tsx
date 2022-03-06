@@ -11,7 +11,7 @@ import { useEnvStore } from 'douhub-ui-store';
 
 const UploadModal = observer((props: Record<string, any>) => {
 
-    const { show, entity, regardingId } = props;
+    const { show, entity, regarding } = props;
     const solution = _window.solution;
     const [stepIndex, setStepIndex] = useState(0);
     const [error, setError] = useState('');
@@ -139,7 +139,7 @@ const UploadModal = observer((props: Record<string, any>) => {
                 onSuccessUpload={onStep1} />
             case 1: return <Step2 entity={entity} modalStyle={modalStyle}
                 onChange={onChangeContent} />
-            case 2: return <Step3 entity={entity} onError={onErrorStep3} regardingId={regardingId} modalStyle={modalStyle} />
+            case 2: return <Step3 entity={entity} onError={onErrorStep3} regarding={regarding} modalStyle={modalStyle} />
             case 3: return <Step4 entity={entity} modalStyle={modalStyle}/>
         }
         return <></>

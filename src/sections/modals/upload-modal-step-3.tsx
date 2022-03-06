@@ -85,13 +85,14 @@ const css = `
 
 const UploadModalStep3 = (props: {
     entity: Record<string, any>,
-    regardingId?:string,
+    regarding?:Record<string, any>,
     onChange?: any,
     modalStyle: Record<string, any>,
     onError?: any
 }) => {
 
-    const {entity, regardingId} = props;
+    const {entity, regarding} = props;
+    const regardingId = regarding?.id;
     const [data, setData] = useState<Record<string, any>[]>([]);
     const [dataChanged, setDataChanged] = useState<string>('');
     const mustReplaceDuplication = entity?.upload?.mustReplaceDuplication == true;
