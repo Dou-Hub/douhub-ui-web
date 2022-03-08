@@ -1,3 +1,8 @@
+//  Copyright PrimeObjects Software Inc. and other contributors <https://www.primeobjects.com/>
+// 
+//  This source code is licensed under the MIT license.
+//  The detail information can be found in the LICENSE file in the root directory of this source tree.
+
 
 import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
@@ -60,7 +65,7 @@ export const signIn = async (
 
         const userOrgs: Record<string, any> = await callAPIBase(
             `${solution.apis.organization}user-orgs`,
-            {type, value: type == 'mobile' ? data?.mobile:data?.email},
+            { type, value: type == 'mobile' ? data?.mobile : data?.email },
             'GET',
             {
                 solutionId: solution.id
@@ -176,10 +181,13 @@ export const signOutInternal = (auth: any): Promise<boolean> => {
 export const useCurrentContext = (solution: Record<string, any>, settings?: {
     signInUrl?: '/auth/sign-in',
     needAuthorization?: boolean,
+    skipAuthentication?: boolean,
     needSolution?: boolean,
+    needRegarding?: boolean,
     onSuccess?: any,
     onError?: any,
-    context?: Record<string, any>
+    context?: Record<string, any>,
+    regardingId?: string
 }) => {
     const router = useRouter();
     const [context, setContext] = useState<Record<string, any> | null>(null);
@@ -191,17 +199,22 @@ export const useCurrentContext = (solution: Record<string, any>, settings?: {
             if (!settings) settings = {
                 signInUrl: '/auth/sign-in',
                 needAuthorization: true,
-                needSolution: false,
                 onSuccess: null,
                 onError: null
             }
 
             if (!isBoolean(settings.needAuthorization)) settings.needAuthorization = true;
             if (!isBoolean(settings.needSolution)) settings.needSolution = false;
-            
-            const apiParams: Record<string, any> = { 
-                needAuthorization: settings.needAuthorization == true, 
-                needSolution: settings.needSolution == true };
+
+            const apiParams: Record<string, any> = {
+                needAuthorization: settings.needAuthorization == true,
+                skipAuthentication: settings.skipAuthentication == true,
+                needSolution: settings.needSolution == true,
+                needRegarding: settings.needRegarding == true || isNonEmptyString(settings.regardingId)
+            };
+
+            if (isNonEmptyString(apiParams.regardingId)) apiParams.regardingId = settings.regardingId;
+
 
             callAPI(solution, `${solution.apis.context}current`, apiParams, 'GET')
                 .then((result: Record<string, any>) => {
