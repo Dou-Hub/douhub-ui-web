@@ -32,8 +32,8 @@ const PageHeaderMenuItems = (props: Record<string, any>) => {
                     <div className="flex-shrink-0 h-6 w-6 text-blue-600" aria-hidden="true" />
                 }
                 <div className="ml-4">
-                    {isNonEmptyString(item.title) && <p className="text-base font-medium text-gray-900">{item.title}</p>}
-                    {isNonEmptyString(item.description) && <p className="mt-1 text-sm text-gray-500">{item.description}</p>}
+                    {isNonEmptyString(item.title) && <p className="text-base font-medium text-gray-900 mb-0">{item.title}</p>}
+                    {isNonEmptyString(item.description) && <p className="mt-1 text-sm text-gray-500 my-1">{item.description}</p>}
                 </div>
             </a>
         })}

@@ -118,7 +118,7 @@ const LookupField = (props: Record<string, any>) => {
         entityName, entityType, attributes, searchOnly, 
         alwaysShowLabel, hideLabel, wrapperStyle } = props;
     
-    const searchMethod =`${props.searchMetho}`.toLowerCase()=='elastic'?'elastic':'contain';
+    const searchMethod =`${props.searchMethod}`.toLowerCase()=='elastic'?'elastic':'contain';
     const solution = _window.solution;
     const defaultValue: Record<string, any> | null = isObject(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';

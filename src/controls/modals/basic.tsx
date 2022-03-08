@@ -74,7 +74,7 @@ const BasicModal = (props: Record<string, any>) => {
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-50 text-base font-medium text-gray-800 hover:bg-gray-100 focus:ring-gray-100 sm:text-sm disabled:text-gray-200 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-800 hover:bg-gray-200 focus:ring-gray-100 sm:text-sm disabled:text-gray-200 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}

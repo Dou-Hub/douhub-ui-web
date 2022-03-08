@@ -171,6 +171,7 @@ const UploadModal = observer((props: Record<string, any>) => {
             })
         }, 'POST')
             .then(() => {
+                setStepIndex(3);
                 if (isFunction(props.onSubmitSucceed)) props.onSubmitSucceed();
             })
             .catch((error: any) => {
