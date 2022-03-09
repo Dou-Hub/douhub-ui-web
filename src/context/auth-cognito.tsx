@@ -183,11 +183,13 @@ export const useCurrentContext = (solution: Record<string, any>, settings?: {
     needAuthorization?: boolean,
     skipAuthentication?: boolean,
     needSolution?: boolean,
-    needRegarding?: boolean,
     onSuccess?: any,
     onError?: any,
     context?: Record<string, any>,
-    regardingId?: string
+    recordId?: string,
+    needRecord?: string
+    recordIdByMembership?: string,
+    needRecordByMembership?: string
 }) => {
     const router = useRouter();
     const [context, setContext] = useState<Record<string, any> | null>(null);
@@ -209,12 +211,14 @@ export const useCurrentContext = (solution: Record<string, any>, settings?: {
             const apiParams: Record<string, any> = {
                 needAuthorization: settings.needAuthorization == true,
                 skipAuthentication: settings.skipAuthentication == true,
-                needSolution: settings.needSolution == true,
-                needRegarding: settings.needRegarding == true || isNonEmptyString(settings.regardingId)
+                needSolution: settings.needSolution == true
             };
 
-            if (isNonEmptyString(apiParams.regardingId)) apiParams.regardingId = settings.regardingId;
+            if (isNonEmptyString(settings.recordId)) apiParams.recordId = settings.recordId;
+            if (isNonEmptyString(settings.recordIdByMembership)) apiParams.recordIdByMembership = settings.recordIdByMembership;
 
+            if (isNonEmptyString(settings.needRecord)) apiParams.needRecord = settings.needRecord;
+            if (isNonEmptyString(settings.needRecordByMembership)) apiParams.needRecordByMembership = settings.needRecordByMembership;
 
             callAPI(solution, `${solution.apis.context}current`, apiParams, 'GET')
                 .then((result: Record<string, any>) => {

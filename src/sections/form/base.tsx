@@ -10,7 +10,7 @@ import PlaceholderField from '../../fields/placeholder';
 import HtmlField from '../../fields/html';
 import LookupField from '../../fields/lookup';
 import TagsField from '../../fields/tags';
-import { isNonEmptyString, isObject } from 'douhub-helper-util';
+import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
@@ -46,19 +46,27 @@ const FormBase = observer((props: Record<string, any>) => {
     }
 
     const onChangeTags = (field: Record<string, any>, value: any) => {
-        const newData: any = cloneDeep(data);
+        const newData: any = isObject(data) ? cloneDeep(data) : {};
         newData[field.name] = cloneDeep(value);
         updateData(newData);
     }
 
-    const onChangeLookupData = (field: Record<string, any>, value: any, record:Record<string,any>) => {
-        const newData = { ...data };
-        newData[field.name] = value;
-        if (isObject(record)) 
-        {
-            const {id, _ts, display, stateCode} = record;
-            newData[`${field.name}_data`] = {id, _ts, display, stateCode};
+    const onChangeLookupData = (field: Record<string, any>, record: Record<string, any>) => {
+
+        const newData: any = isObject(data) ? cloneDeep(data) : {};
+        const attributeName = field.name;
+        if (isObject(record)) {
+            const display = getRecordDisplay(record);
+            const { entityName, entityType, id } = record;
+
+            newData[attributeName] = id;
+            newData[`${attributeName}_data`] = { entityName, entityType, id, display };
         }
+        else {
+            delete newData[attributeName];
+            delete newData[`${attributeName}_data`];
+        }
+
         updateData(newData);
     }
 
@@ -71,8 +79,10 @@ const FormBase = observer((props: Record<string, any>) => {
         return map(form.rows, (row, index) => {
             return <div key={`row${index}`} className="flex flex-row">{map(row.fields, (field) => {
                 const key = field.id || field.name;
+
                 field.value = data && data[field.name];
                 field.record = data;
+
                 switch (field.type) {
                     case 'checkbox':
                         {
@@ -86,11 +96,11 @@ const FormBase = observer((props: Record<string, any>) => {
                         }
                     case 'html':
                         {
-                            return <HtmlField key={key} {...field} onChange={(v: string) => onChangeData(field, v)}  />
+                            return <HtmlField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
                         }
                     case 'lookup':
                         {
-                            return <LookupField key={key} {...field} onChange={(id: string, record:Record<string,any>) => onChangeLookupData(field, id, record)}  />
+                            return <LookupField key={key} {...field} value={data && data[`${field.name}_data`]} onChange={(record: Record<string, any>) => onChangeLookupData(field, record)} />
                         }
                     case 'placeholder':
                         {
@@ -98,7 +108,7 @@ const FormBase = observer((props: Record<string, any>) => {
                         }
                     case 'tags':
                         {
-                            return <TagsField key={key} {...field} onChange={(v:Array<Record<string,any>>) => onChangeTags(field, v)}/>
+                            return <TagsField key={key} {...field} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
                         }
                     case 'alert-info':
                         {

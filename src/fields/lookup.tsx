@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { map, find, isNil, isObject, debounce, isFunction } from 'lodash';
-import { getEntity, isNonEmptyString } from 'douhub-helper-util';
-import { LabelField, CSS, NoteField, Select, callAPI, SVG, _window, SelectProps } from '../index';
+import { map, find, isNil,  debounce, isFunction } from 'lodash';
+import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
+import { LabelField, CSS, NoteField, Select, callAPI, SVG, _window, SelectProps, _track } from '../index';
+
 
 const DISPLAY_NAME = 'LookupField';
 
@@ -91,7 +92,7 @@ function DebounceSelect<
                 const options: any = map(newOptions, (o: Record<string, any>) => {
                     return { label: o.display, value: o.id, record: { ...o } };
                 });
-                console.log({ newOptions })
+                if (_track) console.log({ newOptions })
                 setOptions(options);
                 setFetching(false);
             });
@@ -127,10 +128,13 @@ const LookupField = (props: Record<string, any>) => {
     const entity = getEntity(solution, entityName, entityType);
     const [value, setValue] = useState<Record<string, any>|null>(null);
 
+    if (_track) console.log({entity, solution, entityName, entityType});
+
     const onChange = (newValue: any) => {
-        newValue = isObject(newValue) ? newValue : (isObject(defaultValue) ? { label: defaultValue.display, id: defaultValue.id } : null);
+        if (_track) console.log({newValue})
+        newValue = isObject(newValue) ? newValue : (isObject(defaultValue) ? { label: defaultValue?.display, id: defaultValue?.id } : null);
         const record = isNil(newValue)? null: find(searchResult, (r: any) => r.id == newValue.value);
-        if (isFunction(props.onChange)) props.onChange(isObject(record)?{...record}:null, newValue?newValue.value:null);
+        if (isFunction(props.onChange)) props.onChange(isObject(record)?{...record}:null);
         setValue(searchOnly?null:newValue);
     }
 
@@ -139,7 +143,25 @@ const LookupField = (props: Record<string, any>) => {
     }
 
     useEffect(() => {
-        setValue(isObject(props.value) ? props.value : (isObject(defaultValue) ? { label: defaultValue.display, id: defaultValue.id } : null));
+
+        let newValue = null;
+        if (isObject(props.value))
+        {
+            const {id, display} = props.value;
+            if (isNonEmptyString(id))
+            {
+                newValue = {label: isNonEmptyString(display)?display:id, id};
+            }
+        }
+        else
+        {
+            if (isObject(defaultValue))
+            {
+                newValue = { label: defaultValue?.display, id: defaultValue?.id }
+            } 
+        }
+
+        setValue(newValue);
     }, [props.value]);
 
 
@@ -199,3 +221,4 @@ const LookupField = (props: Record<string, any>) => {
 
 LookupField.displayName = DISPLAY_NAME;
 export default LookupField;
+

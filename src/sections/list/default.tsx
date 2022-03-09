@@ -1,18 +1,17 @@
 import React from 'react';
-import ListBase from './list-base';
-import { doNothing, hasRole } from 'douhub-helper-util';
-import { without, isNil } from 'lodash';
+import BaseList from './base';
+import { doNothing, hasRole, isNonEmptyString } from 'douhub-helper-util';
+import { without, isNil, find } from 'lodash';
 import { DEFAULT_EDIT_COLUMN, _window, DEFAULT_ACTION_COLUMN, DefaultForm } from '../../index';
 
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
 const DefaultList = observer((props: Record<string, any>) => {
-    const { entity, height, search, webQuery } = props;
+    const { entity, height, search, webQuery, width, allowUpload } = props;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
-    
-    const allowCreate = hasRole(context, 'ORG-ADMIN') ||  hasRole(context, 'USER-MANAGER');
+    const allowCreate = hasRole(context, 'ORG-ADMIN') || find(entity.allowCreateRoles,(role:string)=>isNonEmptyString(hasRole(context, role)))?true:false;
 
     const columns = (
         onClick: (record: Record<string, any>, action: string) => {},
@@ -43,20 +42,20 @@ const DefaultList = observer((props: Record<string, any>) => {
     }
 
     return (
-        <ListBase
-            allowUpload={false}
+        <BaseList
+            entity={entity}
+            allowUpload={allowUpload}
             allowCreate={allowCreate}
-            queryId={webQuery.query}
-            statusId={webQuery.status}
+            webQuery={webQuery}
             search={search}
             onRemoveSearch={props.onRemoveSearch}
             onClickRecord={onClickRecord}
             selectionType="checkbox"
-            width={500}
+            width={width}
             height={height}
-            entity={entity}
             columns={columns}
             Form={DefaultForm}
+            Header={DefaultForm}
         />
     )
 })
