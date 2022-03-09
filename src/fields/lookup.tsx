@@ -130,6 +130,18 @@ const LookupField = (props: Record<string, any>) => {
 
     if (_track) console.log({entity, solution, entityName, entityType});
 
+    const onClear = ()=>{
+        if (isFunction(props.onClear)) props.onClear();
+    }
+
+    const onFocus = ()=>{
+        if (isFunction(props.onFocus)) props.onFocus();
+    }
+
+    const onBlur = ()=>{
+        if (isFunction(props.onBlur)) props.onBlur();
+    }
+
     const onChange = (newValue: any) => {
         if (_track) console.log({newValue})
         newValue = isObject(newValue) ? newValue : (isObject(defaultValue) ? { label: defaultValue?.display, id: defaultValue?.id } : null);
@@ -170,6 +182,7 @@ const LookupField = (props: Record<string, any>) => {
         const query: Record<string, any> = {
             "entityName": entity?.entityName,
             attributes,
+            scope: isNonEmptyString(props.scope)?props.scope:'organization',
             "orderBy": [{ "type": "desc", "attribute": "_ts" }]
         };
 
@@ -203,6 +216,9 @@ const LookupField = (props: Record<string, any>) => {
             placeholder={placeholder}
             fetchOptions={doSearch}
             onChange={onChange}
+            onClear={onClear}
+            onFocus={onFocus}
+            onBlur={onBlur}
             disabled={disabled}
             className={`field field-lookup ${className} ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
         />
