@@ -59,7 +59,7 @@ const ListBase = (props: Record<string, any>) => {
             id: 'default-all'
         }, ...entity.statusCodes
     ] : [];
-    const statusId = props.statusId ? props.statusId : (statusCodes.length > 0 && entity.statusCodes[0].id);
+    const statusId = props.statusId ? props.statusId : (statusCodes.length > 0 && statusCodes[0].id);
     const curStatusCode = isNonEmptyString(statusId) && find(statusCodes, (s) => { return s.id == statusId });
 
     const filters = without([

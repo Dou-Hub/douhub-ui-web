@@ -3,7 +3,6 @@ import { map, find, isNil, debounce, isFunction, isInteger, isArray } from 'loda
 import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
 import { LabelField, CSS, NoteField, Select, callAPI, SVG, _window, SelectProps, _track } from '../index';
 
-
 const DISPLAY_NAME = 'LookupField';
 const DEFAULT_LOOKUP_ATTRIBUTES = 'id,avatar,firstName,lastName,fullName,name,title,display,text,entityName,entityType,modifiedOn';
 
@@ -70,7 +69,7 @@ export interface DebounceSelectProps<ValueType = any>
     extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
     fetchOptions: (search: string) => Promise<ValueType[]>;
     debounceTimeout?: number;
-    options?:Record<string,any>[]
+    records?:Record<string,any>[]
 }
 function DebounceSelect<
     ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
@@ -80,13 +79,13 @@ function DebounceSelect<
     const fetchRef = useRef(0);
 
     useEffect(() => {
-        if (isArray(props.options) && props.options.length > 0) {
-            const options: any = map(props.options, (o: Record<string, any>) => {
+        if (isArray(props.records) && props.records.length > 0) {
+            const options: any = map(props.records, (o: Record<string, any>) => {
                 return { label: o.display, value: o.id, record: { ...o } };
             });
             setOptions(options);
         }
-    }, [props.options])
+    }, [props.records])
 
     const debounceFetcher = useMemo(() => {
         const loadOptions = (value: string) => {
@@ -127,7 +126,7 @@ function DebounceSelect<
 const LookupField = (props: Record<string, any>) => {
 
     const { label, disabled, note, style, labelStyle, inputStyle,
-        entityName, entityType, searchOnly, fullRecord,
+        entityName, entityType, searchOnly, fullRecord, 
         alwaysShowLabel, hideLabel, wrapperStyle } = props;
 
     const searchMethod = `${props.searchMethod}`.toLowerCase() == 'elastic' ? 'elastic' : 'contain';
@@ -135,7 +134,7 @@ const LookupField = (props: Record<string, any>) => {
     const defaultValue: Record<string, any> | null = isObject(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const className = isNonEmptyString(props.className) ? props.className : '';
-    const [searchResult, setSearchResult] = useState<Record<string, any>>([]);
+    const [searchResult, setSearchResult] = useState<Record<string, any>[]>([]);
     const entity = getEntity(solution, entityName, entityType);
     const [value, setValue] = useState<Record<string, any> | null>(null);
     const attributes = isNonEmptyString(props.attributes) ? props.attributes : (fullRecord == true ? '*' : DEFAULT_LOOKUP_ATTRIBUTES);
@@ -228,6 +227,7 @@ const LookupField = (props: Record<string, any>) => {
             style={{ ...style, ...inputStyle }}
             value={value}
             showSearch={true}
+            records={searchResult}
             placeholder={placeholder}
             fetchOptions={doSearch}
             onChange={onChange}
