@@ -6,12 +6,12 @@ import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
 const ListHeader = (props: Record<string, any>) => {
 
     const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,
-         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
+        statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
     const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : 0;
     const [showUploadModal, setShowUploadModal] = useState<string | null>(null);
-    
+
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
             let newQuery: Record<string, any> | null = null;
@@ -91,7 +91,7 @@ const ListHeader = (props: Record<string, any>) => {
                 Upload {entity.uiCollectionName}
             </div>
         </Menu.Item></Menu>
-    
+
 
     return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
@@ -104,7 +104,7 @@ const ListHeader = (props: Record<string, any>) => {
         <div className={`douhub-list-title ${sidePanel != 'none' ? 'ml-2' : ''}`}>
             {isArray(queries) && queries.length > 0 ?
                 <Select
-                    style={{ minWidth: 150 }}
+                    style={{ minWidth: isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150 }}
                     labelInValue
                     bordered={false}
                     value={query}
@@ -118,7 +118,7 @@ const ListHeader = (props: Record<string, any>) => {
         </div>
 
         {isArray(statusCodes) && statusCodes.length > 0 && <Select
-            style={{ minWidth: 100 }}
+            style={{ minWidth: isInteger(props.statusSelectorMinWidth) ? props.statusSelectorMinWidth : 100 }}
             labelInValue
             placeholder="Status"
             bordered={false}

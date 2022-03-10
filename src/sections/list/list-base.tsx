@@ -340,6 +340,8 @@ const ListBase = (props: Record<string, any>) => {
             style={{ display: !currentRecord ? 'block' : 'none' }}>
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
+                querySelectorMinWidth={props.querySelectorMinWidth}
+                statusSelectorMinWidth={props.statusSelectorMinWidth}
                 recordForMembership={recordForMembership}
                 allowCreate={allowCreate}
                 allowUpload={allowUpload}
