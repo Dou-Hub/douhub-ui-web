@@ -7,10 +7,17 @@ const ListHeader = (props: Record<string, any>) => {
 
     const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,
         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
+
+    // const querySelectorMinWidth = isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
-    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : 0;
     const [showUploadModal, setShowUploadModal] = useState<string | null>(null);
+    
+    const curQueryTitleLength = isNonEmptyString(query?.title) ? query?.title?.length : 16;
+    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : Math.min(curQueryTitleLength,30);
+    
+    const curStatusTitleLength = isNonEmptyString(status?.title) ? status?.title?.length : 16;
+    const statusTitleMaxLength = isInteger(props.statusTitleMaxLength) ? props.statusTitleMaxLength : Math.min(curStatusTitleLength,20);
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
@@ -22,7 +29,8 @@ const ListHeader = (props: Record<string, any>) => {
             newQuery = {
                 value: newQuery?.id,
                 key: newQuery?.id,
-                label: queryTitleMaxLength > 15 ? shortenString(newQuery?.title, queryTitleMaxLength) : queryTitleMaxLength
+                title: newQuery?.title,
+                label: shortenString(newQuery?.title, queryTitleMaxLength)
 
             };
             setQuery(newQuery);
@@ -41,7 +49,8 @@ const ListHeader = (props: Record<string, any>) => {
             newStatus = {
                 value: newStatus?.id,
                 key: newStatus?.id,
-                label: newStatus?.title
+                title: newStatus?.title,
+                label: shortenString(newStatus?.title, statusTitleMaxLength)
             };
             setStatus(newStatus);
         }
@@ -59,7 +68,7 @@ const ListHeader = (props: Record<string, any>) => {
     }
 
     const onChangeStatus = (curStatus: Record<string, any>) => {
-        const newStatus = { ...curStatus, value: curStatus.key, name: curStatus.label };
+        const newStatus = { ...curStatus, value: curStatus.key, title: curStatus.label };
         setStatus(newStatus);
         if (isFunction(props.onChangeStatus)) props.onChangeStatus(newStatus);
     }
@@ -104,7 +113,7 @@ const ListHeader = (props: Record<string, any>) => {
         <div className={`douhub-list-title ${sidePanel != 'none' ? 'ml-2' : ''}`}>
             {isArray(queries) && queries.length > 0 ?
                 <Select
-                    style={{ minWidth: isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150 }}
+                    // style={{ minWidth: querySelectorMinWidth }}
                     labelInValue
                     bordered={false}
                     value={query}

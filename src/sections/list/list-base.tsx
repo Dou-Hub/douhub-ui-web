@@ -137,7 +137,7 @@ const ListBase = (props: Record<string, any>) => {
             .finally(() => {
                 setFirstLoading(false);
             })
-    }, [entity, reload, search, queryId])
+    }, [entity, reload, search, queryId, statusId])
 
     const onClickCreateRecord = () => {
         const newRecord: Record<string, any> = { id: newGuid(), entityName: entity.entityName };
@@ -340,7 +340,8 @@ const ListBase = (props: Record<string, any>) => {
             style={{ display: !currentRecord ? 'block' : 'none' }}>
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
-                querySelectorMinWidth={props.querySelectorMinWidth}
+                queryTitleMaxLength={props.queryTitleMaxLength}
+                // querySelectorMinWidth={props.querySelectorMinWidth}
                 statusSelectorMinWidth={props.statusSelectorMinWidth}
                 recordForMembership={recordForMembership}
                 allowCreate={allowCreate}
