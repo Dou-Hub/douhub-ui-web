@@ -85,20 +85,24 @@ const css = `
 
 const UploadModalStep3 = (props: {
     entity: Record<string, any>,
-    regarding?:Record<string, any>,
+    recordForMembership?:Record<string, any>,
     onChange?: any,
     modalStyle: Record<string, any>,
+    error?:string,
     onError?: any
 }) => {
 
-    const {entity, regarding} = props;
-    const regardingId = regarding?.id;
+    const {entity, recordForMembership} = props;
+    const recordIdForMembership = recordForMembership?.id;
     const [data, setData] = useState<Record<string, any>[]>([]);
     const [dataChanged, setDataChanged] = useState<string>('');
     const mustReplaceDuplication = entity?.upload?.mustReplaceDuplication == true;
     const [replaceExisting, setReplaceExisting] = useState<boolean>(isBoolean(entity?.upload?.allowDuplication) ? entity?.upload?.allowDuplication : true || mustReplaceDuplication);
     const [error, setError] = useState('');
 
+    useEffect(()=>{
+        setError(props.error?props.error:'');
+    },[props.error])
 
     const { height} = props.modalStyle;
 
@@ -112,16 +116,11 @@ const UploadModalStep3 = (props: {
                 if (result.length > 0) {
                     const newData = isObject(predefinedData) ? map(result, (r) => {
                         const newRecord = { ...r, ...predefinedData };
-                        if (newRecord.membership)
+                        if (newRecord.membership && recordIdForMembership)
                         {
-                            if (regardingId)
-                            {
-                                newRecord.membership[regardingId] = newRecord.membership;
-                            }
-                            else
-                            {
-                                delete newRecord.membership;
-                            }
+                            const membership = cloneDeep(newRecord.membership);
+                            newRecord.membership={};
+                            newRecord.membership[recordIdForMembership] = membership;
                         }
                         return newRecord;
                     }) : cloneDeep(result);

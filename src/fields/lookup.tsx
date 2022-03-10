@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { map, find, isNil,  debounce, isFunction } from 'lodash';
+import { map, find, isNil, debounce, isFunction, isInteger, isArray } from 'lodash';
 import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
 import { LabelField, CSS, NoteField, Select, callAPI, SVG, _window, SelectProps, _track } from '../index';
 
 
 const DISPLAY_NAME = 'LookupField';
+const DEFAULT_LOOKUP_ATTRIBUTES = 'id,avatar,firstName,lastName,fullName,name,title,display,text,entityName,entityType,modifiedOn';
 
 const LOOKUP_FIELD_CSS = `
     .field-lookup-wrapper 
@@ -69,6 +70,7 @@ export interface DebounceSelectProps<ValueType = any>
     extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
     fetchOptions: (search: string) => Promise<ValueType[]>;
     debounceTimeout?: number;
+    options?:Record<string,any>[]
 }
 function DebounceSelect<
     ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
@@ -76,6 +78,15 @@ function DebounceSelect<
     const [fetching, setFetching] = useState(false);
     const [options, setOptions] = useState<ValueType[]>([]);
     const fetchRef = useRef(0);
+
+    useEffect(() => {
+        if (isArray(props.options) && props.options.length > 0) {
+            const options: any = map(props.options, (o: Record<string, any>) => {
+                return { label: o.display, value: o.id, record: { ...o } };
+            });
+            setOptions(options);
+        }
+    }, [props.options])
 
     const debounceFetcher = useMemo(() => {
         const loadOptions = (value: string) => {
@@ -116,78 +127,82 @@ function DebounceSelect<
 const LookupField = (props: Record<string, any>) => {
 
     const { label, disabled, note, style, labelStyle, inputStyle,
-        entityName, entityType, attributes, searchOnly, 
+        entityName, entityType, searchOnly, fullRecord,
         alwaysShowLabel, hideLabel, wrapperStyle } = props;
-    
-    const searchMethod =`${props.searchMethod}`.toLowerCase()=='elastic'?'elastic':'contain';
+
+    const searchMethod = `${props.searchMethod}`.toLowerCase() == 'elastic' ? 'elastic' : 'contain';
     const solution = _window.solution;
     const defaultValue: Record<string, any> | null = isObject(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const className = isNonEmptyString(props.className) ? props.className : '';
     const [searchResult, setSearchResult] = useState<Record<string, any>>([]);
     const entity = getEntity(solution, entityName, entityType);
-    const [value, setValue] = useState<Record<string, any>|null>(null);
+    const [value, setValue] = useState<Record<string, any> | null>(null);
+    const attributes = isNonEmptyString(props.attributes) ? props.attributes : (fullRecord == true ? '*' : DEFAULT_LOOKUP_ATTRIBUTES);
+    const count = isInteger(props.count) && props.count > 0 ? props.count : 20;
 
-    if (_track) console.log({entity, solution, entityName, entityType});
+    if (_track) console.log({ entity, solution, entityName, entityType });
 
-    const onClear = ()=>{
+    const onClear = () => {
         if (isFunction(props.onClear)) props.onClear();
     }
 
-    const onFocus = ()=>{
+    const onFocus = () => {
         if (isFunction(props.onFocus)) props.onFocus();
     }
 
-    const onBlur = ()=>{
+    const onBlur = () => {
         if (isFunction(props.onBlur)) props.onBlur();
     }
 
     const onChange = (newValue: any) => {
-        if (_track) console.log({newValue})
+        if (_track) console.log({ newValue })
         newValue = isObject(newValue) ? newValue : (isObject(defaultValue) ? { label: defaultValue?.display, id: defaultValue?.id } : null);
-        const record = isNil(newValue)? null: find(searchResult, (r: any) => r.id == newValue.value);
-        if (isFunction(props.onChange)) props.onChange(isObject(record)?{...record}:null);
-        setValue(searchOnly?null:newValue);
+        const record = isNil(newValue) ? null : find(searchResult, (r: any) => r.id == newValue.value);
+        if (isFunction(props.onChange)) props.onChange(isObject(record) ? { ...record } : null);
+        setValue(searchOnly ? null : newValue);
     }
 
-    const onDelete = ()=>{
+    const onDelete = () => {
         onChange(null);
     }
 
     useEffect(() => {
-
         let newValue = null;
-        if (isObject(props.value))
-        {
-            const {id, display} = props.value;
-            if (isNonEmptyString(id))
-            {
-                newValue = {label: isNonEmptyString(display)?display:id, id};
+        if (isObject(props.value)) {
+            const { id, display } = props.value;
+            if (isNonEmptyString(id)) {
+                newValue = { label: isNonEmptyString(display) ? display : id, id };
             }
         }
-        else
-        {
-            if (isObject(defaultValue))
-            {
+        else {
+            if (isObject(defaultValue)) {
                 newValue = { label: defaultValue?.display, id: defaultValue?.id }
-            } 
+            }
         }
 
         setValue(newValue);
     }, [props.value]);
 
+    useEffect(() => {
+        if (props.preLoad == true) {
+            doSearch('');
+        }
+    }, [props.preLoad]);
+
 
     const doSearch = async (search: string): Promise<Array<Record<string, any>>> => {
         // setSearching(true);
         const query: Record<string, any> = {
+            top: count,
             "entityName": entity?.entityName,
             attributes,
-            scope: isNonEmptyString(props.scope)?props.scope:'organization',
+            scope: isNonEmptyString(props.scope) ? props.scope : 'organization',
             "orderBy": [{ "type": "desc", "attribute": "_ts" }]
         };
 
-        let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}${searchMethod=='elastic'?'search':'query'}`;
-        query.keywords = search;
+        let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}${searchMethod == 'elastic' ? 'search' : 'query'}`;
+        if (isNonEmptyString(search)) query.keywords = search;
         let data: Array<Record<string, any>> = [];
 
         try {
@@ -208,7 +223,7 @@ const LookupField = (props: Record<string, any>) => {
 
 
     const renderSelect = () => {
-       
+
         return <DebounceSelect
             style={{ ...style, ...inputStyle }}
             value={value}
@@ -224,13 +239,13 @@ const LookupField = (props: Record<string, any>) => {
         />
     }
 
-    return <div className={`flex flex-col w-full field-lookup-wrapper ${isObject(value)?'field-lookup-has-value':'field-lookup-no-value'}`} style={wrapperStyle}>
+    return <div className={`flex flex-col w-full field-lookup-wrapper ${isObject(value) ? 'field-lookup-has-value' : 'field-lookup-no-value'}`} style={wrapperStyle}>
         <CSS id="field-lookup-css" content={LOOKUP_FIELD_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
         {renderSelect()}
-        <SVG src="/icons/x.svg" style={{width:10, height:10}} color="#999999" className="delete-button" onClick={onDelete}/>
+        <SVG src="/icons/x.svg" style={{ width: 10, height: 10 }} color="#999999" className="delete-button" onClick={onDelete} />
         <NoteField text={note} />
     </div>
 };

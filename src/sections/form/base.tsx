@@ -40,8 +40,15 @@ const FormBase = observer((props: Record<string, any>) => {
     }
 
     const onChangeData = (field: Record<string, any>, value: any) => {
-        const newData: any = cloneDeep(data);
+
+        let newData: any = cloneDeep(data);
         newData[field.name] = value;
+
+        if (isFunction(field.onChange)) 
+        {
+            newData = field.onChange(field, value, newData);
+        }
+        
         updateData(newData);
     }
 

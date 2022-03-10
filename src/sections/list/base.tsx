@@ -30,7 +30,7 @@ const BaseList = observer((props: {
     const Header = props.Header ? props.Header : ListHeader;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
-    const regarding = context.regarding;
+    const recordForMembership = context.recordByMembership;
     // const solution = _window.solution;
 
     const onClickRecord = (record: Record<string, any>, action: string) => {
@@ -44,7 +44,7 @@ const BaseList = observer((props: {
     return (
         <>
             <ListBase
-                regarding={regarding}
+                recordForMembership={recordForMembership}
                 allowUpload={allowUpload}
                 allowCreate={allowCreate}
                 queryId={webQuery && webQuery.query}

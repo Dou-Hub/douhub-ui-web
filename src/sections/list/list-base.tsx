@@ -2,11 +2,12 @@ import {
     callAPI, SVG, DEFAULT_COLUMNS, _window, AlertField, CSS,
     Notification, DefaultForm, setLocalStorage,
     ListCategoriesTags, ListFilters, ListFormHeader,
-    Splitter, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage
+    Splitter, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage,
+    _track
 } from '../../index';
 import React, { useEffect, useState } from 'react';
-import { getRecordDisplay, isNonEmptyString, newGuid, setWebQueryValue } from 'douhub-helper-util';
-import { without, throttle, isObject, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
+import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue } from 'douhub-helper-util';
+import { without, throttle, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
 import ListHeader from './list-header';
@@ -14,7 +15,7 @@ import ListHeader from './list-header';
 const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
-    const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, regarding } = props;
+    const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, recordForMembership } = props;
     // const deleteConfirmation = entity?.deleteConfirmation ? entity?.deleteConfirmation : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
@@ -38,16 +39,18 @@ const ListBase = (props: Record<string, any>) => {
     const maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : 800;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
-
+    const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
     const showSidePanel = sidePanel && !currentRecord && areaWidth >= 650 && !hideListCategoriesTags;
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
 
-    const queries = isArray(entity.queries) && entity.queries.length > 0 ? [
-        {
+    const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
+
+    const queries = isArray(predefinedQueries) && predefinedQueries.length > 0 ? without([
+        props.hideQueryForAll == true ? null : {
             title: `All ${entity.uiCollectionName}`,
             id: 'default-all'
-        }, ...entity.queries
-    ] : [];
+        }, ...predefinedQueries
+    ], null) : [];
     const queryId = props.queryId ? props.queryId : (queries.length > 0 && queries[0].id);
 
     const statusCodes = isArray(entity.statusCodes) && entity.statusCodes.length > 0 ? [
@@ -104,7 +107,16 @@ const ListBase = (props: Record<string, any>) => {
             orderBy: [{ "type": "desc", "attribute": "_ts" }],
             conditions: []
         };
+
+        // if (_track) console.log({ recordForMembership, scope });
+
+        if (isObject(recordForMembership) && isNonEmptyString(recordForMembership.id) && scope == 'membership') {
+            query.scope = 'membership';
+            query.recordIdForMembership = recordForMembership.id;
+        }
+
         const curQuery = isNonEmptyString(queryId) && find(queries, (q) => q.id == queryId);
+        if (isArray(props.conditions)) query.conditions = [...query.conditions, ...props.conditions];
         if (curQuery && isArray(curQuery.conditions)) query.conditions = [...query.conditions, ...curQuery.conditions];
         if (curStatusCode && isArray(curStatusCode.conditions)) query.conditions = [...query.conditions, ...curStatusCode.conditions];
 
@@ -328,7 +340,7 @@ const ListBase = (props: Record<string, any>) => {
             style={{ display: !currentRecord ? 'block' : 'none' }}>
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
-                regarding={regarding}
+                recordForMembership={recordForMembership}
                 allowCreate={allowCreate}
                 allowUpload={allowUpload}
                 sidePanel={hideListCategoriesTags || areaWidth < 650 ? 'none' : sidePanel}
@@ -395,7 +407,7 @@ const ListBase = (props: Record<string, any>) => {
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-6 pt-2 pb-6 overflow-hidden overflow-y-auto"
                             style={{ borderTop: 'solid 1rem #ffffff', marginTop: 78, height: height - formHeightAdjust }}>
-                            <Form data={currentRecord} onChange={onChangeCurrentRecord} />
+                            <Form data={currentRecord} onChange={onChangeCurrentRecord} recordForMembership={recordForMembership}/>
                         </div>}
                     </div>
                 </ListFormResizer>

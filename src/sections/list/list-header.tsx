@@ -6,7 +6,7 @@ import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
 const ListHeader = (props: Record<string, any>) => {
 
     const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,
-         statusId, menuForCreateButton, allowCreate, allowUpload, regarding } = props;
+         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
     const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : 0;
@@ -168,7 +168,7 @@ const ListHeader = (props: Record<string, any>) => {
             </div>
         </div>
         <UploadModal
-            regarding={regarding}
+            recordForMembership={recordForMembership}
             onSubmitSucceed={() => { }}
             entity={entity}
             show={showUploadModal}
