@@ -6,7 +6,7 @@ import { isNonEmptyString } from 'douhub-helper-util';
 
 export const rendeActionButtonColumn = (
     menuItems: Array<{ title: string, action: string, confirmation?: string }>,
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -22,7 +22,7 @@ export const rendeActionButtonColumn = (
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
-        render: (id: string, record: Record<string, any>, rowIndex:number) => {
+        render: (id: string, record: Record<string, any>, rowIndex: number) => {
             const r = { id, ...record };
             const menu = <Menu>{map(menuItems, (menuItem: any, index: number) => {
                 return <Menu.Item
@@ -66,7 +66,7 @@ export const rendeActionButtonColumn = (
 export const renderIconButtonColumn = (
     iconUrl: string,
     action: string,
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -81,7 +81,7 @@ export const renderIconButtonColumn = (
         width: 40,
         fixed: 'right',
         className: 'cursor-pointer',
-        render: (id: string, record: Record<string, any>, rowIndex:number) => {
+        render: (id: string, record: Record<string, any>, rowIndex: number) => {
 
             const r = { id, ...record };
             const wrapperClassName = isFunction(onRenderWrapperClassName) ? onRenderWrapperClassName(r) : '';
@@ -100,7 +100,7 @@ export const renderIconButtonColumn = (
 }
 
 export const DEFAULT_EDIT_COLUMN = (
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -119,7 +119,7 @@ export const DEFAULT_EDIT_COLUMN = (
 
 
 export const DEFAULT_EMAIL_COLUMN = (
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
@@ -137,19 +137,23 @@ export const DEFAULT_EMAIL_COLUMN = (
 }
 
 export const DEFAULT_ACTION_COLUMN = (
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     menuItems?: Array<{ title: string, action: string, confirmation?: string }>,
     onRenderWrapperClassName?: (record: Record<string, any>) => string,
     onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
     onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>
+    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
+    settings?: {
+        deleteConfirmationMessage?: string,
+        deleteButtonLabel?: string
+    }
 ) => {
 
-    const deleteConfirmation = entity?.deleteConfirmation?entity?.deleteConfirmation:`Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`
+    const deleteConfirmation = settings?.deleteConfirmationMessage ? settings?.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`
     return rendeActionButtonColumn([
-        { title: "Delete", action: "delete", confirmation: deleteConfirmation },
-        ...(isArray(menuItems)?menuItems:[])
+        { title: settings?.deleteButtonLabel ? settings?.deleteButtonLabel : "Delete", action: "delete", confirmation: deleteConfirmation },
+        ...(isArray(menuItems) ? menuItems : [])
     ],
         onClick,
         entity,
@@ -161,7 +165,7 @@ export const DEFAULT_ACTION_COLUMN = (
 }
 
 export const DEFAULT_COLUMNS = (
-    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?:number) => void,
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity: Record<string, any>
 ) => {
     return without([

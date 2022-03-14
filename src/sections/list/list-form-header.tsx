@@ -1,12 +1,13 @@
 import React from 'react';
-import {SVG, Popconfirm, Tooltip} from '../../index';
+import { SVG, Popconfirm, Tooltip } from '../../index';
 import { getRecordDisplay } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 
 const ListFormHeader = (props: Record<string, any>) => {
 
-    const {  entity, recordSaving, currentRecord } = props;
-    const deleteConfirmation = entity?.deleteConfirmation ? entity?.deleteConfirmation : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
+    const { entity, recordSaving, currentRecord } = props;
+    const deleteConfirmationMessage = props.deleteConfirmationMessage ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
+    const deleteButtonLabel = props.deleteButtonLabel ? props.deleteButtonLabel : `Delete`;
     const display = getRecordDisplay(currentRecord ? currentRecord : {});
     const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
@@ -21,14 +22,16 @@ const ListFormHeader = (props: Record<string, any>) => {
                 <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
                 <span className="pl-2">{recordSaving == 'create' ? 'Creating ...' : 'Updating ...'}</span>
             </div>}
-            {recordSaving == '' && <Tooltip color="red" placement='top' title="Delete">
+            {recordSaving == '' && <Tooltip color="red" placement='top' title={deleteButtonLabel}>
                 <Popconfirm
                     placement="bottom"
-                    title={deleteConfirmation}
+                    title={deleteConfirmationMessage}
                     onConfirm={() => { isFunction(props.onClickDeleteRecord) && props.onClickDeleteRecord() }}
-                    okText="Delete"
-                    cancelText="Cancel">
-                    <div className="hidden ml-2 sm:flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-red-600 rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600">
+                    okText="Yes"
+                    cancelText="No">
+                    <div
+                        style={{ height: 30 }}
+                        className="hidden ml-2 sm:flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-red-600 rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600">
                         <SVG src="/icons/delete.svg" color="#ffffff" style={{ width: 18 }} />
                     </div>
                 </Popconfirm>

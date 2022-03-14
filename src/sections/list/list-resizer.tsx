@@ -90,7 +90,7 @@ const ListFormResizer = (props: Record<string, any>) => {
         style={{ ...style, display: 'flex' }}
 
     >
-        <div className="cursor-col-resize h-full" style={{ width: 4 }}></div>
+        <div className="cursor-col-resize h-full" style={{ width: 4, backgroundColor: '#ffffff' }}></div>
         {props.children}
     </div>
 };

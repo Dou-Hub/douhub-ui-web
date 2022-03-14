@@ -1,8 +1,8 @@
 import {
     callAPI, SVG, DEFAULT_COLUMNS, _window, AlertField, CSS,
     Notification, DefaultForm, setLocalStorage,
-    ListCategoriesTags, ListFilters, ListFormHeader,
-    Splitter, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage,
+    ListCategoriesTags as ListCategoriesTagsInternal, ListFilters, ListFormHeader,
+    Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage,
     _track
 } from '../../index';
 import React, { useEffect, useState } from 'react';
@@ -11,12 +11,18 @@ import { without, throttle, isNumber, map, isFunction, isArray, find, isNil } fr
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
 import ListHeader from './list-header';
+// import ListHeader from 'douhub-ui-web';
+
+const NonSplitter = (props: Record<string, any>) => {
+    return <div className="flex flex-row w-full">
+        {props.children}
+    </div>
+}
 
 const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
     const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, recordForMembership } = props;
-    // const deleteConfirmation = entity?.deleteConfirmation ? entity?.deleteConfirmation : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
     const sidePanelCacheKey = `list-sidePanel-${entity?.entityName}-${entity?.entityType}`;
@@ -33,7 +39,9 @@ const ListBase = (props: Record<string, any>) => {
     const Form = props.Form ? props.Form : DefaultForm;
     const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 85;
     const Header = props.Header ? props.Header : ListHeader;
-
+    const supportSlitter = props.supportSlitter == true
+    const Splitter = supportSlitter ? SplitterInternal : NonSplitter;
+    const ListCategoriesTags = props.ListCategoriesTags ? props.ListCategoriesTags : ListCategoriesTagsInternal;
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
     const maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : 800;
@@ -42,7 +50,9 @@ const ListBase = (props: Record<string, any>) => {
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
     const showSidePanel = sidePanel && !currentRecord && areaWidth >= 650 && !hideListCategoriesTags;
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
-
+    const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel)?props.deleteButtonLabel:'Delete';
+    const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage)? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
+    
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
 
     const queries = isArray(predefinedQueries) && predefinedQueries.length > 0 ? without([
@@ -150,6 +160,18 @@ const ListBase = (props: Record<string, any>) => {
         setCurrentRecord(null);
     }
 
+    const onClickDeleteRecordInternal = async (entity: Record<string, any>, record: Record<string, any>, recordForMembership?: Record<string, any>) => {
+        return new Promise((resolve, reject) => {
+
+            const postData: Record<string, any> = { id: record.id }
+            if (isNonEmptyString(recordForMembership?.id)) postData.recordIdForMembership = recordForMembership?.id;
+
+            callAPI(solution, `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}delete`, postData, 'delete')
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
     const onClickDeleteRecord = (record: Record<string, any>) => {
 
         setResult({
@@ -166,15 +188,31 @@ const ListBase = (props: Record<string, any>) => {
             })
         });
 
-        callAPI(solution, `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}delete`, { id: record.id }, 'delete')
+        const callToDelete = isFunction(props.onClickDeleteRecord) ? props.onClickDeleteRecord : onClickDeleteRecordInternal;
+
+        callToDelete(entity, record, recordForMembership)
             .then(() => {
-                const newResult: Record<string, any> = {
-                    ...result, data: without(map(result?.data, (r) => {
-                        return r.id == record.id ? null : r;
-                    }), null)
-                };
-                newResult.count = newResult.count - 1;
-                setResult(newResult);
+                if (!props.keepRecordInListAfterDelete) {
+                    const newResult: Record<string, any> = {
+                        ...result, data: without(map(result?.data, (r) => {
+                            delete r.uiDoing;
+                            delete r.uiDisabled;
+                            return r.id == record.id ? null : r;
+                        }), null)
+                    };
+                    setResult(newResult);
+                }
+                else
+                {
+                    setResult({
+                        ...result, data: map(result?.data, (r) => {
+                            delete r.uiDoing;
+                            delete r.uiDisabled;
+                            return r;
+                        })
+                    });
+                }
+                
             })
             .catch((error: any) => {
                 console.error(error);
@@ -188,7 +226,7 @@ const ListBase = (props: Record<string, any>) => {
                 setNotification({ id: newGuid(), message: 'Error', description: `Sorry, it was failed to delete the ${entity.uiName}.`, type: 'error' });
             })
             .finally(() => {
-
+                
             })
     }
 
@@ -327,17 +365,18 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const renderListCategoriesTags = () => {
-        return <div className="w-full h-full overflow-hidden" style={areaWidth > 650 ? {} : { display: 'none' }}>
+        return <div className="w-full h-full overflow-hidden"
+            style={{ ...areaWidth > 650 ? {} : { display: 'none' }, ...supportSlitter ? {} : { width: 260 }, ...currentRecord ? { display: 'none' } : {} }}>
             <ListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} />
         </div>
     }
 
-    console.log({ statusCodes, statusId })
 
     const renderListSection = () => {
         return <div
             className={`w-full h-full flex-1 overflow-hidden  ${showSidePanel ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
-            style={{ display: !currentRecord ? 'block' : 'none' }}>
+        // style={{ display: !currentRecord ? 'block' : 'none' }}
+        >
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
                 queryTitleMaxLength={props.queryTitleMaxLength}
@@ -396,12 +435,21 @@ const ListBase = (props: Record<string, any>) => {
                 {renderListSection()}
             </Splitter> : renderListSection()}
 
-            {currentRecord && <div className="relative w-full h-full z-40" style={{ backgroundColor: '#fafafa', minHeight: height }}>
-                <ListFormResizer id={currentRecord.id} onChangeSize={onUpdateFormWidth} defaultWidth={formWidth > areaWidth ? areaWidth : formWidth} className="absolute top-0 right-0"
-                    style={{ height, maxWidth: maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth, minWidth: 560 }}>
+            {currentRecord && <div className="relative h-full z-40" style={{ backgroundColor: '#fafafa', minHeight: height }}>
+                <ListFormResizer
+                    id={currentRecord.id}
+                    onChangeSize={onUpdateFormWidth}
+                    defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
+                    className="absolute top-0 right-0"
+                    style={{
+                        height, maxWidth: maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth, minWidth: 560,
+                        borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%'
+                    }}>
                     <div className="list-form w-full h-full overflow-x-hidden overflow-y-auto border border-0 border-l drop-shadow-lg bg-white">
                         <ListFormHeader
                             entity={entity}
+                            deleteButtonLabel={deleteButtonLabel}
+                            deleteConfirmationMessage={deleteConfirmationMessage}
                             currentRecord={currentRecord}
                             recordSaving={recordSaving}
                             onClickClose={onClickCloseForm}
@@ -410,7 +458,7 @@ const ListBase = (props: Record<string, any>) => {
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-6 pt-2 pb-6 overflow-hidden overflow-y-auto"
                             style={{ borderTop: 'solid 1rem #ffffff', marginTop: 78, height: height - formHeightAdjust }}>
-                            <Form data={currentRecord} onChange={onChangeCurrentRecord} recordForMembership={recordForMembership}/>
+                            <Form data={currentRecord} onChange={onChangeCurrentRecord} recordForMembership={recordForMembership} />
                         </div>}
                     </div>
                 </ListFormResizer>

@@ -71,7 +71,7 @@ export const ARTICLE_CSS =  `
     .article p,
     .article li
     {
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         line-height: 1.5rem
     }
 

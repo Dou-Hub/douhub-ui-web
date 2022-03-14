@@ -34,7 +34,7 @@ const HtmlField = (props: Record<string, any>) => {
 
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
-        name, wrapperStyle, 
+        name, wrapperStyle,
         hideLabel, hideH1, hideH2, hideH3,
         hideH4, record } = props;
 
@@ -42,7 +42,7 @@ const HtmlField = (props: Record<string, any>) => {
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState(isNonEmptyString(props.value) ? props.value : defaultValue);
     const [id] = useState(newGuid());
-    const layoutClassName = props.layoutClassName?props.layoutClassName:'';
+    const layoutClassName = props.layoutClassName ? props.layoutClassName : '';
 
     if (!_window?.HtmlFields) _window.HtmlFields = {};
 
@@ -215,7 +215,11 @@ const HtmlField = (props: Record<string, any>) => {
                     <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
                 </button>
                 <button className="float-menu">
-                    <Uploader entityName={record.entityName} attributeName={name}
+                    <Uploader
+                        iconStyle={{width:20, height:20}}
+                        hideLabel={true}
+                        entityName={record.entityName}
+                        attributeName={name}
                         fileType="Photo"
                         signedUrlSize={960}
                         onSuccess={onUploadPhoto}

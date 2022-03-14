@@ -27,6 +27,7 @@ export const CHECKBOX_FIELD_CSS = `
     {
         height: 16px;
         width: 16px;
+        min-width: 16px;
     }
 
     .field-checkbox .checkmark 

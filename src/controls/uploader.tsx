@@ -34,6 +34,7 @@ const Uploader = (props: {
     recordId: string,
     attributeName: string,
     wrapperStyle?: Record<string, any>,
+    iconStyle?: Record<string, any>,
     label?: string,
     signedUrlSize?: 'raw' | 120 | 240 | 480 | 960 | 1440,
     signedUrlFormat?: 'original' | 'webp',
@@ -46,14 +47,14 @@ const Uploader = (props: {
     accept?: string,
     fileNamePrefix?: string,
     hideLabel?: boolean,
-    resultType?:"content"|"upload"|"both"
+    resultType?: "content" | "upload" | "both"
 }) => {
 
     const { entityName, recordId, attributeName, wrapperStyle, label,
         fileNamePrefix,
         signedUrlFormat, fileType, iconUrl } = props;
 
-    const resultType = props.resultType?props.resultType:'upload';
+    const resultType = props.resultType ? props.resultType : 'upload';
     const solution = _window.solution;
     const [files, setFiles] = useState<Array<any>>([]);
     const [error, setError] = useState('');
@@ -62,9 +63,10 @@ const Uploader = (props: {
     const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
     const hideLabel = props.hideLabel == true ? true : false;
+    const iconSyle = { ...{ width: 30, height: 30 }, ...props.iconStyle };
 
     const uiFormat = props.uiFormat == 'photo' ? 'photo' : 'icon';
-  
+
     useEffect(() => {
         setValue(props.value);
         if (isNil(previewValue)) setPreviewValue(props.value);
@@ -89,9 +91,9 @@ const Uploader = (props: {
         if (isFunction(props.onSuccess)) props.onSuccess({ content: fileContent });
     }
 
-    const onUpload = async (result: Record<string, any>, includeContent:boolean) => {
+    const onUpload = async (result: Record<string, any>, includeContent: boolean) => {
         let base64Data: any = await getBase64(result.file);
-
+ 
         //NOTE: Need to replace the data:xxx;base64 for other type of documents
         base64Data = base64Data.replace(/^data:image\/\w+;base64,/, "");
         base64Data = base64Data.replace(/^data:text\/\w+;base64,/, "");
@@ -134,7 +136,7 @@ const Uploader = (props: {
 
         if (_track) console.log({ cfSignedResult });
 
-        const fileContent = includeContent==true ? await getContent(result.file):null;
+        const fileContent = includeContent == true ? await getContent(result.file) : null;
         if (isFunction(props.onSuccess)) props.onSuccess(assign({ s3Setting, cfSignedResult }, fileContent ? { content: fileContent } : {}));
     }
 
@@ -148,18 +150,17 @@ const Uploader = (props: {
                 setUploading(true);
                 setError('');
 
-                switch(resultType)
-                {
+                switch (resultType) {
                     case 'content':
                         {
                             await onContentOnly(result);
                             break;
-                    }
+                        }
                     case 'both':
                         {
                             await onUpload(result, true);
                             break;
-                    }
+                        }
                     default:
                         {
                             await onUpload(result, false);
@@ -188,13 +189,13 @@ const Uploader = (props: {
         return <>
             {files.length == 0 && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
-                <SVG src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
+                <SVG src="/icons/upload-to-cloud.svg" style={iconSyle} />
                 {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
                 {isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
             </div>}
             {uploading && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
-                <SVG src="/icons/upload-to-cloud.svg" className="spinner" style={{ width: 30, height: 30 }} />
+                <SVG src="/icons/upload-to-cloud.svg" className="spinner" style={iconSyle} />
             </div>}
         </>
     }
@@ -203,13 +204,13 @@ const Uploader = (props: {
         if (uiFormat != 'icon') return null;
         return <>
             {files.length == 0 && !uploading && <div className="flex flex-col items-center">
-                <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={{ width: 30, height: 30 }} color={error ? '#ff0000' : '#000000'} />
+                <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={iconSyle} color={error ? '#ff0000' : '#000000'} />
                 {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
                 {isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
             </div>
             }
             {uploading && <div className="flex flex-col items-center">
-                <SVG className="spinner" src="/icons/upload-to-cloud.svg" style={{ width: 30, height: 30 }} />
+                <SVG className="spinner" src="/icons/upload-to-cloud.svg" style={iconSyle} />
             </div>
             }
         </>

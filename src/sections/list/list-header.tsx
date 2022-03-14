@@ -1,4 +1,4 @@
-import { Menu, Dropdown, SVG, Select, SelectOption, _window, UploadModal } from '../../index';
+import { Dropdown, SVG, Select, SelectOption, _window, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
 import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
 import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
@@ -77,9 +77,9 @@ const ListHeader = (props: Record<string, any>) => {
         if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
     }
 
-    const onClickUploadRecords = () => {
-        if (isFunction(props.onClickUploadRecords)) props.onClickUploadRecords();
-    }
+    // const onClickUploadRecords = () => {
+    //     if (isFunction(props.onClickUploadRecords)) props.onClickUploadRecords();
+    // }
 
     const onClickRefresh = () => {
         if (isFunction(props.onToggleSidePanel)) props.onClickRefresh();
@@ -89,18 +89,17 @@ const ListHeader = (props: Record<string, any>) => {
         setShowUploadModal(newGuid());
     }
 
-    const menu = menuForCreateButton ? menuForCreateButton : isFunction(props.onClickUploadRecords) && <Menu>
-        <Menu.Item key="create">
-            <div onClick={onClickCreateRecord}>
-                Create {entity.uiName}
-            </div>
-        </Menu.Item>
-        <Menu.Item key="upload">
-            <div onClick={onClickUploadRecords}>
-                Upload {entity.uiCollectionName}
-            </div>
-        </Menu.Item></Menu>
-
+    // const menu = menuForCreateButton ? menuForCreateButton : isFunction(props.onClickUploadRecords) && <Menu>
+    // <Menu.Item key="create">
+    //     <div onClick={onClickCreateRecord}>
+    //         Create {entity.uiName}
+    //     </div>
+    // </Menu.Item>
+    // <Menu.Item key="upload">
+    //     <div onClick={onClickUploadRecords}>
+    //         Upload {entity.uiCollectionName}
+    //     </div>
+    // </Menu.Item></Menu>
 
     return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
@@ -146,28 +145,20 @@ const ListHeader = (props: Record<string, any>) => {
                 <span className="hidden sm:block sm:ml-2">Upload</span>
             </div>}
 
-            {menu && allowCreate && <Dropdown overlay={menu}>
+            {menuForCreateButton && allowCreate && <Dropdown overlay={menuForCreateButton}>
                 <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                     <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
                     <span className="hidden sm:block sm:ml-2">New</span>
                 </div>
             </Dropdown>}
+            
 
-            {!menu && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700"
+            {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700"
                 onClick={onClickCreateRecord}
             >
                 <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
                 <span className="hidden sm:block sm:ml-2">New</span>
             </div>}
-
-            {/* {menu ? <Dropdown overlay={menu} className="block sm:hidden">
-                <div className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                    +
-                </div>
-            </Dropdown> : <div onClick={onClickCreateRecord}
-                className="block sm:hidden cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-2 py-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                +
-            </div>} */}
 
             {props.children}
 

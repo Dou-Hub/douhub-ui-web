@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isArray, cloneDeep, map, isNil, each, isBoolean, isFunction, without } from 'lodash';
 import {
-    _window, Table, Input, PicklistField, CSS,
+    _window, Table, Input, PicklistField, CSS, Popconfirm,
     DEFAULT_ACTION_COLUMN, SVG, Tooltip, CheckboxField
 } from '../../index';
 
@@ -85,14 +85,14 @@ const css = `
 
 const UploadModalStep3 = (props: {
     entity: Record<string, any>,
-    recordForMembership?:Record<string, any>,
+    recordForMembership?: Record<string, any>,
     onChange?: any,
     modalStyle: Record<string, any>,
-    error?:string,
+    error?: string,
     onError?: any
 }) => {
 
-    const {entity, recordForMembership} = props;
+    const { entity, recordForMembership } = props;
     const recordIdForMembership = recordForMembership?.id;
     const [data, setData] = useState<Record<string, any>[]>([]);
     const [dataChanged, setDataChanged] = useState<string>('');
@@ -100,11 +100,11 @@ const UploadModalStep3 = (props: {
     const [replaceExisting, setReplaceExisting] = useState<boolean>(isBoolean(entity?.upload?.allowDuplication) ? entity?.upload?.allowDuplication : true || mustReplaceDuplication);
     const [error, setError] = useState('');
 
-    useEffect(()=>{
-        setError(props.error?props.error:'');
-    },[props.error])
+    useEffect(() => {
+        setError(props.error ? props.error : '');
+    }, [props.error])
 
-    const { height} = props.modalStyle;
+    const { height } = props.modalStyle;
 
     const predefinedData = entity?.upload?.data;
     const predefinedColumns = isObject(entity?.upload?.columns) ? entity?.upload?.columns : {};
@@ -116,10 +116,9 @@ const UploadModalStep3 = (props: {
                 if (result.length > 0) {
                     const newData = isObject(predefinedData) ? map(result, (r) => {
                         const newRecord = { ...r, ...predefinedData };
-                        if (newRecord.membership && recordIdForMembership)
-                        {
+                        if (newRecord.membership && recordIdForMembership) {
                             const membership = cloneDeep(newRecord.membership);
-                            newRecord.membership={};
+                            newRecord.membership = {};
                             newRecord.membership[recordIdForMembership] = membership;
                         }
                         return newRecord;
@@ -132,7 +131,7 @@ const UploadModalStep3 = (props: {
                     });
                     updateColumns(firstRow);
                     _window.uploadedCSVFileJSON = newData;
-                    console.log({newData})
+                    console.log({ newData })
                     checkMissingFields();
                     setDataChanged(newGuid());
                 }
@@ -184,11 +183,11 @@ const UploadModalStep3 = (props: {
 
                         return <PicklistField
                             name={propName}
-                            value={isArray(value)?(value.length>0?value[0]:null):value}
+                            value={isArray(value) ? (value.length > 0 ? value[0] : null) : value}
                             {...predefinedColumn}
                             onChange={(newValue: any) => {
-                                console.log({VV:!isNil(newValue) ? (predefinedColumn.isArray?[newValue]:newValue) : null})
-                                onChangeValue(columnName, index, !isNil(newValue) ? (predefinedColumn.isArray?[newValue]:newValue) : null);
+                                console.log({ VV: !isNil(newValue) ? (predefinedColumn.isArray ? [newValue] : newValue) : null })
+                                onChangeValue(columnName, index, !isNil(newValue) ? (predefinedColumn.isArray ? [newValue] : newValue) : null);
                             }}
                         />
                     }
@@ -210,6 +209,14 @@ const UploadModalStep3 = (props: {
         }
     }
 
+    const onRemoveColumn = (columnName: string) => {
+        _window.uploadedCSVFileJSON = map(_window.uploadedCSVFileJSON, (row: Record<string, any>) => {
+            delete row[columnName];
+            return row;
+        });
+        setDataChanged(newGuid());
+        _window.uploadedCSVFileJSON.length>0 && updateColumns(cloneDeep( _window.uploadedCSVFileJSON[0]))
+    }
 
     const updateColumns = (record: Record<string, any>) => {
         _window.uploadedCSVColumns = [
@@ -220,12 +227,27 @@ const UploadModalStep3 = (props: {
                 return {
                     width: 120,
                     title: isNil(predefinedData[propName]) ? <div className="flex flex-col">
-                        <Input className="w-full border border-sky text-xs py-1 px-2"
+                        <div className="flex w-full items-center ">
+                            <Input className="w-full border border-sky text-xs py-1 px-2 mr-2"
                             value={title}
                             onChange={(newColumnName: string) => onChangeProp(columnName, newColumnName)}
                         />
+                            <Popconfirm
+                                placement="topRight"
+                                title="Remove this column?"
+                                onCancel={() => { }}
+                                onConfirm={() => onRemoveColumn(columnName)}
+                                okText="Remove"
+                                cancelText="Cancel">
+                                <Tooltip color="#ff0000" placement='bottom' title={`Remove`}>
+                                    <div className="cursor-pointer">
+                                        <SVG src="/icons/delete.svg" color="#ff0000" style={{ width: 16 }} />
+                                        </div>
+                                </Tooltip>
+                            </Popconfirm>
+                        </div>
                         <div className="flex text-2xs items-center mt-1" style={{ marginRight: 5 }}>
-                            <Tooltip color="#999999" placement='top' title={`The property name in the system`}>
+                            <Tooltip color="#999999" placement='bottom' title={`The property name in the system`}>
                                 <div><SVG src="/icons/tag-h.svg" style={{ width: 12 }} /></div>
                             </Tooltip>
                             <span className="pl-1">{propName}</span>
@@ -250,7 +272,7 @@ const UploadModalStep3 = (props: {
                         return renderInputField(columnName, propName, index, v);
                     }
                 }
-            }),null),
+            }), null),
             DEFAULT_ACTION_COLUMN(onClickAction, { uiName: 'Row' })
         ];
         setDataChanged(newGuid())
@@ -276,7 +298,7 @@ const UploadModalStep3 = (props: {
     }
 
     const onClickAction = (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => {
-        doNothing(isNil({record, action, entity}));
+        doNothing(isNil({ record, action, entity }));
         const index = rowIndex ? rowIndex : 0;
         const newData = cloneDeep(data);
         _window.uploadedCSVFileJSON = [...newData.slice(0, index), ...newData.slice(index + 1)];
@@ -296,7 +318,7 @@ const UploadModalStep3 = (props: {
         }
     `
 
-    console.log({VVV:  _window.uploadedCSVFileJSON})
+    console.log({ VVV: _window.uploadedCSVFileJSON })
 
     return <div className="w-full upload-model-step-3" style={{ height: height - 150 - (isNonEmptyString(error) ? 50 : 0) }}>
         <CSS id='upload-model-step-3' content={css} />
