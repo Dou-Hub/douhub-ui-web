@@ -20,11 +20,15 @@ const BaseList = observer((props: {
     webQuery?: Record<string, any>,
     onClickRecord?: (record: Record<string, any>, action: string) => any,
     onRemoveSearch?: (filter: Record<string, any>) => any,
+    ListCategoriesTags?: any,
+    deleteButtonLabel?: string,
+    deleteConfirmationMessage?: string
+
     children?: any
 }) => {
     const { entity, height, width, search, webQuery, columns } = props;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
-    const allowCreate = props.allowCreate == true && entity.allowCreate!=false;
+    const allowCreate = props.allowCreate == true && entity.allowCreate != false;
     const allowUpload = props.allowUpload == true && entity.allowUpload == true && allowCreate;
     const Form = props.Form ? props.Form : DefaultForm;
     const Header = props.Header ? props.Header : ListHeader;
@@ -44,6 +48,7 @@ const BaseList = observer((props: {
     return (
         <>
             <ListBase
+                {...props}
                 recordForMembership={recordForMembership}
                 allowUpload={allowUpload}
                 allowCreate={allowCreate}

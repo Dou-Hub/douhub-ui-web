@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { isFunction, isArray, isNil, find, map } from 'lodash';
-import { LabelField, CSS, Tree, Dropdown, Menu, TextField, SVG, _window } from '../index';
-import { isNonEmptyString, newGuid, insertTreeItem, updateTreeItem, getTreeItem, isObject, removeTreeItem } from 'douhub-helper-util';
+import React from 'react';
+import { isFunction, map, cloneDeep } from 'lodash';
+import { LabelField, CSS, Tree, _window } from '../index';
+import { isNonEmptyString} from 'douhub-helper-util';
 
 const TREE_CSS = `
 .field-tree {
@@ -35,15 +35,9 @@ const TREE_CSS = `
 
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel, hideLabel, uiName, doing } = props;
+    const { label, disabled, labelStyle, alwaysShowLabel, hideLabel, expendedIds, doing, selectedId, value } = props;
 
-    const defaultValue = isArray(props.defaultValue) ? props.defaultValue : [];
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
-    const [value, setValue] = useState<Array<Record<string, any>>>(isArray(props.value) ? props.value : defaultValue);
-    const [selectedId, setSelectedId] = useState('');
-    const [expendedIds, setExpendedIds] = useState<Array<string>>([]);
-    const [op, setOp] = useState('');
-    const [text, setText] = useState('');
     const solution = _window.solution;
     const TREE_ITEM_CSS = solution.theme.color ? `
     .field-tree-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected
@@ -54,12 +48,6 @@ const TreeField = (props: Record<string, any>) => {
     const onDragEnter = (info: Record<string, any>) => {
         console.log(info);
     };
-
-
-    useEffect(() => {
-        setValue([...isArray(props.value) ? props.value : defaultValue]);
-    }, [props.value]);
-
 
     const onDrop = (info: Record<string, any>) => {
         const dropKey = info.node.id;
@@ -77,7 +65,7 @@ const TreeField = (props: Record<string, any>) => {
                 }
             }
         };
-        const data = [...value];
+        const data = cloneDeep(value);
 
         // Find dragObject
         let dragObj: Record<string, any> = {};
@@ -117,21 +105,11 @@ const TreeField = (props: Record<string, any>) => {
             }
         }
 
-        onChange(data, dragObj.id);
-    }
-
-
-    const onChange = (newValue: Array<Record<string, any>> | null, afffectedId: string) => {
-        if (isNil(newValue)) return;
-        setValue(newValue);
-        setSelectedId(afffectedId);
-        if (isFunction(props.onChange)) props.onChange(newValue);
+        if (isFunction(props.onDrop)) props.onDrop(data);
     }
 
     const onSelect = (selectedKeys: React.Key[]) => {
-        const newSelectedId = selectedKeys.length > 0 ? `${selectedKeys[0]}` : '';
-        setSelectedId(newSelectedId);
-        setOp('');
+        if (isFunction(props.onSelect)) props.onSelect(selectedKeys.length > 0 ? `${selectedKeys[0]}` : '');
     };
 
     const onCheck = (checkedKeys: any, info: any) => {
@@ -139,128 +117,8 @@ const TreeField = (props: Record<string, any>) => {
     };
 
     const onExpand = (checkedKeys: React.Key[]) => {
-        setExpendedIds(map(checkedKeys, (key: any) => `${key}`));
+        if (isFunction(props.onExpand)) props.onExpand(map(checkedKeys, (key: any) => `${key}`));
     };
-
-    const onClickAdd = (type: 'above' | 'below' | 'children' | 'root') => {
-        setText('');
-        setOp(`add-${type}`);
-    }
-
-    const onClickSubmit = (type: string) => {
-
-        const newId = newGuid();
-
-        switch (type) {
-            case 'add-root':
-                {
-                    if (!isNonEmptyString(text)) return;
-                    if (!find(value, (i: Record<string, any>) => i.text?.toLowerCase() == text.toLowerCase())) {
-                        onChange([{ id: newId, text: text }, ...value], newId);
-                    }
-                    break;
-                }
-            case 'add-above':
-                {
-                    if (!isNonEmptyString(text)) return;
-                    onChange(insertTreeItem(value, selectedId, { id: newId, text: text }, 'above'), newId);
-                    break;
-                }
-            case 'add-below':
-                {
-                    if (!isNonEmptyString(text)) return;
-                    onChange(insertTreeItem(value, selectedId, { id: newId, text: text }, 'below'), newId);
-                    break;
-                }
-            case 'add-children':
-                {
-                    if (!isNonEmptyString(text)) return;
-                    onChange(insertTreeItem(value, selectedId, { id: newId, text: text }, 'children'), newId);
-                    setExpendedIds([...expendedIds, selectedId]);
-                    break;
-                }
-            case 'delete':
-                {
-                    onChange(removeTreeItem(value, selectedId), '');
-                    break;
-                }
-            case 'edit':
-                {
-                    if (!isNonEmptyString(text)) return;
-                    onChange(updateTreeItem(value, selectedId, (item?: Record<string, any>) => {
-                        return { ...item, text };
-                    }), selectedId);
-                    break;
-                }
-        }
-        setText('');
-        setOp('');
-    }
-
-
-    const onClickEdit = () => {
-        if (selectedId) {
-            const newSelected = getTreeItem(value, (item?: Record<string, any>) => item?.id == selectedId)
-            setText(isObject(newSelected) ? newSelected?.text : '');
-            setOp('edit');
-        }
-    }
-
-    const renderInputs = () => {
-        if (op.indexOf('add') < 0 && op != 'edit') return null;
-        return <>
-            <TextField
-                inputWrapperStyle={{ marginBottom: 0, borderBottom: 'none' }}
-                inputStyle={{ fontSize: 12, height: 36 }}
-                onChange={(v: string) => {
-                    console.log({ v })
-                    setText(v)
-                }}
-                type="text"
-                placeholder={`Type new ${uiName} here`}
-                value={text}
-            />
-            <button
-                style={{ height: 20 }}
-                className="cursor-pointer inline-flex ml-2 items-center self-center justify-center py-2 px-1  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-gray-100 hover:bg-gray-200"
-                onClick={() => setOp('')}>
-                <SVG src="/icons/x.svg" style={{ width: 12 }} />
-            </button>
-            <button
-                style={{ height: 20 }}
-                className="cursor-pointer inline-flex ml-2 items-center self-center justify-center py-2 px-1  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-sky-600 hover:bg-sky-700"
-                onClick={() => onClickSubmit(op)}>
-                <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="white" />
-            </button>
-        </>
-    }
-
-
-    const renderDeleteConfirmation = () => {
-        if (op != 'delete') return null;
-        return <>
-            <div className="w-full text-2xs items-center self-center justify-center " style={{ lineHeight: 1.25 }}>
-                Are you sure you want to delete the selected {uiName}?
-            </div>
-            <button
-                style={{ height: 20 }}
-                className="cursor-pointer inline-flex ml-2 items-center self-center justify-center py-2 px-1  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-gray-100 hover:bg-gray-200"
-                onClick={() => setOp('')}>
-                <SVG src="/icons/x.svg" style={{ width: 12 }} />
-            </button>
-            <button
-                style={{ height: 20 }}
-                className="cursor-pointer inline-flex ml-2 items-center self-center justify-center py-2 px-1  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-red-600 hover:bg-red-700"
-                onClick={() => onClickSubmit(op)}>
-                <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="white" />
-            </button>
-        </>
-    }
-
-
-    const hideButtons = op != '';
-
-    console.log({ expendedIds })
 
     return <>
         <CSS id='tree-field-css' content={TREE_CSS} />
@@ -290,55 +148,7 @@ const TreeField = (props: Record<string, any>) => {
                     treeData={value}
                 />
             </div>
-            <div className="flex py-1 field-tree-buttons border-t" style={{borderColor:'#f0f0f0'}}>
-                {!isNonEmptyString(doing) && <>
-                    {isNonEmptyString(selectedId) && !hideButtons && <button
-                        style={{ height: 20 }}
-                        className="cursor-pointer inline-flex items-center  self-center justify-center px-2  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-red-600 hover:bg-red-700"
-                        onClick={() => setOp('delete')}
-                    >
-                        Delete
-                    </button>}
-                    <div className="flex-1" style={{ height: 36 }}></div>
-                    {isNonEmptyString(selectedId) && !hideButtons && <Dropdown placement="topCenter" overlay={
-                        <Menu>
-                            <Menu.Item onClick={() => onClickAdd('above')}>
-                                Add above the selected {uiName}
-                            </Menu.Item>
-                            <Menu.Item onClick={() => onClickAdd('below')}>
-                                Add below the selected {uiName}
-                            </Menu.Item>
-                            <Menu.Item onClick={() => onClickAdd('children')}>
-                                Add as a children {uiName}
-                            </Menu.Item>
-                        </Menu>}>
-                        <button
-                            style={{ height: 20 }}
-                            className="cursor-pointer inline-flex ml-2 items-center  self-center justify-center px-2  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-green-600 hover:bg-green-700">
-                            Add
-                        </button>
-                    </Dropdown>}
-
-                    {!isNonEmptyString(selectedId) && !hideButtons && <button
-                        style={{ height: 20 }}
-                        className="cursor-pointer inline-flex ml-2 items-center self-center justify-center py-2 px-1  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-green-600 hover:bg-green-700"
-                        onClick={() => onClickAdd('root')}>
-                        Add
-                    </button>
-                    }
-                    {renderInputs()}
-                    {renderDeleteConfirmation()}
-                    {isNonEmptyString(selectedId) && !hideButtons && <button
-                        style={{ height: 20 }}
-                        className="cursor-pointer inline-flex ml-2 items-center  self-center justify-center px-2  border border-transparent rounded-sm shadow-sm text-2xs font-medium text-white bg-sky-600 hover:bg-sky-700"
-                        onClick={onClickEdit}>
-                        Edit
-                    </button>}
-                </>}
-                {isNonEmptyString(doing) && <>
-                    <div className="my-4 items-center  self-center justify-center">{doing}</div>
-                </>}
-            </div>
+            
         </div>
 
     </>

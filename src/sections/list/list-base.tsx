@@ -365,7 +365,7 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const renderListCategoriesTags = () => {
-        return <div className="w-full h-full overflow-hidden"
+        return <div className={`w-full h-full overflow-hidden ${showSidePanel?'':'hidden'}`}
             style={{ ...areaWidth > 650 ? {} : { display: 'none' }, ...supportSlitter ? {} : { width: 260 }, ...currentRecord ? { display: 'none' } : {} }}>
             <ListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} />
         </div>
@@ -427,13 +427,13 @@ const ListBase = (props: Record<string, any>) => {
 
         <div className={`douhub-list relative bg-white flex flex-row overflow-hidden douhub-list-${areaWidth < 650 ? 'full' : ''} douhub-list-sidepanel-${showSidePanel ? 'show' : 'hidden'}`}
             style={{ backgroundColor: '#fafafa', minHeight: height }}>
-            {!hideListCategoriesTags ? <Splitter
+            <Splitter
                 secondaryInitialSize={secondaryInitialSize}
                 primaryMinSize={250}
                 secondaryMinSize={areaWidth - 350}>
                 {renderListCategoriesTags()}
                 {renderListSection()}
-            </Splitter> : renderListSection()}
+            </Splitter>
 
             {currentRecord && <div className="relative h-full z-40" style={{ backgroundColor: '#fafafa', minHeight: height }}>
                 <ListFormResizer
