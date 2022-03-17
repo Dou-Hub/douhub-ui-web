@@ -1,17 +1,16 @@
 
 import React from 'react';
-import { SVG, Menu, Popconfirm, Dropdown } from '../../index';
+import { Menu, Popconfirm, Dropdown } from '../../index';
 import { isFunction, without, map, isArray } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
+import { SVG } from 'douhub-ui-web-basic';
+import { Tooltip } from '../../index';
 
 export const rendeActionButtonColumn = (
     menuItems: Array<{ title: string, action: string, confirmation?: string }>,
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>
+    settings?: LIST_COLUMN_SETTINGS_TYPE
 ) => {
 
     return {
@@ -44,11 +43,11 @@ export const rendeActionButtonColumn = (
             </Menu>;
 
 
-            const wrapperClassName = isFunction(onRenderWrapperClassName) ? onRenderWrapperClassName(record) : '';
-            const wrapperStyle = isFunction(onRenderWrapperStyle) ? onRenderWrapperStyle(record) : {};
+            const wrapperClassName = isFunction(settings?.onRenderWrapperClassName) ? settings?.onRenderWrapperClassName(record) : '';
+            const wrapperStyle = isFunction(settings?.onRenderWrapperStyle) ? settings?.onRenderWrapperStyle(record) : {};
 
-            const iconClassName = isFunction(onRenderIconClassName) ? onRenderIconClassName(record) : {};
-            const iconColor = isFunction(onRenderIconColor) ? onRenderIconColor(record) : '#000000';
+            const iconClassName = isFunction(settings?.onRenderIconClassName) ? settings?.onRenderIconClassName(record) : {};
+            const iconColor = isFunction(settings?.onRenderIconColor) ? settings?.onRenderIconColor(record) : '#000000';
 
             const icon = record.uiDoing ? '/icons/loading.svg' : '/icons/menu-vertical.svg'
 
@@ -63,15 +62,21 @@ export const rendeActionButtonColumn = (
     }
 }
 
+export type LIST_COLUMN_TOOLTIP_TYPE = { placement?: 'top' | 'left' | 'bottom' | 'right', title: string, color?: string };
+export type LIST_COLUMN_SETTINGS_TYPE = {
+    onRenderWrapperClassName?: (record: Record<string, any>) => string,
+    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
+    onRenderIconClassName?: (record: Record<string, any>) => string,
+    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
+    tooltip?: LIST_COLUMN_TOOLTIP_TYPE
+}
+
 export const renderIconButtonColumn = (
     iconUrl: string,
     action: string,
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>
+    settings?: LIST_COLUMN_SETTINGS_TYPE
 ) => {
     return {
         title: '',
@@ -84,17 +89,29 @@ export const renderIconButtonColumn = (
         render: (id: string, record: Record<string, any>, rowIndex: number) => {
 
             const r = { id, ...record };
-            const wrapperClassName = isFunction(onRenderWrapperClassName) ? onRenderWrapperClassName(r) : '';
-            const wrapperStyle = isFunction(onRenderWrapperStyle) ? onRenderWrapperStyle(r) : {};
+            const wrapperClassName = isFunction(settings?.onRenderWrapperClassName) ? settings?.onRenderWrapperClassName(r) : '';
+            const wrapperStyle = isFunction(settings?.onRenderWrapperStyle) ? settings?.onRenderWrapperStyle(r) : {};
 
-            const iconClassName = isFunction(onRenderIconClassName) ? onRenderIconClassName(r) : '';
-            const iconColor = isFunction(onRenderIconColor) ? onRenderIconColor(r) : '#000000';
+            const iconClassName = isFunction(settings?.onRenderIconClassName) ? settings?.onRenderIconClassName(r) : '';
+            const iconColor = isFunction(settings?.onRenderIconColor) ? settings?.onRenderIconColor(r) : '#000000';
 
-            return <div className={`w-full flex justify-center ${record.uiDisabled ? 'cursor-not-allowed' : 'cursor-pointer'} ${wrapperClassName}`}
+            const c = <div className={`w-full flex justify-center ${record.uiDisabled ? 'cursor-not-allowed' : 'cursor-pointer'} ${wrapperClassName}`}
                 style={wrapperStyle}
                 onClick={() => !record.uiDisabled && onClick(r, action, entity, rowIndex)} >
                 <SVG id={`list-col-icon-${iconUrl}-${id}`} color={record.uiDisabled ? '#cccccc' : iconColor} src={iconUrl} className={`h-4 w-4 ${iconClassName}`} />
             </div>
+
+            if (settings?.tooltip) {
+                return <Tooltip
+                    color={settings?.tooltip.color ? settings?.tooltip.color : '#999999'}
+                    placement={settings?.tooltip.placement ? settings?.tooltip.placement : 'left'}
+                    title={settings?.tooltip.title}>
+                    {c}
+                </Tooltip>
+            }
+            else {
+                return c;
+            }
         }
     }
 }
@@ -102,37 +119,37 @@ export const renderIconButtonColumn = (
 export const DEFAULT_EDIT_COLUMN = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>
+    events?: LIST_COLUMN_SETTINGS_TYPE
 ) => {
     return renderIconButtonColumn('/icons/edit.svg', 'edit',
         onClick,
         entity,
-        onRenderWrapperClassName,
-        onRenderWrapperStyle,
-        onRenderIconClassName,
-        onRenderIconColor
+        events
     );
 }
 
+export const DEFAULT_OPEN_IN_BROWSER_COLUMN = (
+    onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
+    entity?: Record<string, any>,
+    settings?: LIST_COLUMN_SETTINGS_TYPE
+
+) => {
+    return renderIconButtonColumn('/icons/open-in-browser.svg', 'open-in-browser',
+        onClick,
+        entity,
+        settings
+    );
+}
 
 export const DEFAULT_EMAIL_COLUMN = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>
+    settings?: LIST_COLUMN_SETTINGS_TYPE
 ) => {
     return renderIconButtonColumn('/icons/send-email.svg', 'email',
         onClick,
         entity,
-        onRenderWrapperClassName,
-        onRenderWrapperStyle,
-        onRenderIconClassName,
-        onRenderIconColor
+        settings
     );
 }
 
@@ -140,13 +157,14 @@ export const DEFAULT_ACTION_COLUMN = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
     menuItems?: Array<{ title: string, action: string, confirmation?: string }>,
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
     settings?: {
         deleteConfirmationMessage?: string,
-        deleteButtonLabel?: string
+        deleteButtonLabel?: string,
+        onRenderWrapperClassName?: (record: Record<string, any>) => string,
+        onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
+        onRenderIconClassName?: (record: Record<string, any>) => string,
+        onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
+        tooltip?: LIST_COLUMN_TOOLTIP_TYPE
     }
 ) => {
 
@@ -157,10 +175,13 @@ export const DEFAULT_ACTION_COLUMN = (
     ],
         onClick,
         entity,
-        onRenderWrapperClassName,
-        onRenderWrapperStyle,
-        onRenderIconClassName,
-        onRenderIconColor
+        {
+            onRenderWrapperClassName: settings?.onRenderWrapperClassName,
+            onRenderWrapperStyle: settings?.onRenderWrapperStyle,
+            onRenderIconClassName: settings?.onRenderIconClassName,
+            onRenderIconColor: settings?.onRenderIconColor,
+            tooltip: settings?.tooltip
+        }
     );
 }
 

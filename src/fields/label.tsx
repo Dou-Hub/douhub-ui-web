@@ -3,7 +3,7 @@ import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { marked } from 'marked';
 import {FIELD_CSS} from './css';
-import CSS from '../controls/css';
+import {CSS} from 'douhub-ui-web-basic'
 
 const LABEL_FIELD_CSS = `
     .field-label

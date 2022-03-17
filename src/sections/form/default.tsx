@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, without } from 'lodash';
-import { _window, FormBase } from '../../index';
+import { FormBase } from '../../index';
 import { isObject } from 'douhub-helper-util';
+import { _window, _track } from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'DefaultForm';
 const DefaultForm = (props: Record<string, any>) => {
 
     const [data, setData] = useState<Record<string, any> | null>(isObject(props.data) ? props.data : null);
-   
+
     useEffect(() => {
-        setData(isObject(props.data)?{ ...props.data }:null);
+        setData(isObject(props.data) ? { ...props.data } : null);
     }, [props.data]);
 
     const onChange = (newData: Record<string, any>) => {

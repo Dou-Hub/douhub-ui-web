@@ -1,11 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { isArray, isFunction } from 'lodash';
-import { signOut } from '../../../context/auth-cognito';
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
-import Avatar from '../../avatar';
-import { _track, _window } from '../../../util';
+import { _track, _window, signOut, Avatar } from 'douhub-ui-web-basic';
 
 const PageHeaderMe = observer((props: Record<string, any>) => {
 

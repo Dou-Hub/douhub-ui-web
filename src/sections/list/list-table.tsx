@@ -1,5 +1,5 @@
 import Table from '../../controls/antd/table';
-import { _window } from '../../util';
+import { _window } from 'douhub-ui-web-basic';
 import React from 'react';
 import { isFunction, isNumber } from 'lodash';
 

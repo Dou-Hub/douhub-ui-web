@@ -3,11 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { isEmail, isObject } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
 import { cloneDeep, isNil, isFunction } from 'lodash';
-import {
-    signIn, SignInSection, MessageField, _track, callAPIBase,
-    SVG, getCookie, removeCookie, setCookie, _window
-} from '../../index';
-
+import { SignInSection, MessageField } from '../../index';
+import { signIn, _track, SVG, callAPIBase, getCookie, removeCookie, setCookie, _window } from 'douhub-ui-web-basic';
 
 const SignInPageBody = (props: Record<string, any>) => {
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-util';
-import { SVG, _window, _track, callAPI } from '../index';
+import { callAPI, _window, _track, SVG } from 'douhub-ui-web-basic';
+
 import { Upload } from 'antd';
 import { isFunction, isNil, assign } from 'lodash';
 
@@ -93,7 +94,7 @@ const Uploader = (props: {
 
     const onUpload = async (result: Record<string, any>, includeContent: boolean) => {
         let base64Data: any = await getBase64(result.file);
- 
+
         //NOTE: Need to replace the data:xxx;base64 for other type of documents
         base64Data = base64Data.replace(/^data:image\/\w+;base64,/, "");
         base64Data = base64Data.replace(/^data:text\/\w+;base64,/, "");

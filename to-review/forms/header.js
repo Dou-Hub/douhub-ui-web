@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import _ from '../../../shared/util/base';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 import Popconfirm from '../controls/antd/popconfirm';
 import Tooltip from '../controls/antd/tooltip';
 import { callAPI } from '../../util/web';

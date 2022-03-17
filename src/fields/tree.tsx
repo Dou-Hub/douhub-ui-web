@@ -1,7 +1,8 @@
 import React from 'react';
 import { isFunction, map, cloneDeep } from 'lodash';
-import { LabelField, CSS, Tree, _window } from '../index';
+import { LabelField,  Tree  } from '../index';
 import { isNonEmptyString} from 'douhub-helper-util';
+import {CSS, _window} from 'douhub-ui-web-basic';
 
 const TREE_CSS = `
 .field-tree {

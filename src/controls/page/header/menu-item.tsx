@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import SVG from '../../svg';
+import { SVG } from 'douhub-ui-web-basic';
 import { Popover, Transition } from '@headlessui/react'
 import { isArray, without, map, isNumber } from 'lodash';
 import HeaderMenuActions from './meun-actions';

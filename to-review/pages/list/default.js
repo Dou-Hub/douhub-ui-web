@@ -6,7 +6,7 @@ import BaseCSS from './base-css';
 import ReactResizeDetector from 'react-resize-detector';
 import Table from '../../controls/antd/table';
 import Affix from '../../controls/antd/affix';
-import SVG from '../../controls/svg';
+import SVG from '../douhub-ui-web-basic';
 // import Dropdown from '../../controls/antd/dropdown';
 import Menu from '../../controls/antd/menu';
 import Drawer from '../../controls/antd/drawer';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction, isNumber } from 'lodash';
-import SVG from './svg';
+import { SVG } from 'douhub-ui-web-basic';
 
 const Logo = (props: Record<string, any>) => {
 

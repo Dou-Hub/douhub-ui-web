@@ -3,7 +3,7 @@ import { FIELD_CSS } from './css';
 import { isFunction } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { marked } from 'marked';
-import CSS from '../controls/css';
+import { CSS } from 'douhub-ui-web-basic'
 
 const SECTION_FIELD_CSS = `
 .field-section

@@ -1,7 +1,8 @@
 import React from 'react';
-import { SVG, Popconfirm, Tooltip } from '../../index';
+import {  Popconfirm, Tooltip } from '../../index';
 import { getRecordDisplay } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
+import { SVG } from 'douhub-ui-web-basic';
 
 const ListFormHeader = (props: Record<string, any>) => {
 

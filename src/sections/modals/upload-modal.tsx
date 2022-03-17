@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, cloneDeep, map, each, without, isNil } from 'lodash';
-import {  BasicModal, callAPI, _window } from '../../index';
+import {  callAPI, _window } from 'douhub-ui-web-basic';
+import {  BasicModal } from '../../index';
 import { getDateTimeString, isNonEmptyString, getPropName } from 'douhub-helper-util';
 import Step1 from './upload-modal-step-1';
 import Step2 from './upload-modal-step-2';

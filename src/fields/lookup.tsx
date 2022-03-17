@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { map, find, isNil, debounce, isFunction, isInteger, isArray } from 'lodash';
 import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
-import { LabelField, CSS, NoteField, Select, callAPI, SVG, _window, SelectProps, _track } from '../index';
+import { LabelField, NoteField, Select,   SelectProps } from '../index';
+import { callAPI, CSS,SVG,_window, _track} from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'LookupField';
 const DEFAULT_LOOKUP_ATTRIBUTES = 'id,avatar,firstName,lastName,fullName,name,title,display,text,entityName,entityType,modifiedOn';

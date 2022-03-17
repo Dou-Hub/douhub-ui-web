@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
-import SVG from '../svg';
+import {SVG} from 'douhub-ui-web-basic';
 import { isNonEmptyString } from 'douhub-helper-util';
 
 const BasicModal = (props: Record<string, any>) => {

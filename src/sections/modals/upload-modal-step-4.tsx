@@ -1,5 +1,5 @@
 import React from 'react';
-import { _window } from '../../index';
+import { _window } from 'douhub-ui-web-basic';
 
 const UploadModalStep4 = (props: {
     entity: Record<string, any>,

@@ -1,7 +1,7 @@
 import _ from '../../../shared/util/base';
 import { callAPIBase, callAPI } from '../../util/web';
 import { APPCOLORS, colorByName } from '../../../shared/util/colors';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 export const MESSAGE = {
     "search-error": `<p>Your search - "[KEYWORDS]" - was failed.</p>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Checkbox } from 'antd';
-import {_track} from '../../util';
-import CSS from '../../controls/css';
+import {_track, CSS} from 'douhub-ui-web-basic';
 
 
 if (_track) console.log('Load Ant Button');

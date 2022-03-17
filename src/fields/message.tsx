@@ -2,7 +2,7 @@ import React from 'react';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { FIELD_CSS } from './css';
-import { CSS } from '../index';
+import {CSS} from 'douhub-ui-web-basic';
 
 const FieldMessage = (props: {
     type: 'error' | 'info' | 'success' | 'warnning' | 'secondard' | 'default',

@@ -7,7 +7,7 @@ import FieldSlider from '../fields/slider';
 import FieldColorPicker from '../fields/color-picker';
 import dynamic from 'next/dynamic';
 import { logDynamic } from '../controls/base';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 let Popconfirm = null;
 

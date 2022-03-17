@@ -2,7 +2,7 @@
 import React from 'react';
 import { colorByName } from 'douhub-helper-util';
 import { Button } from 'antd';
-import { _track } from '../../util';
+import { _track } from 'douhub-ui-web-basic';
 if (_track) console.log('Load Ant Button');
 
 const ButtonCSS = () => <style global={true} jsx={true}>{`

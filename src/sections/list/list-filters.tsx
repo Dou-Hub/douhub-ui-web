@@ -1,4 +1,4 @@
-import { SVG, _window } from '../../index';
+import { _window, SVG } from 'douhub-ui-web-basic';
 import React from 'react';
 import { isArray, isFunction, map, throttle, without } from 'lodash';
 import ReactResizeDetector from 'react-resize-detector';

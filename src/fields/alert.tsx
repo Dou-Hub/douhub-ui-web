@@ -1,8 +1,7 @@
 import React from 'react';
 import {isFunction} from 'lodash';
-import SVG from '../controls/svg';
+import {SVG, CSS} from 'douhub-ui-web-basic';
 import {isNonEmptyString} from 'douhub-helper-util';
-import CSS from '../controls/css';
 
 const DISPLAY_NAME = 'AlertField';
 

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {isBoolean, isFunction} from 'lodash';
 import NoteField from './note';
-import SVG from '../controls/svg';
+import {SVG, CSS} from 'douhub-ui-web-basic';
 import {isNonEmptyString} from 'douhub-helper-util';
 import {marked} from 'marked';
-import CSS from '../controls/css';
 import {CHECKBOX_FIELD_CSS} from './checkbox-css';
 
 const CheckboxField = (props: Record<string,any>) => {

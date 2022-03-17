@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { isEmpty, isFunction, isNumber } from 'lodash';
-import { _window } from '../../util';
+import { _window } from 'douhub-ui-web-basic';
 
 const ListFormResizer = (props: Record<string, any>) => {
 

@@ -9,7 +9,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import Div from '../controls/div';
 import SearchPageCSS from './search-css';
 import ReactResizeDetector from 'react-resize-detector';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 const apiEndpoint = `${solution.apis.search}search-web-product-page`;
 const autoLoadMore = true;

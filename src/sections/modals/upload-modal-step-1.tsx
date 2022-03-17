@@ -1,6 +1,7 @@
 import React from 'react';
 import { isFunction} from 'lodash';
-import { _window, Uploader } from '../../index';
+import {  Uploader } from '../../index';
+import { _window } from 'douhub-ui-web-basic';
 
 const UploadModalStep1 = (props: {
     entity: Record<string, any>,

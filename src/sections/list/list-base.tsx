@@ -1,10 +1,11 @@
 import {
-    callAPI, SVG, DEFAULT_COLUMNS, _window, AlertField, CSS,
-    Notification, DefaultForm, setLocalStorage,
+     DEFAULT_COLUMNS, AlertField, 
+    Notification, DefaultForm,
     ListCategoriesTags as ListCategoriesTagsInternal, ListFilters, ListFormHeader,
-    Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer, hasErrorType, getLocalStorage,
-    _track
+    Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
+import { SVG,hasErrorType, getLocalStorage, _window,CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
+
 import React, { useEffect, useState } from 'react';
 import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue } from 'douhub-helper-util';
 import { without, throttle, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
@@ -50,9 +51,9 @@ const ListBase = (props: Record<string, any>) => {
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
     const showSidePanel = sidePanel && !currentRecord && areaWidth >= 650 && !hideListCategoriesTags;
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
-    const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel)?props.deleteButtonLabel:'Delete';
-    const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage)? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
-    
+    const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel) ? props.deleteButtonLabel : 'Delete';
+    const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
+
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
 
     const queries = isArray(predefinedQueries) && predefinedQueries.length > 0 ? without([
@@ -202,8 +203,7 @@ const ListBase = (props: Record<string, any>) => {
                     };
                     setResult(newResult);
                 }
-                else
-                {
+                else {
                     setResult({
                         ...result, data: map(result?.data, (r) => {
                             delete r.uiDoing;
@@ -212,7 +212,7 @@ const ListBase = (props: Record<string, any>) => {
                         })
                     });
                 }
-                
+
             })
             .catch((error: any) => {
                 console.error(error);
@@ -226,7 +226,7 @@ const ListBase = (props: Record<string, any>) => {
                 setNotification({ id: newGuid(), message: 'Error', description: `Sorry, it was failed to delete the ${entity.uiName}.`, type: 'error' });
             })
             .finally(() => {
-                
+
             })
     }
 
@@ -365,7 +365,7 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const renderListCategoriesTags = () => {
-        return <div className={`w-full h-full overflow-hidden ${showSidePanel?'':'hidden'}`}
+        return <div className={`w-full h-full overflow-hidden ${showSidePanel ? '' : 'hidden'}`}
             style={{ ...areaWidth > 650 ? {} : { display: 'none' }, ...supportSlitter ? {} : { width: 260 }, ...currentRecord ? { display: 'none' } : {} }}>
             <ListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} />
         </div>

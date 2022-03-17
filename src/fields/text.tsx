@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { isNonEmptyString, isPassword, isEmail } from 'douhub-helper-util';
 import { isFunction, isNumber } from 'lodash';
-import { _window, LabelField, NoteField, CSS, InputPassword, InputTextArea, InputText } from '../index';
+import { LabelField, NoteField, InputPassword, InputTextArea, InputText } from '../index';
+import { CSS, _window } from 'douhub-ui-web-basic';
 import { IMaskInput } from 'react-imask';
 
 const DISPLAY_NAME = 'TextField';

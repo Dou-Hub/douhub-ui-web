@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { _window } from '../util';
+import { _window } from 'douhub-ui-web-basic';
 
 const _document = _window.document ? _window.document : {};
 

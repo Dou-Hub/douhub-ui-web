@@ -15,3 +15,11 @@ type StaticImageData = {
     placeholder?: string;
   };
 ```
+
+if run into the error below, make sure correct typscript version
+Overload signatures must all be optional or required.
+203     randomUUID?(): string
+
+sudo yarn add typescript@4.5.5 --dev
+
+

@@ -2,8 +2,8 @@ import React from 'react';
 import BaseList from './base';
 import { doNothing, hasRole, isNonEmptyString } from 'douhub-helper-util';
 import { without, isNil, find } from 'lodash';
-import { DEFAULT_EDIT_COLUMN, _window, DEFAULT_ACTION_COLUMN, DefaultForm } from '../../index';
-
+import { DEFAULT_EDIT_COLUMN,  DEFAULT_ACTION_COLUMN, DefaultForm } from '../../index';
+import { _window } from 'douhub-ui-web-basic';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 

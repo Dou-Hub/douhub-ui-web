@@ -1,7 +1,7 @@
 import React from 'react';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { map } from 'lodash';
-import SVG from '../../svg';
+import { SVG } from 'douhub-ui-web-basic';
 
 const PageHeaderMenuItems = (props: Record<string, any>) => {
 

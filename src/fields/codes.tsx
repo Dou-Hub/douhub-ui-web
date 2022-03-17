@@ -7,7 +7,7 @@ import Note from './note';
 // import dynamic from 'next/dynamic';
 import InputPassword from '../controls/antd/password';
 import Input from '../controls/antd/input';
-import CSS from '../controls/css';
+import {CSS} from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'CodesField';
 

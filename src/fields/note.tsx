@@ -1,7 +1,7 @@
 import React from 'react';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { FIELD_CSS } from './css';
-import CSS from '../controls/css';
+import {CSS} from 'douhub-ui-web-basic';
 
 const FieldNote = (props: Record<string, any>) => {
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getRecordFullName, isNonEmptyString } from 'douhub-helper-util';
 import { isFunction, isArray, map, uniqBy, without } from 'lodash';
-import { FormBase, BasicModal, SVG, _window, LookupField, Avatar, callAPI } from '../../index';
+import { FormBase, BasicModal,  LookupField} from '../../index';
+import {_window,SVG, callAPI, Avatar} from 'douhub-ui-web-basic'
 
 const SendInvitationModal = (props: Record<string, any>) => {
 

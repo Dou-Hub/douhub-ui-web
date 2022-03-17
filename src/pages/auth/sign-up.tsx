@@ -1,10 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { sendMessage } from 'douhub-ui-store';
-import {
-    callAPIBase, SignUpSection, MessageField,
-    getCookie, _window
-} from '../../index';
+import {SignUpSection, MessageField} from '../../index';
+import { callAPIBase,getCookie,_window } from 'douhub-ui-web-basic';
 import { isNil, isFunction } from 'lodash';
 import { isEmail } from 'douhub-helper-util';
 

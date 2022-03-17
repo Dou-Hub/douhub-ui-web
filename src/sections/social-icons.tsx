@@ -1,6 +1,6 @@
 import React from "react";
 import { map } from 'lodash';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 const SocialIconsSection = (props: Record<string, any>) => {
     const { data } = props;

@@ -1,7 +1,8 @@
-import { Dropdown, SVG, Select, SelectOption, _window, UploadModal } from '../../index';
+import { Dropdown, Select, SelectOption, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
 import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
 import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
+import {SVG,  _window} from 'douhub-ui-web-basic';
 
 const ListHeader = (props: Record<string, any>) => {
 

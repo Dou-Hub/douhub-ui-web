@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import _ from '../../../shared/util/base';
 import Input from './input';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 const Search = (props) => {
 

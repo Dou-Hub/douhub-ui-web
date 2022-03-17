@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import BasicModal from '../../controls/modals/basic';
-import { _window } from '../../util';
+import { _window } from 'douhub-ui-web-basic';
 import Uploader from '../../controls/uploader';
-import { callAPI } from '../../context/auth-call-api';
+import { callAPI } from 'douhub-ui-web-basic';
 
 import { hasRole, isObject, isNonEmptyString } from 'douhub-helper-util';
 import { isArray, isFunction, map, uniq } from 'lodash';

@@ -4,7 +4,7 @@ import SelectOption from '../controls/antd/select-option';
 import Select from '../controls/antd/select';
 import NoteField from './note';
 import LabelField from './label';
-import CSS from '../controls/css';
+import {CSS} from 'douhub-ui-web-basic';
 
 import { isNonEmptyString } from 'douhub-helper-util';
 

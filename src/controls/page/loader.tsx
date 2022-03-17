@@ -1,6 +1,6 @@
 import { isNonEmptyString } from 'douhub-helper-util';
 import React from 'react';
-import SVG from '../svg';
+import {SVG} from 'douhub-ui-web-basic';
 
 const PageLoader = (props: Record<string, any>) => {
     const iconSrc = isNonEmptyString(props.iconSrc) ? props.iconSrc : '/logo.svg';

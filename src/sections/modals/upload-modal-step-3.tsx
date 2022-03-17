@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { isArray, cloneDeep, map, isNil, each, isBoolean, isFunction, without } from 'lodash';
 import {
-    _window, Table, Input, PicklistField, CSS, Popconfirm,
-    DEFAULT_ACTION_COLUMN, SVG, Tooltip, CheckboxField
+     Table, Input, PicklistField, Popconfirm,
+    DEFAULT_ACTION_COLUMN, Tooltip, CheckboxField
 } from '../../index';
 
 import { isNonEmptyString, newGuid, csvToJson, isObject, getPropName, doNothing } from 'douhub-helper-util';
+import { _window, CSS, SVG } from 'douhub-ui-web-basic';
 
 const css = `
     .upload-model-step-3 .ant-table-cell

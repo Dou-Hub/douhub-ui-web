@@ -1,5 +1,5 @@
 import React from 'react';
-import SVG from '../../svg';
+import { SVG } from 'douhub-ui-web-basic';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { map } from 'lodash';
 

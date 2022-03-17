@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { map, isFunction, isArray, without, isObject } from 'lodash';
-import { LabelField, NoteField, SVG, Input, Checkbox, CSS } from '../index';
+import { LabelField, NoteField, Input, Checkbox } from '../index';
+import { SVG, CSS } from 'douhub-ui-web-basic';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { TAGS_CSS } from './tags-css';
 import { ReactSortable } from "react-sortablejs";

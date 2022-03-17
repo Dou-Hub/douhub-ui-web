@@ -1,5 +1,5 @@
 import _ from '../../../shared/util/base';
-import SVG from '../controls/svg';
+import {SVG} from 'douhub-ui-web-basic';
 import ToolbarSectionCSS from './toolbar-css';
 import Input from '../controls/antd/input';
 import Popconfirm from '../controls/antd/popconfirm';

@@ -2,8 +2,7 @@ import React, { useState,  useEffect } from 'react';
 
 import { observer } from 'mobx-react-lite';
 import { useEnvStore } from 'douhub-ui-store';
-import SVG from '../../controls/svg';
-import {_window} from '../../util';
+import {_window,SVG} from 'douhub-ui-web-basic';
 import  Input from '../../controls/input';
 import  {isNonEmptyString} from 'douhub-helper-util';
 

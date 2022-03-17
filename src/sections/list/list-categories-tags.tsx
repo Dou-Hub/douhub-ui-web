@@ -3,10 +3,12 @@ import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
 } from 'douhub-helper-util';
-import {
-    callAPI, _window, Select, SelectOption, CSS, Popconfirm,
-    Dropdown, Menu, TextField, SVG, TagsField, TreeField
+import {Select, SelectOption,  Popconfirm,
+    Dropdown, Menu, TextField,  TagsField, TreeField
 } from '../../index';
+
+import { _window,CSS,SVG, callAPI } from 'douhub-ui-web-basic';
+
 import React, { useEffect, useState } from 'react';
 
 
@@ -79,7 +81,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             .then((result: Record<string, any>) => {
                 setCategories(result);
             })
-            .catch((error) => {
+            .catch((error:any) => {
                 console.error(error);
                 setError('Failed to save categories.');
             })

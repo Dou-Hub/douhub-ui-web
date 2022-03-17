@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
-import {  _window, InputTextArea, setLocalStorage } from '../../index';
+import {  InputTextArea} from '../../index';
+import {  _window, setLocalStorage } from 'douhub-ui-web-basic';
 
 const UploadModalStep2 = (props: {
     entity: Record<string,any>,

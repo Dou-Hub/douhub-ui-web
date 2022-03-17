@@ -1,5 +1,6 @@
 import React from 'react';
-import { _window, DefaultForm } from '../../index';
+import {  DefaultForm } from '../../index';
+import { _window } from 'douhub-ui-web-basic';
 import ListHeader from './list-header';
 import { isNumber, isFunction } from 'lodash';
 import { observer } from 'mobx-react-lite';

@@ -6,10 +6,10 @@
 
 import { useEffect, useState } from 'react';
 import { callAPIBase } from '../call-api';
-import { callAPI } from '../context/auth-call-api';
+import { callAPI } from './auth-call-api.tsx.delete';
 import { each, without, map, isFunction, isBoolean } from 'lodash';
 import { isPhoneNumber, isEmail, isPassword, isNonEmptyString, isObject } from 'douhub-helper-util';
-import { _window, _track } from "../util";
+import { _window, _track } from "../to-delete/util.tsx.delete";
 import { useRouter } from 'next/router';
 import { useContextStore } from 'douhub-ui-store';
 
