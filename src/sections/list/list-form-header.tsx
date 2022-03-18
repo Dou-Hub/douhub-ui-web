@@ -10,13 +10,13 @@ const ListFormHeader = (props: Record<string, any>) => {
     const deleteConfirmationMessage = props.deleteConfirmationMessage ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const deleteButtonLabel = props.deleteButtonLabel ? props.deleteButtonLabel : `Delete`;
     const display = getRecordDisplay(currentRecord ? currentRecord : {});
-    const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
+    // const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
     return <div style={{ height: 78 }}
         className="list-form-header absolute bg-gray-50 w-full flex flex-row px-6 py-4 border border-0 border-b">
-        <div className="flex-1">
+        <div className="flex-1 truncate">
             <p className="pb-0 mb-0 text-xs uppercase">{entity.uiName}</p>
-            <h1 className="text-lg text-black mb-0 whitespace-nowrap" title={display}>{title}</h1>
+            <h1 className="text-lg text-black mb-0 whitespace-nowrap" title={display}>{display}</h1>
         </div>
         <div className="flex flex-row justify-center">
             {recordSaving != '' && <div className="w-full flex p-4 self-center ">

@@ -8,8 +8,8 @@ import {Select, SelectOption,  Popconfirm,
 } from '../../index';
 
 import { _window,CSS,SVG, callAPI } from 'douhub-ui-web-basic';
-
 import React, { useEffect, useState } from 'react';
+
 
 
 const LIST_CATEGORIES_TAGS_CSS = `
@@ -27,8 +27,7 @@ const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select-selection-item
     {
         font-weight: bold !important;
-        font-size: 1.2rem;
-        line-height: 1.4 !important;
+        font-size: 1rem;
         padding-right: 32px !important;
     }
 `
@@ -81,7 +80,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             .then((result: Record<string, any>) => {
                 setCategories(result);
             })
-            .catch((error:any) => {
+            .catch((error) => {
                 console.error(error);
                 setError('Failed to save categories.');
             })
@@ -181,10 +180,10 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             style={{ height }}>
 
             <div
-                className="w-full flex flex-row border-b p-4 flex flex-row items-center "
+                className="w-full flex flex-row border-b py-4 px-6 pr-4 flex flex-row items-center "
                 style={{ height: 68, borderColor: '#f0f0f0' }}
             >
-                <div className="flex flex-col" style={{width:150}}>
+                <div className="flex flex-col">
                     <Select
                         // style={{ minWidth: querySelectorMinWidth }}
                         labelInValue
@@ -196,8 +195,6 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         <SelectOption key="categories" value="categories">Categories</SelectOption>
                         <SelectOption key="tags" value="tags">Tags</SelectOption>
                     </Select>
-                    {isNonEmptyString(doing) && <div className="text-xs">{doing}</div>}
-                    {isNonEmptyString(error) && !isNonEmptyString(doing) && <div className="text-xs text-red-700">{error}</div>}
                 </div>
                 {!isNonEmptyString(doing) && <div className="flex-1 flex flex-row">
                     <div className="flex-1"></div>
@@ -272,7 +269,19 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                     <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="white" />
                 </button>
             </div>}
-            <div className="h-full flex flex-col w-full overflow-hidden bg-white p-4" style={{ height: 'calc(100% - 42px)' }}>
+            
+            {isNonEmptyString(doing) && <div className="w-full flex p-6">
+                <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
+                <span className="pl-2">Loading ...</span>
+            </div>}
+
+            {isNonEmptyString(error) && !isNonEmptyString(doing) &&
+                <div className="w-full flex p-6">
+                    <span className="text-xs text-red-700">{error}</span>
+                </div>
+            }
+
+            {!isNonEmptyString(doing) && <div className="h-full flex flex-col w-full overflow-hidden bg-white p-4" style={{ height: 'calc(100% - 42px)' }}>
                 {!isNonEmptyString(error) && curTab.value == 'categories' && <TreeField
                     disabled={isNonEmptyString(doing)}
                     value={categories.data}
@@ -289,7 +298,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                     uiCollectionName="tags"
                     onChange={onChangeTags} />}
             </div>
-
+            }
         </div>
     </>
 };

@@ -44,17 +44,33 @@ const FormBase = observer((props: Record<string, any>) => {
         let newData: any = cloneDeep(data);
         newData[field.name] = value;
 
-        if (isFunction(field.onChange)) 
-        {
+        if (isFunction(field.onChange)) {
             newData = field.onChange(field, value, newData);
         }
-        
+
         updateData(newData);
     }
 
     const onChangeTags = (field: Record<string, any>, value: any) => {
         const newData: any = isObject(data) ? cloneDeep(data) : {};
         newData[field.name] = cloneDeep(value);
+        updateData(newData);
+    }
+
+    const onChangePicklist = (field: Record<string, any>, option: { value: number | string, text: string }) => {
+
+        const newData: any = isObject(data) ? cloneDeep(data) : {};
+        const attributeName = field.name;
+        if (isObject(option)) {
+            const { value, text } = option;
+            newData[attributeName] = value;
+            newData[`${attributeName}_data`] = { value, text };
+        }
+        else {
+            delete newData[attributeName];
+            delete newData[`${attributeName}_data`];
+        }
+
         updateData(newData);
     }
 
@@ -135,7 +151,7 @@ const FormBase = observer((props: Record<string, any>) => {
                         }
                     case 'picklist':
                         {
-                            return <PicklistField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
+                            return <PicklistField key={key} {...field} onChange={(option: { value: number | string, text: string }) => onChangePicklist(field, option)} />
                         }
                     default:
                         {

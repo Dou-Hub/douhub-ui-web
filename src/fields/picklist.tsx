@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { map, isFunction, isNil, isInteger } from 'lodash';
+import { map, isFunction, isNil, isInteger, find } from 'lodash';
 import SelectOption from '../controls/antd/select-option';
 import Select from '../controls/antd/select';
 import NoteField from './note';
@@ -23,15 +23,16 @@ const PICKLIST_FIELD_CSS = `
     {
         border-radius: 0;
         padding: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
         height: 30px !important;
         border: none !important;
         font-size: 0.9rem;
     }
 
-    .field-picklist .ant-select-selection-item
+    .field-picklist .ant-select-arrow
     {
-        padding-left: 5px !important;
-        padding-right: 30px !important;
+        right: 0 !important
     }
 
     .field-picklist.ant-select-focused .ant-select-selector
@@ -56,7 +57,8 @@ const PicklistField = (props: Record<string, any>) => {
         if (newValue != value || isNil(value)) {
             newValue = isNonEmptyString(newValue) || isInteger(newValue) ? newValue : defaultValue;
             setValue(newValue);
-            if (isFunction(props.onChange)) props.onChange(newValue);
+            const option = find(props.options, (option)=>{option.value==newValue});
+            if (isFunction(props.onChange)) props.onChange(option);
         }
     }
 

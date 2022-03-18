@@ -59,7 +59,7 @@ export const LIST_CSS = `
     {
         font-weight: bold !important;
         font-size: 1.2rem;
-        line-height: 1.4 !important;
+        line-height: 30px !important;
     }
 
     .douhub-list-header .douhub-list-title h1
