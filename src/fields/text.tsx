@@ -5,8 +5,6 @@ import { LabelField, NoteField, InputPassword, InputTextArea, InputText } from '
 import { CSS, _window } from 'douhub-ui-web-basic';
 import { IMaskInput } from 'react-imask';
 
-const DISPLAY_NAME = 'TextField';
-
 const TEXT_FIELD_CSS = `
    
     .field-wrapper-input
@@ -73,7 +71,7 @@ const TEXT_FIELD_CSS = `
 const TextField = (props: Record<string, any>) => {
 
     const { label, disabled, type, wrapperStyle, note, minRows, inputWrapperStyle,
-        maxRows, labelStyle, inputStyle, alwaysShowLabel,
+        maxRows, labelStyle, inputStyle, alwaysShowLabel, button,
         hideLabel, onPressEnter } = props;
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
@@ -208,8 +206,16 @@ const TextField = (props: Record<string, any>) => {
         </div>
         <NoteField text={note} />
         {isNonEmptyString(errorMessage) && <NoteField text={errorMessage} type="error" />}
+        {isFunction(button?.onClick) && isNonEmptyString(button?.text) && <div className="flex flex-col">
+            {isNonEmptyString(button?.error) && <div className="flex flex-row justify-end text-red-500 mb-2">{button?.error}</div>}
+            {isNonEmptyString(button?.doing) && <div className="flex flex-row justify-end mb-2">{button?.doing}</div>}
+            {!isNonEmptyString(button?.doing) && <div className="flex flex-row justify-end"><button
+                onClick={button?.onClick} 
+                className={`flex cursor-pointer whitespace-nowrap inline-flexitems-center justify-center p-2 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 ${isNonEmptyString(button?.className)?button?.className:''}`}>
+                {button?.text}
+            </button></div>}
+        </div>}
     </div>
 };
 
-TextField.displayName = DISPLAY_NAME;
 export default TextField;

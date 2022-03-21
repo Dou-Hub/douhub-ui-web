@@ -17,7 +17,7 @@ const PageBase = (props) => {
         hideSideArea, mainStyle, pageStyle, bodyStyle,
         userAgent, slug, query, getPageMetadata,
         hideHeader, hideFooter } = props;
-
+ 
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(props.editMode);
     const [relocateSection, setRelocateSection] = useState(false);
