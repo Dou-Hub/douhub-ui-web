@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, map, isEmpty, cloneDeep } from 'lodash';
+import { isFunction, map, isEmpty, cloneDeep, isNil } from 'lodash';
 import TextField from '../../fields/text';
 import CheckboxGroupField from '../../fields/checkbox-group';
 import SectionField from '../../fields/section';
@@ -100,10 +100,11 @@ const FormBase = observer((props: Record<string, any>) => {
 
     const renderForm = () => {
         return map(form.rows, (row, index) => {
-            return <div key={`row${index}`} className="flex flex-row">{map(row.fields, (field) => {
+            return <div key={`row${index}`} className="flex flex-row">{map(row.fields, (f) => {
+                const field = cloneDeep(f);
                 const key = field.id || field.name;
-
-                field.value = data && data[field.name];
+                const dataValue = data && data[field.name];
+                field.value = !isNil(field.value) && isNil(dataValue)?field.value: dataValue;
                 field.record = data;
 
                 switch (field.type) {
