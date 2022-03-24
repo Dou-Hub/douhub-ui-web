@@ -23,12 +23,21 @@ const LOOKUP_FIELD_CSS = `
 
     .field-lookup-wrapper .delete-button
     {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
         position: absolute;
-        right: 15px;
-        top: 10px;
+        right: 16px;
         cursor: pointer;
+    }
+
+    .field-lookup-wrapper.label-hidden-false .delete-button
+    {
+        top: 26px;
+    }
+
+    .field-lookup-wrapper.label-hidden-true .delete-button
+    {
+        top: 8px;
     }
 
     .field-lookup-no-value .delete-button
@@ -240,13 +249,15 @@ const LookupField = (props: Record<string, any>) => {
         />
     }
 
-    return <div className={`flex flex-col w-full field-lookup-wrapper ${isObject(value) ? 'field-lookup-has-value' : 'field-lookup-no-value'}`} style={wrapperStyle}>
+    const labelHidden = !(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)));
+
+    return <div className={`flex flex-col w-full field-lookup-wrapper label-hidden-${labelHidden} ${isObject(value) ? 'field-lookup-has-value' : 'field-lookup-no-value'}`} style={wrapperStyle}>
         <CSS id="field-lookup-css" content={LOOKUP_FIELD_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle}
-            hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
+            hidden={labelHidden}
         />
         {renderSelect()}
-        <SVG src="/icons/x.svg" style={{ width: 10, height: 10 }} color="#999999" className="delete-button" onClick={onDelete} />
+        <SVG src="/icons/x.svg" style={{ width: 12, height: 12 }} color="#999999" className="delete-button" onClick={onDelete} />
         <NoteField text={note} />
     </div>
 };

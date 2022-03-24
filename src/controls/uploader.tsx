@@ -101,7 +101,12 @@ const Uploader = (props: {
 
         base64Data = Buffer.from(base64Data, 'base64');
 
-        const fileName = fileNamePrefix ? `${fileNamePrefix}.${result.file.name}` : result.file.name;
+        const fName = (fileNamePrefix ? `${fileNamePrefix}.${result.file.name}` : result.file.name);
+        const fNameInfo = fName.split('.');
+        const fExt = fNameInfo.pop(0);
+        const fileName = (fNameInfo.join('.').replace(/[^a-z0-9-]/gi, '_') + '.' + fExt).toLowerCase();
+
+        if (_track) console.log({fileName});
 
         const s3Setting = await callAPI(solution, `${solution.apis.file}upload-setting`,
             { fileName, entityName, recordId, attributeName },

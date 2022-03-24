@@ -11,6 +11,8 @@ import Uploader from './controls/uploader';
 import Tags from './fields/tags';
 import Logo from './controls/logo';
 import Input from './controls/input';
+
+import Popover from './controls/antd/popover';
 import Checkbox from './controls/antd/checkbox';
 import Table from './controls/antd/table';
 import Tooltip from './controls/antd/tooltip';
@@ -99,7 +101,7 @@ import Splitter from './controls/splitter';
 
 
 export {
-    Logo, Input, InputTextArea, Checkbox, Tags,
+    Logo, Input, InputTextArea, Checkbox, Tags, Popover,
     Table, Tooltip, Slider, Switch, Select, SelectOption, SelectProps,
     InputPassword, InputNumber, InputText, Notification, Splitter,
     Popconfirm, Dropdown, Menu, Alert, Button,
@@ -114,6 +116,7 @@ export { renderIconButtonColumn,
     LIST_COLUMN_TOOLTIP_TYPE,
     DEFAULT_ACTION_COLUMN,
     DEFAULT_EMAIL_COLUMN, 
+    LIST_COLUMN_SETTINGS_TYPE,
     rendeActionButtonColumn} from './sections/list/list-helper';
 export {LIST_CSS}  from './sections/list/list-css';
 import ListTable from './sections/list/list-table';

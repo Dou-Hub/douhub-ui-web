@@ -100,66 +100,67 @@ const FormBase = observer((props: Record<string, any>) => {
 
     const renderForm = () => {
         return map(form.rows, (row, index) => {
-            return <div key={`row${index}`} className="flex flex-row">{map(row.fields, (f) => {
-                const field = cloneDeep(f);
-                const key = field.id || field.name;
-                const dataValue = data && data[field.name];
-                field.value = !isNil(field.value) && isNil(dataValue)?field.value: dataValue;
-                field.record = data;
+            return <div key={`row${index}`} className={`flex flex-row ${row.hidden==true?'hidden':''}`}>{
+                map(row.fields, (f) => {
+                    const field = cloneDeep(f);
+                    const key = field.id || field.name;
+                    const dataValue = data && data[field.name];
+                    field.value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
+                    field.record = data;
 
-                switch (field.type) {
-                    case 'checkbox':
-                        {
-                            if (isNonEmptyString(field.groupValue)) {
-                                return <CheckboxGroupField key={`${key}-${field.groupValue}`} {...field} onChange={(v: string) => onChangeData(field, v)} />
-                            }
-                            else {
-                                return <CheckboxField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
-                            }
+                    switch (field.type) {
+                        case 'checkbox':
+                            {
+                                if (isNonEmptyString(field.groupValue)) {
+                                    return <CheckboxGroupField key={`${key}-${field.groupValue}`} {...field} onChange={(v: string) => onChangeData(field, v)} />
+                                }
+                                else {
+                                    return <CheckboxField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
+                                }
 
-                        }
-                    case 'html':
-                        {
-                            return <HtmlField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
-                        }
-                    case 'lookup':
-                        {
-                            return <LookupField key={key} {...field} value={data && data[`${field.name}_data`]} onChange={(record: Record<string, any>) => onChangeLookupData(field, record)} />
-                        }
-                    case 'placeholder':
-                        {
-                            return <PlaceholderField key={key} {...field} />
-                        }
-                    case 'tags':
-                        {
-                            return <TagsField key={key} {...field} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
-                        }
-                    case 'alert-info':
-                        {
-                            return <AlertField key={key} {...field} type="info" />
-                        }
-                    case 'alert-success':
-                        {
-                            return <AlertField key={key} {...field} type="success" />
-                        }
-                    case 'alert-error':
-                        {
-                            return <AlertField key={key} {...field} type="error" />
-                        }
-                    case 'section':
-                        {
-                            return <SectionField key={key} {...field} />
-                        }
-                    case 'picklist':
-                        {
-                            return <PicklistField key={key} {...field} onChange={(option: { value: number | string, text: string }) => onChangePicklist(field, option)} />
-                        }
-                    default:
-                        {
-                            return <TextField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
-                        }
-                }
-            })}
+                            }
+                        case 'html':
+                            {
+                                return <HtmlField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
+                            }
+                        case 'lookup':
+                            {
+                                return <LookupField key={key} {...field} value={data && data[`${field.name}_data`]} onChange={(record: Record<string, any>) => onChangeLookupData(field, record)} />
+                            }
+                        case 'placeholder':
+                            {
+                                return <PlaceholderField key={key} {...field} />
+                            }
+                        case 'tags':
+                            {
+                                return <TagsField key={key} {...field} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
+                            }
+                        case 'alert-info':
+                            {
+                                return <AlertField key={key} {...field} type="info" />
+                            }
+                        case 'alert-success':
+                            {
+                                return <AlertField key={key} {...field} type="success" />
+                            }
+                        case 'alert-error':
+                            {
+                                return <AlertField key={key} {...field} type="error" />
+                            }
+                        case 'section':
+                            {
+                                return <SectionField key={key} {...field} />
+                            }
+                        case 'picklist':
+                            {
+                                return <PicklistField key={key} {...field} onChange={(option: { value: number | string, text: string }) => onChangePicklist(field, option)} />
+                            }
+                        default:
+                            {
+                                return <TextField key={key} {...field} onChange={(v: string) => onChangeData(field, v)} />
+                            }
+                    }
+                })}
             </div>
         });
     }

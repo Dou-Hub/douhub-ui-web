@@ -40,6 +40,7 @@ const HtmlField = (props: Record<string, any>) => {
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : '';
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState(isNonEmptyString(props.value) ? props.value : defaultValue);
+    const [placeholderOn, setPlaceholderOn] = useState(!isNonEmptyString(value));
     const [id] = useState(newGuid());
     const layoutClassName = props.layoutClassName ? props.layoutClassName : '';
 
@@ -58,7 +59,6 @@ const HtmlField = (props: Record<string, any>) => {
 
         console.log({ html, action })
 
-
         if ((action == 'init' || action == 'blur') && html == '<p></p>') {
             if (fieldEditor) fieldEditor.className = `${fieldEditor.className} is-placeholder field-html-${id}-is-placeholder`;
             editor?.commands?.setContent(`<p>${placeholder}</p>`);
@@ -67,6 +67,7 @@ const HtmlField = (props: Record<string, any>) => {
         if (action == 'focus' && html == `<p>${placeholder}</p>`) {
             if (fieldEditor) fieldEditor.className = fieldEditor.className.replace(`field-html-${id}-is-placeholder`, '').replace(`is-placeholder`, '').trim();
             editor?.commands?.setContent(`<p></p>`);
+            setPlaceholderOn(false);
         }
 
         if ((action == 'selection' || action == 'focus') && fieldEditor) {
@@ -180,6 +181,50 @@ const HtmlField = (props: Record<string, any>) => {
         })
     }
 
+    const renderFloatMenuButtons = (name:string) => {
+        if (placeholderOn) return null;
+        return <>
+            <button
+                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                className="float-menu"
+            >
+                H2
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                className="float-menu"
+            >
+                H3
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                className="float-menu"
+            >
+                <SVG src="/icons/material-bullet-list.svg" style={{ width: 20 }} />
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                className="float-menu"
+            >
+                <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
+            </button>
+            <button className="float-menu">
+                <Uploader
+                    iconStyle={{ width: 20, height: 20 }}
+                    hideLabel={true}
+                    entityName={record.entityName}
+                    attributeName={name}
+                    fileType="Photo"
+                    signedUrlSize={960}
+                    onSuccess={onUploadPhoto}
+                    recordId={record.id ? record.id : newGuid()}
+                    fileNamePrefix={newGuid()}
+                    uiFormat="icon" iconUrl="/icons/image.svg"
+                    wrapperStyle={{ width: 20, height: 20, border: 'none' }} />
+            </button>
+        </>
+    }
+
     return <div className="flex flex-col w-full" style={wrapperStyle}>
         <CSS id="html-field-css" content={HTML_FIELD_CSS} />
         <CSS id="html-field-code-css" content={HTML_FIELD_CODE_CSS} />
@@ -187,47 +232,13 @@ const HtmlField = (props: Record<string, any>) => {
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
+        {editor && (!isNonEmptyString(value) || value=="<p></p>") && <div className="flex field-html">
+            {renderFloatMenuButtons(name)}
+        </div>}
         <div className={`w-full field-html field-html-${id} ${layoutClassName}`} style={style}>
-            {editor && <FloatingMenu editor={editor}>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                    className="float-menu"
-                >
-                    H2
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                    className="float-menu"
-                >
-                    H3
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
-                    className="float-menu"
-                >
-                    <SVG src="/icons/material-bullet-list.svg" style={{ width: 20 }} />
-                </button>
-                <button
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                    className="float-menu"
-                >
-                    <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
-                </button>
-                <button className="float-menu">
-                    <Uploader
-                        iconStyle={{width:20, height:20}}
-                        hideLabel={true}
-                        entityName={record.entityName}
-                        attributeName={name}
-                        fileType="Photo"
-                        signedUrlSize={960}
-                        onSuccess={onUploadPhoto}
-                        recordId={record.id ? record.id : newGuid()}
-                        fileNamePrefix={newGuid()}
-                        uiFormat="icon" iconUrl="/icons/image.svg"
-                        wrapperStyle={{ width: 20, height: 20, border: 'none' }} />
-                </button>
-            </FloatingMenu>}
+            {editor && isNonEmptyString(value) && value!="<p></p>" ? <FloatingMenu editor={editor}>
+                {renderFloatMenuButtons(name)}
+            </FloatingMenu> : <FloatingMenu editor={editor}></FloatingMenu>}
             {editor && <BubbleMenu editor={editor} className="menu-wrapper">
                 <div className="menu">
                     {!hideH1 && <div
@@ -295,3 +306,4 @@ const HtmlField = (props: Record<string, any>) => {
 
 HtmlField.displayName = DISPLAY_NAME;
 export default HtmlField;
+
