@@ -173,12 +173,4 @@ export const HTML_FIELD_CSS = `
     display: flex;
 }
 
-.field-html .float-menu,
-.field-html .float-menu
-{
-    border: solid 1px #333333;
-    padding: 2px;
-    margin-right: 10px;
-    font-size: 14px;
-}
 `;

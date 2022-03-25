@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction } from 'lodash';
+import { isFunction, each } from 'lodash';
 import LabelField from './label';
 import Uploader from '../controls/uploader';
 import {SVG, CSS} from 'douhub-ui-web-basic';
@@ -27,6 +27,15 @@ import lowlight from 'lowlight';
 // lowlight.registerLanguage('javascript', javascript)
 
 
+const FLOAT_MENU_STYLE = {
+    border: 'solid 1px #333333',
+    backgroundColor:'#ffffff',
+    padding: 2,
+    marginLeft: 10,
+    fontSize: 14,
+    display: 'flex'
+}
+
 const DISPLAY_NAME = 'HtmlField';
 
 const HtmlField = (props: Record<string, any>) => {
@@ -40,7 +49,6 @@ const HtmlField = (props: Record<string, any>) => {
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : '';
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState(isNonEmptyString(props.value) ? props.value : defaultValue);
-    const [placeholderOn, setPlaceholderOn] = useState(!isNonEmptyString(value));
     const [id] = useState(newGuid());
     const layoutClassName = props.layoutClassName ? props.layoutClassName : '';
 
@@ -66,8 +74,7 @@ const HtmlField = (props: Record<string, any>) => {
 
         if (action == 'focus' && html == `<p>${placeholder}</p>`) {
             if (fieldEditor) fieldEditor.className = fieldEditor.className.replace(`field-html-${id}-is-placeholder`, '').replace(`is-placeholder`, '').trim();
-            editor?.commands?.setContent(`<p></p>`);
-            setPlaceholderOn(false);
+            editor?.commands?.setContent(`<p></p><p></p>`);
         }
 
         if ((action == 'selection' || action == 'focus') && fieldEditor) {
@@ -170,75 +177,74 @@ const HtmlField = (props: Record<string, any>) => {
     }
 
     const onSyncValue = () => {
-        const newValue = editor?.getHTML();
+        let newValue = editor?.getHTML();
+        if (newValue == '' || newValue == '<p></p>') newValue = "<p></p><p></p>";
         setValue(newValue);
         if (isFunction(props.onChange)) props.onChange(isNonEmptyString(newValue) ? newValue : null);
     }
 
     const onUploadPhoto = (photoInfo: Record<string, any>) => {
-        editor.commands.setImage({
-            src: photoInfo.cfSignedResult.signedUrl
-        })
+
+        const src = photoInfo.cfSignedResult.signedUrl;
+        const rawSrc = photoInfo.cfSignedRawResult.signedUrl;
+        editor.commands.setImage({ src });
+        each(document.getElementsByTagName('img'), (img: any) => {
+            if (img.src == src) {
+                img.onerror = function () {
+                    console.log("USING RAW FILE");
+                    this.rawSrc = rawSrc;
+                    this.src = rawSrc;
+                };
+            }
+        });
     }
 
-    const renderFloatMenuButtons = (name:string) => {
-        if (placeholderOn) return null;
-        return <>
-            <button
-                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                className="float-menu"
-            >
-                H2
-            </button>
-            <button
-                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                className="float-menu"
-            >
-                H3
-            </button>
-            <button
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className="float-menu"
-            >
-                <SVG src="/icons/material-bullet-list.svg" style={{ width: 20 }} />
-            </button>
-            <button
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className="float-menu"
-            >
-                <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
-            </button>
-            <button className="float-menu">
-                <Uploader
-                    iconStyle={{ width: 20, height: 20 }}
-                    hideLabel={true}
-                    entityName={record.entityName}
-                    attributeName={name}
-                    fileType="Photo"
-                    signedUrlSize={960}
-                    onSuccess={onUploadPhoto}
-                    recordId={record.id ? record.id : newGuid()}
-                    fileNamePrefix={newGuid()}
-                    uiFormat="icon" iconUrl="/icons/image.svg"
-                    wrapperStyle={{ width: 20, height: 20, border: 'none' }} />
-            </button>
-        </>
-    }
-
-    return <div className="flex flex-col w-full" style={wrapperStyle}>
+    return <div className="flex flex-col w-full relative" style={wrapperStyle}>
         <CSS id="html-field-css" content={HTML_FIELD_CSS} />
         <CSS id="html-field-code-css" content={HTML_FIELD_CODE_CSS} />
         <CSS id="html-field-article-css" content={ARTICLE_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        {editor && (!isNonEmptyString(value) || value=="<p></p>") && <div className="flex field-html">
-            {renderFloatMenuButtons(name)}
-        </div>}
-        <div className={`w-full field-html field-html-${id} ${layoutClassName}`} style={style}>
-            {editor && isNonEmptyString(value) && value!="<p></p>" ? <FloatingMenu editor={editor}>
-                {renderFloatMenuButtons(name)}
-            </FloatingMenu> : <FloatingMenu editor={editor}></FloatingMenu>}
+        <div className={`w-full field-html article field-html-${id} ${layoutClassName}`} style={style}>
+            {editor && <FloatingMenu editor={editor}>
+                <button style={FLOAT_MENU_STYLE}
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                >
+                    H2
+                </button>
+                <button style={FLOAT_MENU_STYLE}
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                >
+                    H3
+                </button>
+                <button style={FLOAT_MENU_STYLE}
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+
+                >
+                    <SVG src="/icons/material-bullet-list.svg" style={{ width: 20 }} />
+                </button>
+                <button style={FLOAT_MENU_STYLE}
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+
+                >
+                    <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
+                </button>
+                <button style={FLOAT_MENU_STYLE}>
+                    <Uploader
+                        iconStyle={{ width: 20, height: 20 }}
+                        hideLabel={true}
+                        entityName={record.entityName}
+                        attributeName={name}
+                        fileType="Photo"
+                        signedUrlSize={960}
+                        onSuccess={onUploadPhoto}
+                        recordId={record.id ? record.id : newGuid()}
+                        fileNamePrefix={newGuid()}
+                        uiFormat="icon" iconUrl="/icons/image.svg"
+                        wrapperStyle={{ width: 20, height: 20, border: 'none' }} />
+                </button>
+            </FloatingMenu>}
             {editor && <BubbleMenu editor={editor} className="menu-wrapper">
                 <div className="menu">
                     {!hideH1 && <div
@@ -306,4 +312,5 @@ const HtmlField = (props: Record<string, any>) => {
 
 HtmlField.displayName = DISPLAY_NAME;
 export default HtmlField;
+
 
