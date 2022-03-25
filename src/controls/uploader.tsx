@@ -116,6 +116,8 @@ const Uploader = (props: {
         await uploadToS3(s3Setting.url, s3Setting.s3FileName, base64Data);
 
         let cfSignedResult = null;
+        let cfSignedRawResult = null;
+
         if (fileType == 'Photo') {
             const url = `${solution.cloudFront.photo}${s3Setting.s3FileName}${signedUrlSize == 'raw' ? '' : '.resized.' + signedUrlSize + '.jpg'}${signedUrlFormat == 'original' ? '' : '.webp'}`;
             cfSignedResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
@@ -125,7 +127,7 @@ const Uploader = (props: {
             //Because photo auto create tables time, the url to setValue should be the raw file
             if (signedUrlSize != 'raw') {
                 const rawUrl = `${solution.cloudFront.photo}${s3Setting.s3FileName}`;
-                const cfSignedRawResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
+                cfSignedRawResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
                     { url: rawUrl },
                     'GET');
                 setPreviewValue(cfSignedRawResult.signedUrl);
@@ -143,7 +145,7 @@ const Uploader = (props: {
         if (_track) console.log({ cfSignedResult });
 
         const fileContent = includeContent == true ? await getContent(result.file) : null;
-        if (isFunction(props.onSuccess)) props.onSuccess(assign({ s3Setting, cfSignedResult }, fileContent ? { content: fileContent } : {}));
+        if (isFunction(props.onSuccess)) props.onSuccess(assign({ s3Setting, cfSignedResult, cfSignedRawResult }, fileContent ? { content: fileContent } : {}));
     }
 
     const onAfterUpload = (result: Record<string, any>) => {
