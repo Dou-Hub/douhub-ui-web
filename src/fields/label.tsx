@@ -34,20 +34,19 @@ const LABEL_FIELD_CSS = `
 `;
 
 const FieldLabel = (props: Record<string, any>) => {
-    const { text, disabled, style, hidden } = props;
+    const { text, disabled, style, hidden, className } = props;
     const onClick = (e: any) => {
         if (isFunction(props.onClick)) props.onClick(e);
     }
-    return (
+    return isNonEmptyString(text) && !hidden ?
         <>
             <CSS id="field-label-css" content={LABEL_FIELD_CSS} />
             <CSS id="field-css" content={FIELD_CSS} />
-            {isNonEmptyString(text) && !hidden && <div style={style}
+            <div style={style}
                 onClick={onClick}
-                className={`field-label ${disabled ? 'field-disabled' : ''}`}
-                dangerouslySetInnerHTML={{ __html: marked(text) }} />}
-        </>
-    )
+                className={`w-full field-label ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(className) ? className : ''}`}
+                dangerouslySetInnerHTML={{ __html: marked(text) }} />
+        </>:<></>
 }
 
 FieldLabel.displayName = 'FieldLabel';

@@ -11,7 +11,6 @@ const ListFormResizer = (props: Record<string, any>) => {
     useEffect(()=>{
         if (isNumber(defaultWidth)) 
         {
-            console.log({defaultWidth})
             const current: Record<string, any> = inputEl && inputEl.current? inputEl.current : {};
             current.style.width = defaultWidth + 'px';
         }

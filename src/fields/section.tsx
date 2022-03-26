@@ -23,7 +23,7 @@ const SECTION_FIELD_CSS = `
 `;
 
 const FieldSection = (props: Record<string, any>) => {
-    const { title, subTitle, disabled, style, className } = props;
+    const { title, subTitle, disabled, style, className, titleClassName, subTitleClassName } = props;
 
     const onClick = (e: any) => {
         if (isFunction(props.onClick)) props.onClick(e);
@@ -33,9 +33,11 @@ const FieldSection = (props: Record<string, any>) => {
         <>
             <CSS id="field-css" content={FIELD_CSS} />
             <CSS id="field-section-css" content={SECTION_FIELD_CSS} />
-            <div style={style} className={`p-3 bg-gray-50 border border-0 border-l text-left field-section ${disabled ? 'field-disabled' : ''} ${className ? className : ''}`} onClick={onClick}>
-                <div className="w-full text-base" dangerouslySetInnerHTML={{ __html: marked(title) }} />
-                {isNonEmptyString(subTitle) && <div className="w-full text-xs text-gray-500" dangerouslySetInnerHTML={{ __html: marked(subTitle) }} />}
+            <div style={style} onClick={onClick}
+            className={`w-full p-3 bg-gray-50 border border-0 border-l text-left field-section ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(className) ? className : ''}`} 
+            >
+                {isNonEmptyString(title) && <div className={`w-full text-base text-gray-800 ${isNonEmptyString(titleClassName) ? titleClassName : ''}`} dangerouslySetInnerHTML={{ __html: marked(title) }} />}
+                {isNonEmptyString(subTitle) && <div className={`w-full text-xs text-gray-500 ${isNonEmptyString(subTitleClassName) ? subTitleClassName : ''}`} dangerouslySetInnerHTML={{ __html: marked(subTitle) }} />}
             </div>
         </>
     )

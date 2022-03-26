@@ -24,9 +24,15 @@ const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
     const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, recordForMembership } = props;
+    const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
+
+
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
+
     const sidePanelCacheKey = `list-sidePanel-${entity?.entityName}-${entity?.entityType}`;
+    const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
+
     const sidePanelCacheValue = getLocalStorage(sidePanelCacheKey, true);
     const [sidePanel, setSidePanel] = useState(!isNil(sidePanelCacheValue) ? sidePanelCacheValue : true);
     const [firstLoadError, setFirstLoadError] = useState('');
@@ -37,6 +43,8 @@ const ListBase = (props: Record<string, any>) => {
     const [notification, setNotification] = useState<{ id: string, message: string, description: string, type: string } | null>(null);
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
+    const [predefinedFormWidth, setPredefinedFormWidth] = useState(defaultFormWidth);
+
     const Form = props.Form ? props.Form : DefaultForm;
     const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 130;
     const Header = props.Header ? props.Header : ListHeader;
@@ -45,8 +53,9 @@ const ListBase = (props: Record<string, any>) => {
     const CurrentListCategoriesTags = props.ListCategoriesTags ? props.ListCategoriesTags : ListCategoriesTags;
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
-    const maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : 800;
-    const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
+
+    const maxFormWidth = predefinedFormWidth > areaWidth - 20 ? areaWidth - 20 : (isNumber(props.maxFormWidth) ? props.maxFormWidth : 800);
+
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
     const showSidePanel = sidePanel && !hideListCategoriesTags && !currentRecord;
@@ -55,6 +64,16 @@ const ListBase = (props: Record<string, any>) => {
     const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
+    const formWidth = defaultFormWidth < maxFormWidth ? defaultFormWidth : maxFormWidth;
+
+    useEffect(() => {
+        //init form width from localstorage and props
+        const cacheValue = getLocalStorage(formWidthCacheKey);
+        if (isNumber(cacheValue)) {
+            setPredefinedFormWidth(cacheValue);
+        }
+    }, [])
+
 
     const queries = isArray(predefinedQueries) && predefinedQueries.length > 0 ? without([
         props.hideQueryForAll == true ? null : {
@@ -86,10 +105,10 @@ const ListBase = (props: Record<string, any>) => {
     ], null);
 
 
-    const [formWidth, setFormWidth] = useState(defaultFormWidth < maxFormWidth ? defaultFormWidth : maxFormWidth);
 
     const onUpdateFormWidth = (newWidth: number) => {
-        setFormWidth(newWidth);
+        setPredefinedFormWidth(newWidth);
+        setLocalStorage(formWidthCacheKey, newWidth);
     }
 
 
@@ -447,7 +466,7 @@ const ListBase = (props: Record<string, any>) => {
                     defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
                     className="absolute top-0 right-0"
                     style={{
-                        height, maxWidth: maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth, minWidth: 560,
+                        height, maxWidth: maxFormWidth, minWidth: 560,
                         borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%'
                     }}>
                     <div className="list-form w-full h-full overflow-x-hidden overflow-y-auto border border-0 border-l drop-shadow-lg bg-white">
@@ -463,11 +482,11 @@ const ListBase = (props: Record<string, any>) => {
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-8 pt-4 pb-20 overflow-hidden overflow-y-auto"
                             style={{ borderTop: 'solid 1rem #ffffff', marginTop: 95, height: height - formHeightAdjust }}>
-                            <Form 
-                            wrapperClassName="pb-20"
-                            data={currentRecord} 
-                            onChange={onChangeCurrentRecord} 
-                            recordForMembership={recordForMembership} />
+                            <Form
+                                wrapperClassName="pb-20"
+                                data={currentRecord}
+                                onChange={onChangeCurrentRecord}
+                                recordForMembership={recordForMembership} />
                         </div>}
                     </div>
                 </ListFormResizer>

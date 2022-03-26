@@ -10,6 +10,7 @@ import PlaceholderField from '../../fields/placeholder';
 import HtmlField from '../../fields/html';
 import LookupField from '../../fields/lookup';
 import TagsField from '../../fields/tags';
+import LabelField from '../../fields/label'
 import { CSS } from 'douhub-ui-web-basic';
 import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
@@ -156,6 +157,10 @@ const FormBase = observer((props: Record<string, any>) => {
                         case 'tags':
                             {
                                 return <TagsField key={key} {...field} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
+                            }
+                        case 'label':
+                            {
+                                return <LabelField key={key} {...field}/>
                             }
                         case 'alert-info':
                             {

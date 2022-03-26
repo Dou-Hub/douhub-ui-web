@@ -42,7 +42,7 @@ const HtmlField = (props: Record<string, any>) => {
 
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
-        name, wrapperStyle,
+        name, wrapperStyle, supportSourceCode,
         hideLabel, hideH1, hideH2, hideH3,
         hideH4, record } = props;
 
@@ -291,9 +291,9 @@ const HtmlField = (props: Record<string, any>) => {
                         onClick={() => editor.chain().focus().toggleOrderedList().run()}
                         className={`menu-icon ${editor.isActive('orderedList') ? 'active' : ''}`} />
                     <div className="menu-sp" />
-                   <SVG src="/icons/source-code.svg"
+                    {supportSourceCode && <SVG src="/icons/source-code.svg"
                         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                        className={`menu-icon ${editor.isActive('codeBlock') ? 'active' : ''}`} />
+                        className={`menu-icon ${editor.isActive('codeBlock') ? 'active' : ''}`} />}
                     <SVG src="/icons/material-get-quote.svg"
                         onClick={() => editor.chain().focus().toggleBlockquote().run()}
                         className={`menu-icon ${editor.isActive('blockquote') ? 'active' : ''}`} />
