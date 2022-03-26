@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Popconfirm, Tooltip } from '../../index';
+import { Popconfirm, Tooltip } from '../../index';
 import { getRecordDisplay } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { SVG } from 'douhub-ui-web-basic';
@@ -13,8 +13,8 @@ const ListFormHeader = (props: Record<string, any>) => {
     // const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
     return <div style={{ height: 78 }}
-        className="list-form-header absolute bg-gray-50 w-full flex flex-row px-6 py-4 border border-0 border-b">
-        <div className="flex-1 truncate">
+        className="list-form-header absolute bg-gray-50 w-full flex flex-row px-8 py-4 border border-0 border-b">
+        <div className="flex-1 truncate mr-4">
             <p className="pb-0 mb-0 text-xs uppercase">{entity.uiName}</p>
             <h1 className="text-lg text-black mb-0 whitespace-nowrap" title={display}>{display}</h1>
         </div>
@@ -53,9 +53,9 @@ const ListFormHeader = (props: Record<string, any>) => {
             </Tooltip>
             }
             {recordSaving == '' && <Tooltip color="#aaaaaa" placement='top' title="Close">
-                <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30 }}
-                    className="hidden sm:flex self-center ml-2 cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-gray-200 hover:border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200">
-                    <SVG src="/icons/close.svg" color="#333333" style={{ width: 18 }} />
+                <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30, top: 0, right: 0 }}
+                    className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
+                    <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
                 </div>
             </Tooltip>}
         </div>

@@ -71,15 +71,7 @@ export const LIST_CSS = `
         height: 32px;
         margin-right: 20px;
     }
-       
-    .douhub-list-sidepanel-hidden .layout-pane-primary,
-    .douhub-list-sidepanel-hidden .layout-splitter,
-    .douhub-list-full .layout-pane-primary,
-    .douhub-list-full .layout-splitter
-    {
-        display: none;
-    }
-
+     
     .douhub-list-full .layout-pane
     {
         width: 100% !important;

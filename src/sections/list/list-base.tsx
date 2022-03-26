@@ -1,10 +1,10 @@
 import {
-     DEFAULT_COLUMNS, AlertField, 
+    DEFAULT_COLUMNS, AlertField,
     Notification, DefaultForm,
-    ListCategoriesTags as ListCategoriesTagsInternal, ListFilters, ListFormHeader,
+    ListCategoriesTags, ListFilters, ListFormHeader,
     Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
-import { SVG,hasErrorType, getLocalStorage, _window,CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
+import { SVG, hasErrorType, getLocalStorage, _window, CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
 
 import React, { useEffect, useState } from 'react';
 import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue } from 'douhub-helper-util';
@@ -38,18 +38,18 @@ const ListBase = (props: Record<string, any>) => {
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
     const Form = props.Form ? props.Form : DefaultForm;
-    const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 85;
+    const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 130;
     const Header = props.Header ? props.Header : ListHeader;
     const supportSlitter = props.supportSlitter == true
     const Splitter = supportSlitter ? SplitterInternal : NonSplitter;
-    const ListCategoriesTags = props.ListCategoriesTags ? props.ListCategoriesTags : ListCategoriesTagsInternal;
+    const CurrentListCategoriesTags = props.ListCategoriesTags ? props.ListCategoriesTags : ListCategoriesTags;
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
     const maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : 800;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
-    const showSidePanel = sidePanel && !currentRecord && areaWidth >= 650 && !hideListCategoriesTags;
+    const showSidePanel = sidePanel && !hideListCategoriesTags && !currentRecord;
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
     const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel) ? props.deleteButtonLabel : 'Delete';
     const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
@@ -350,9 +350,9 @@ const ListBase = (props: Record<string, any>) => {
         setCurrentRecord({ ...newData, display: getRecordDisplay(newData) })
     }
 
-    const onToggleSidePanel = () => {
-        setLocalStorage(sidePanelCacheKey, !sidePanel)
-        setSidePanel(!sidePanel);
+    const onClickShowSidePanel = () => {
+        setLocalStorage(sidePanelCacheKey, true);
+        setSidePanel(true);
     }
 
     const onRemoveFilter = (filter: Record<string, any>) => {
@@ -364,10 +364,16 @@ const ListBase = (props: Record<string, any>) => {
         }
     }
 
+    const onClickCloseListCategoriesTags = () => {
+        console.log('onClickCloseListCategoriesTags');
+        setLocalStorage(sidePanelCacheKey, false);
+        setSidePanel(false);
+    }
+
     const renderListCategoriesTags = () => {
-        return <div className={`w-full h-full overflow-hidden ${showSidePanel ? '' : 'hidden'}`}
-            style={{ ...areaWidth > 650 ? {} : { display: 'none' }, ...supportSlitter ? {} : { width: 260 }, ...currentRecord ? { display: 'none' } : {} }}>
-            <ListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} />
+        return <div className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePanel ? '' : 'hidden'}`}
+            style={supportSlitter ? {} : { width: 320 }}>
+            <CurrentListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} onClickClose={onClickCloseListCategoriesTags} />
         </div>
     }
 
@@ -375,7 +381,6 @@ const ListBase = (props: Record<string, any>) => {
     const renderListSection = () => {
         return <div
             className={`w-full h-full flex-1 overflow-hidden  ${showSidePanel ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
-        // style={{ display: !currentRecord ? 'block' : 'none' }}
         >
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
@@ -385,14 +390,14 @@ const ListBase = (props: Record<string, any>) => {
                 recordForMembership={recordForMembership}
                 allowCreate={allowCreate}
                 allowUpload={allowUpload}
-                sidePanel={hideListCategoriesTags || areaWidth < 650 ? 'none' : sidePanel}
+                sidePanel={hideListCategoriesTags ? 'none' : sidePanel}
                 statusCodes={statusCodes}
                 statusId={statusId}
                 queries={queries}
                 queryId={queryId}
                 entity={entity}
                 maxWidth={maxListWidth}
-                onToggleSidePanel={onToggleSidePanel}
+                onClickShowSidePanel={onClickShowSidePanel}
                 onClickRefresh={onClickRefresh}
                 onClickCreateRecord={onClickCreateRecord}
                 onChangeQuery={onChangeQuery}
@@ -435,7 +440,7 @@ const ListBase = (props: Record<string, any>) => {
                 {renderListSection()}
             </Splitter>
 
-            {currentRecord && <div className="relative h-full z-40" style={{ backgroundColor: '#fafafa', minHeight: height }}>
+            {currentRecord && <div className="relative h-full z-10" style={{ backgroundColor: '#fafafa', minHeight: height }}>
                 <ListFormResizer
                     id={currentRecord.id}
                     onChangeSize={onUpdateFormWidth}
@@ -456,9 +461,13 @@ const ListBase = (props: Record<string, any>) => {
                             onClickSaveRecord={onClickSaveRecord}
                             onClickDeleteRecord={onClickDeleteRecordFromForm}
                         />
-                        {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-6 pt-2 pb-6 overflow-hidden overflow-y-auto"
-                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 78, height: height - formHeightAdjust }}>
-                            <Form data={currentRecord} onChange={onChangeCurrentRecord} recordForMembership={recordForMembership} />
+                        {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-8 pt-4 pb-20 overflow-hidden overflow-y-auto"
+                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 95, height: height - formHeightAdjust }}>
+                            <Form 
+                            wrapperClassName="pb-20"
+                            data={currentRecord} 
+                            onChange={onChangeCurrentRecord} 
+                            recordForMembership={recordForMembership} />
                         </div>}
                     </div>
                 </ListFormResizer>

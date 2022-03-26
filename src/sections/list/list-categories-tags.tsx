@@ -1,4 +1,4 @@
-import { cloneDeep, each, find } from 'lodash';
+import { cloneDeep, each, find, isFunction } from 'lodash';
 import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
@@ -10,12 +10,10 @@ import {Select, SelectOption,  Popconfirm,
 import { _window,CSS,SVG, callAPI } from 'douhub-ui-web-basic';
 import React, { useEffect, useState } from 'react';
 
-
-
 const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select
     {
-        height: 32px;
+        height: 32, width: 32px;
     }
 
     .douhub-list-categories-header .ant-select-selector
@@ -32,7 +30,7 @@ const LIST_CATEGORIES_TAGS_CSS = `
     }
 `
 
-const ListCategoriesTags = (props: { entityName: string, entityType?: string, height: number }) => {
+const ListCategoriesTags = (props: { entityName: string, entityType?: string, height: number, onClickClose?: any }) => {
     const { entityName, entityType, height } = props;
     const solution = _window.solution;
     const [categoriesExpendedIds, setCategoriesExpendedIds] = useState<Array<string>>([]);
@@ -44,7 +42,8 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
     const [selectedId, setSelectedId] = useState('');
     const [op, setOp] = useState('');
     const [categoryText, setCategoryText] = useState('');
-    const uiName = curTab.value == 'categories' ? 'Categories' : 'Tags';
+    const uiName = curTab.value == 'categories' ? 'Category' : 'Tag';
+    // const uiCollectionName = curTab.value == 'categories' ? 'Categories' : 'Tags';
 
     useEffect(() => {
 
@@ -70,6 +69,10 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 })
         }
     }, [entityName, entityType])
+
+    const onClickClose = () => {
+        if (isFunction(props.onClickClose)) props.onClickClose();
+    }
 
     const onChangeCategories = (newData: Array<Record<string, any>>) => {
 
@@ -180,10 +183,15 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             style={{ height }}>
 
             <div
-                className="w-full flex flex-row border-b py-4 px-6 pr-4 flex flex-row items-center "
+                className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center "
                 style={{ height: 68, borderColor: '#f0f0f0' }}
             >
-                <div className="flex flex-col">
+                <SVG src={`/icons/hide-sidepanel.svg`}
+                    style={{ width: 26, height: 26, alignSelf: 'center', cursor: 'pointer' }}
+                    onClick={onClickClose}
+                />
+
+                <div className="flex flex-col ml-2">
                     <Select
                         // style={{ minWidth: querySelectorMinWidth }}
                         labelInValue
@@ -205,16 +213,16 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         okText="Delete"
                         okType="danger"
                         cancelText="Cancel">
-                        <button style={{ height: 30 }} onClick={onClickEditCategory}
-                            className="cursor-pointer p-1 rounded-md inline-flex mr-1 items-center  self-center justify-center  rounded-sm shadow-sm font-medium text-white bg-white hover:shadow-md">
-                            <SVG src="/icons/delete-subnode.svg" style={{ width: 24 }} color="#ff0000" />
+                        <button style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
+                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-red-600 hover:bg-red-700">
+                         <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
 
                     </Popconfirm>}
                     {isNonEmptyString(selectedId) && <button
-                        style={{ height: 30 }} onClick={onClickEditCategory}
-                        className="cursor-pointer p-1 rounded-md inline-flex mr-1 items-center  self-center justify-center  rounded-sm shadow-sm font-medium text-white bg-white hover:shadow-md">
-                        <SVG src="/icons/edit-node.svg" style={{ width: 24 }} color="rgb(2 132 199)" />
+                        style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
+                        className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-sky-600 hover:bg-sky-700">
+                        <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#ffffff" />
                     </button>}
                     {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="topCenter" overlay={
                         <Menu>
@@ -229,18 +237,21 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                             </Menu.Item>
                         </Menu>}>
                         <button
-                            style={{ height: 30 }}
-                            className="cursor-pointer p-1 rounded-md inline-flex mr-1 items-center  self-center justify-center rounded-sm shadow-sm font-medium text-white bg-white hover:shadow-md">
-                            <SVG src="/icons/add-subnode.svg" style={{ width: 24 }} color="rgb(22 163 74)" />
+                            style={{ height: 32, width: 32 }} 
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
                     </Dropdown>}
                     {!isNonEmptyString(selectedId) &&
                         <button
-                            style={{ height: 30 }} onClick={() => onClickAddCategory('root')}
-                            className="cursor-pointer p-1 rounded-md inline-flex mr-1 items-center  self-center justify-center rounded-sm shadow-sm font-medium text-white bg-white hover:shadow-md">
-                            <SVG src="/icons/add-subnode.svg" style={{ width: 24 }} color="rgb(22 163 74)" />
+                            style={{ height: 32, width: 32 }} onClick={() => onClickAddCategory('root')}
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
                     }
+
+
+
                 </div>
                 }
             </div>
@@ -258,18 +269,18 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 />
                 <button
                     style={{ height: 20 }}
-                    className="mr-1 rounded-md cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1   rounded-sm shadow-md font-medium text-white bg-gray-100 hover:bg-gray-200"
+                    className="mr-1 cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow-md font-medium text-white bg-gray-100 hover:bg-gray-200"
                     onClick={() => setOp('')}>
                     <SVG src="/icons/x.svg" style={{ width: 12 }} />
                 </button>
                 <button
                     style={{ height: 20 }}
-                    className="rounded-md cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1   rounded-sm shadow-md font-medium text-white bg-sky-600 hover:bg-sky-700"
+                    className="cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow-md font-medium text-white bg-sky-600 hover:bg-sky-700"
                     onClick={() => onClickSubmitCategory(op)}>
                     <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="white" />
                 </button>
             </div>}
-            
+
             {isNonEmptyString(doing) && <div className="w-full flex p-6">
                 <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
                 <span className="pl-2">Loading ...</span>

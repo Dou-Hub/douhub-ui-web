@@ -2,7 +2,7 @@ import { Dropdown, Select, SelectOption, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
 import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
 import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
-import {SVG,  _window} from 'douhub-ui-web-basic';
+import { SVG, _window } from 'douhub-ui-web-basic';
 
 const ListHeader = (props: Record<string, any>) => {
 
@@ -13,12 +13,12 @@ const ListHeader = (props: Record<string, any>) => {
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
     const [showUploadModal, setShowUploadModal] = useState<string | null>(null);
-    
+
     const curQueryTitleLength = isNonEmptyString(query?.title) ? query?.title?.length : 16;
-    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : Math.min(curQueryTitleLength,30);
-    
+    const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : Math.min(curQueryTitleLength, 30);
+
     const curStatusTitleLength = isNonEmptyString(status?.title) ? status?.title?.length : 16;
-    const statusTitleMaxLength = isInteger(props.statusTitleMaxLength) ? props.statusTitleMaxLength : Math.min(curStatusTitleLength,20);
+    const statusTitleMaxLength = isInteger(props.statusTitleMaxLength) ? props.statusTitleMaxLength : Math.min(curStatusTitleLength, 20);
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
@@ -58,8 +58,8 @@ const ListHeader = (props: Record<string, any>) => {
 
     }, [statusCodes, statusId])
 
-    const onToggleSidePanel = () => {
-        if (isFunction(props.onToggleSidePanel)) props.onToggleSidePanel();
+    const onClickShowSidePanel = () => {
+        if (isFunction(props.onClickShowSidePanel)) props.onClickShowSidePanel();
     }
 
     const onChangeQuery = (curQuery: Record<string, any>) => {
@@ -83,7 +83,7 @@ const ListHeader = (props: Record<string, any>) => {
     // }
 
     const onClickRefresh = () => {
-        if (isFunction(props.onToggleSidePanel)) props.onClickRefresh();
+        if (isFunction(props.onClickRefresh)) props.onClickRefresh();
     }
 
     const onClickUpload = () => {
@@ -105,12 +105,12 @@ const ListHeader = (props: Record<string, any>) => {
     return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
 
-        {sidePanel != 'none' && <SVG src={`/icons/${sidePanel ? 'hide' : 'show'}-sidepanel.svg`}
+        {sidePanel == false && <SVG src="/icons/show-sidepanel.svg"
             style={{ width: 26, height: 26, alignSelf: 'center', cursor: 'pointer' }}
-            onClick={onToggleSidePanel} />}
+            onClick={onClickShowSidePanel} />}
 
 
-        <div className={`douhub-list-title ${sidePanel != 'none' ? 'ml-2' : ''}`}>
+        <div className={`douhub-list-title ${sidePanel == false ? 'ml-2' : ''}`}>
             {isArray(queries) && queries.length > 0 ?
                 <Select
                     // style={{ minWidth: querySelectorMinWidth }}
@@ -152,7 +152,7 @@ const ListHeader = (props: Record<string, any>) => {
                     <span className="hidden sm:block sm:ml-2">New</span>
                 </div>
             </Dropdown>}
-            
+
 
             {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700"
                 onClick={onClickCreateRecord}
