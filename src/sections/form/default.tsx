@@ -33,7 +33,7 @@ const DefaultForm = (props: Record<string, any>) => {
     }
 
     return <div className="flex flex-col w-full">
-        <FormBase data={data} form={form} onChange={onChange} />
+        <FormBase {...props} data={data} form={form} onChange={onChange} />
     </div>
 };
 

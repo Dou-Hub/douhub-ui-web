@@ -33,40 +33,63 @@ export const ARTICLE_CSS =  `
 
     .article h1
     {
+        margin-top: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .article h1,
+    .article h1 code,
+    .article h1 span
+    {
         font-size: 2.2rem !important;
         line-height: 1.2;
         font-weight: 700;
-        margin-top: 0.5rem;
-        margin-bottom: 2rem;
     }
     
     .article h2
     {
-        font-size: 1.8rem !important;
-        font-weight: 500;
-        line-height: 1.2;
         margin-top: 0.5rem;
         margin-bottom: 1.5rem;
     }
 
+    .article h2,
+    .article h2 code,
+    .article h2 span
+    {
+        font-size: 1.8rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
     .article h3
+    {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .article h3,
+    .article h3 code,
+    .article h3 span
     {
         font-size: 1.4rem !important;
         font-weight: 500;
         line-height: 1.2;
-        margin-top: 0.5rem;
-        margin-bottom: 1rem;
     }
 
     .article h4
     {
-        font-size: 1.2rem !important;
-        font-weight: 500;
-        line-height: 1.2;
         margin-top: 0.5rem;
         margin-bottom: 1rem;
     }
 
+    .article h4,
+    .article h4 code,
+    .article h4 span
+    {
+        font-size: 1.2rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+    }
 
     .article p,
     .article li
