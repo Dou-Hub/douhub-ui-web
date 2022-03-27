@@ -20,12 +20,13 @@ const NonSplitter = (props: Record<string, any>) => {
     </div>
 }
 
+const FORM_RESIZER_MIN_WIDTH = 500;
+
 const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
     const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, recordForMembership } = props;
-    const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : 500;
-
+    const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
 
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
@@ -64,15 +65,16 @@ const ListBase = (props: Record<string, any>) => {
     const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
-    const formWidth = defaultFormWidth < maxFormWidth ? defaultFormWidth : maxFormWidth;
-
+    const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
+   
     useEffect(() => {
         //init form width from localstorage and props
         const cacheValue = getLocalStorage(formWidthCacheKey);
+        console.log({ cacheValue })
         if (isNumber(cacheValue)) {
             setPredefinedFormWidth(cacheValue);
         }
-    }, [])
+    }, [formWidthCacheKey, currentRecord?.id])
 
 
     const queries = isArray(predefinedQueries) && predefinedQueries.length > 0 ? without([
@@ -466,10 +468,10 @@ const ListBase = (props: Record<string, any>) => {
                     defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
                     className="absolute top-0 right-0"
                     style={{
-                        height, maxWidth: maxFormWidth, minWidth: 560,
+                        height, maxWidth: maxFormWidth, minWidth: FORM_RESIZER_MIN_WIDTH,
                         borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%'
                     }}>
-                    <div className="list-form w-full h-full overflow-x-hidden overflow-y-auto border border-0 border-l drop-shadow-lg bg-white">
+                    <div className={`list-form w-full h-full overflow-x-hidden overflow-y-auto border border-0 border-l drop-shadow-lg bg-white`}>
                         <ListFormHeader
                             entity={entity}
                             deleteButtonLabel={deleteButtonLabel}
