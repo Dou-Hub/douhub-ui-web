@@ -1,17 +1,23 @@
 import React from 'react';
-import BaseList from './base';
-import { doNothing, hasRole, isNonEmptyString } from 'douhub-helper-util';
-import { without, isNil, find } from 'lodash';
-import { DEFAULT_EDIT_COLUMN,  DEFAULT_ACTION_COLUMN, DefaultForm } from '../../index';
+import { isFunction, without } from 'lodash';
+import DefaultForm from '../form/default';
+import { BaseList, DEFAULT_EDIT_COLUMN, DEFAULT_ACTION_COLUMN, ListCategoriesTags } from '../../index';
+
 import { _window } from 'douhub-ui-web-basic';
+import { hasRole, isNonEmptyString } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
 const DefaultList = observer((props: Record<string, any>) => {
-    const { entity, height, search, webQuery, width, allowUpload } = props;
+    const { entity, height, search, webQuery } = props;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
-    const allowCreate = hasRole(context, 'ORG-ADMIN') || find(entity.allowCreateRoles,(role:string)=>isNonEmptyString(hasRole(context, role)))?true:false;
+
+    const allowCreate = isFunction(props.allowCreate)?props.allowCreate():isNonEmptyString(hasRole(context, 'ORG-ADMIN'));
+
+    const onClickRecord = (record: Record<string, any>, action: string) => {
+        isFunction(props.onClickRecord) && props.onClickRecord(record, action);
+    }
 
     const columns = (
         onClick: (record: Record<string, any>, action: string) => {},
@@ -37,25 +43,22 @@ const DefaultList = observer((props: Record<string, any>) => {
         ], undefined);
     };
 
-    const onClickRecord = (record: Record<string, any>, action: string) => {
-       doNothing(isNil({record, action}))
-    }
-
     return (
         <BaseList
-            entity={entity}
-            allowUpload={allowUpload}
+            ListCategoriesTags={ListCategoriesTags}
+            allowUpload={false}
             allowCreate={allowCreate}
             webQuery={webQuery}
             search={search}
             onRemoveSearch={props.onRemoveSearch}
             onClickRecord={onClickRecord}
             selectionType="checkbox"
-            width={width}
+            width={500}
             height={height}
+            entity={entity}
             columns={columns}
             Form={DefaultForm}
-            Header={DefaultForm}
+            maxFormWidth={1000}
         />
     )
 })

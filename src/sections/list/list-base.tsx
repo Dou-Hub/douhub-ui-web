@@ -55,7 +55,8 @@ const ListBase = (props: Record<string, any>) => {
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
 
-    const maxFormWidth = predefinedFormWidth > areaWidth - 20 ? areaWidth - 20 : (isNumber(props.maxFormWidth) ? props.maxFormWidth : 800);
+    let maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : (isNumber(entity.maxFormWidth) ? entity.maxFormWidth : 1000);
+    maxFormWidth = maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth;
 
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
@@ -66,7 +67,7 @@ const ListBase = (props: Record<string, any>) => {
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
     const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
-   
+
     useEffect(() => {
         //init form width from localstorage and props
         const cacheValue = getLocalStorage(formWidthCacheKey);
@@ -485,6 +486,7 @@ const ListBase = (props: Record<string, any>) => {
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-8 pt-4 pb-20 overflow-hidden overflow-y-auto"
                             style={{ borderTop: 'solid 1rem #ffffff', marginTop: 95, height: height - formHeightAdjust }}>
                             <Form
+                                entity={entity}
                                 wrapperClassName="pb-20"
                                 data={currentRecord}
                                 onChange={onChangeCurrentRecord}

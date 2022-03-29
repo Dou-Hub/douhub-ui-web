@@ -14,7 +14,7 @@ const PageBase = (props: Record<string, any>) => {
     const sharedProps = { solution };
 
     return <div id="body">
-        <Head type="website" url="/" {...sharedProps} />
+        <Head type="website" url="/" {...sharedProps}  {...props.headProps}/>
         <EnvCenter />
         <MessageCenter />
         <Header {...sharedProps} {...props.headerProps}/>

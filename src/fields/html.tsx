@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { isFunction, each } from 'lodash';
 import LabelField from './label';
 import Uploader from '../controls/uploader';
-import {SVG, CSS} from 'douhub-ui-web-basic';
-import { _window } from 'douhub-ui-web-basic';
+import {SVG, CSS, _window, ARTICLE_CSS} from 'douhub-ui-web-basic';
 import { isNonEmptyString, newGuid } from 'douhub-helper-util';
 import { useEditor, EditorContent, BubbleMenu, ReactNodeViewRenderer, FloatingMenu } from '@tiptap/react';
 import Typography from '@tiptap/extension-typography';
@@ -16,7 +15,6 @@ import HtmlFieldCode from './html-code';
 
 import { HTML_FIELD_CSS } from './html-css';
 import { HTML_FIELD_CODE_CSS } from './html-code-css';
-import { ARTICLE_CSS } from "./article-css";
 // import './html-code-langs.scss';
 // load all highlight.js languages
 import lowlight from 'lowlight';

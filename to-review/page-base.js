@@ -17,7 +17,7 @@ const PageBase = (props) => {
         hideSideArea, mainStyle, pageStyle, bodyStyle,
         userAgent, slug, query, getPageMetadata,
         hideHeader, hideFooter } = props;
- 
+
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(props.editMode);
     const [relocateSection, setRelocateSection] = useState(false);
@@ -37,7 +37,7 @@ const PageBase = (props) => {
         query, env, url
     };
 
-    const headProps = _.assign({}, baseProps, metadata);
+    const headProps = _.assign({}, baseProps, props.headProps, metadata);
     const headerProps = _.assign({}, baseProps, { hide: hideHeader }, header);
     const footerProps = _.assign({}, baseProps, { hide: hideFooter }, footer);
     const newProps = { ...props, ...baseProps, ...metadata };

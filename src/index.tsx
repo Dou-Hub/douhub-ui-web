@@ -92,7 +92,7 @@ import SignUpPageBody from './pages/auth/sign-up';
 
 export { SignInFields, SignUpFields } from './sections/auth/helper';
 
-export { ARTICLE_CSS } from './fields/article-css';
+
 export { HTML_FIELD_CSS } from './fields/html-css';
 export { HTML_FIELD_CODE_CSS } from './fields/html-code-css';
 

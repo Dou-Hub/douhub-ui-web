@@ -1,35 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, without } from 'lodash';
-import { FormBase } from '../../index';
-import { isObject } from 'douhub-helper-util';
-import { _window, _track } from 'douhub-ui-web-basic';
+import { cloneDeep, isFunction } from 'lodash';
+import {  isObject } from 'douhub-helper-util';
+import FormBase from './base';
+import { _window } from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'DefaultForm';
+
 const DefaultForm = (props: Record<string, any>) => {
 
-    const [data, setData] = useState<Record<string, any> | null>(isObject(props.data) ? props.data : null);
+    const [data, setData] = useState<Record<string, any>>({});
 
     useEffect(() => {
-        setData(isObject(props.data) ? { ...props.data } : null);
+        const newData = isObject(props.data) ? cloneDeep(props.data) : {};
+        setData(newData);
     }, [props.data]);
 
-    const onChange = (newData: Record<string, any>) => {
-        setData({ ...newData });
-        if (isFunction(props.onChange)) props.onChange({ ...newData });
+    const onChange = (changedData: Record<string, any>) => {
+        const newData = changedData ? cloneDeep(changedData) : {};
+        setData(newData);
+        if (isFunction(props.onChange)) props.onChange(newData);
     }
 
     const form = {
-        rows: without([
+        rows: [
             {
                 fields: [
                     {
-                        name: 'name',
+                        name: 'title',
                         type: 'text',
-                        value: data?.name
+                        placeholder: `Type title here`,
+                        label: "Title",
+                        alwaysShowLabel: true
+                    }
+                ]
+            },
+            {
+                fields: [
+                    {
+                        name: 'tags',
+                        type: 'tags',
+                        label: "Tags",
+                        placeholder: `Type and press enter to create tags here`,
+                        alwaysShowLabel: true
+                    }
+                ]
+            },
+            {
+                fields: [
+                    {
+                        name: 'description',
+                        type: 'textarea',
+                        label: "Description",
+                        placeholder: "Type description here",
+                        alwaysShowLabel: true
                     }
                 ]
             }
-        ], null)
+        ]
     }
 
     return <div className="flex flex-col w-full">

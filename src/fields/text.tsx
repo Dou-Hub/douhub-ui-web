@@ -4,6 +4,7 @@ import { isFunction, isNumber } from 'lodash';
 import { LabelField, NoteField, InputPassword, InputTextArea, InputText } from '../index';
 import { CSS, _window } from 'douhub-ui-web-basic';
 import { IMaskInput } from 'react-imask';
+import {FIELD_CSS} from './css';
 
 const TEXT_FIELD_CSS = `
    
@@ -164,16 +165,16 @@ const TextField = (props: Record<string, any>) => {
                 }
         }
 
-        const curInput: any = inputControl?.current;
-        const style = curInput?.resizableTextArea?.textArea?.style;
+        // const curInput: any = inputControl?.current;
+        // const style = curInput?.resizableTextArea?.textArea?.style;
 
-        useEffect(() => {
-            const curInput: any = inputControl?.current;
-            const style = curInput?.resizableTextArea?.textArea?.style;
-            if (style && style.height == '') {
-                setTimeout(() => { style.height = '0px' }, 500);
-            }
-        }, [style && style.height])
+        // useEffect(() => {
+        //     const curInput: any = inputControl?.current;
+        //     const style = curInput?.resizableTextArea?.textArea?.style;
+        //     if (style && style.height == '') {
+        //         setTimeout(() => { style.height = '0px' }, 500);
+        //     }
+        // }, [style && style.height])
 
         return mask ? <IMaskInput
             mask={mask}
@@ -198,6 +199,7 @@ const TextField = (props: Record<string, any>) => {
         />
     }
     return <div className="flex flex-col w-full" style={wrapperStyle}>
+        <CSS id="field-css" content={FIELD_CSS} />
         <CSS id="field-text-css" content={TEXT_FIELD_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}

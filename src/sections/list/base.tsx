@@ -24,7 +24,7 @@ const BaseList = observer((props: {
     ListCategoriesTags?: any,
     deleteButtonLabel?: string,
     deleteConfirmationMessage?: string
-
+    maxFormWidth?:number,
     children?: any
 }) => {
     const { entity, height, width, search, webQuery, columns } = props;

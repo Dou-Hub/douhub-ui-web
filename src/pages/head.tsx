@@ -11,6 +11,7 @@ const PageHead = (props: {
         name?: string,
         publishedOn?: Date
     },
+    host?: string,
     author?: string,
     keywords?: string,
     solution: Record<string, any>,
@@ -21,10 +22,10 @@ const PageHead = (props: {
     url: string
 }) => {
 
-    const { noIndex, solution, titleAppendSiteName, url } = props;
-    const site = solution?.site?solution.site:{};
-    const domain = solution.host;
-    const protocal = domain=='localhost'?'http':'https';
+    const { noIndex, solution, titleAppendSiteName, url, host } = props;
+    const site = solution?.site ? solution.site : {};
+    const domain = isNonEmptyString(host) ? host : solution.host;
+    const protocal = domain == 'localhost' ? 'http' : 'https';
     const type = props.type == 'website' ? 'website' : 'article';
     const author = isNonEmptyString(props.author) ? props.author : site.author;
     const siteName = site.name;
@@ -35,7 +36,7 @@ const PageHead = (props: {
     if (!isNonEmptyString(image)) image = '/home.webp';
     if (image.indexOf('/') == 0) image = `${protocal}://${domain}${image}`;
 
-    let title = isNonEmptyString(props.title) ? props.title : (site?.title?site.title:'');
+    let title = isNonEmptyString(props.title) ? props.title : (site?.title ? site.title : '');
     if (title.length > 120) title = title.substring(0, 120) + ' ...';
     if (titleAppendSiteName) title = title + ` - ${site.name}`;
 
