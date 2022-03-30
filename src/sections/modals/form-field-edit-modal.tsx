@@ -5,7 +5,7 @@ import { isNonEmptyString, formatText } from 'douhub-helper-util';
 import { isFunction, isNil, without } from 'lodash';
 import { FormBase } from '../../index';
 
-const BaseFormFieldEditModal = (props: Record<string, any>) => {
+const FormFieldEditModal = (props: Record<string, any>) => {
 
     const { field } = props;
     const title = props.title ? props.title : 'Edit Field';
@@ -136,4 +136,4 @@ const BaseFormFieldEditModal = (props: Record<string, any>) => {
     />
 }
 
-export default BaseFormFieldEditModal;
+export default FormFieldEditModal;

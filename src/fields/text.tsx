@@ -97,22 +97,22 @@ const TextField = (props: Record<string, any>) => {
     }
 
     useEffect(() => {
-        const newValue = !isNil(props.value)? props.value : defaultValue;
-      
-        setValue(newValue);
-        onChange(newValue);
-      
+        const newValue = !isNil(props.value) ? props.value : defaultValue;
+        if (newValue != value) {
+            validateValye(newValue);
+            setValue(newValue);
+        }
     }, [props.value, defaultValue]);
 
     const onChangeText = (e: any) => {
-         onChange(isNil(e?.target?.value)?e:e?.target?.value);
+        onChange(isNil(e?.target?.value) ? e : e?.target?.value);
     }
 
     const onChangeMaskValue = (newValue: any) => {
         onChange(newValue);
     }
 
-    const onChange = (newValue: any) => {
+    const validateValye = (newValue: any) => {
         switch (type) {
             case 'password':
                 {
@@ -136,6 +136,10 @@ const TextField = (props: Record<string, any>) => {
                     break;
                 }
         }
+    }
+
+    const onChange = (newValue: any) => {
+        validateValye(newValue);
         setValue(newValue);
         if (isFunction(props.onChange)) props.onChange(newValue);
     }
