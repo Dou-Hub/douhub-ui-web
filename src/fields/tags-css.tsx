@@ -5,6 +5,12 @@ export const TAGS_CSS = `
         padding-top: 0.5rem;
     }
 
+    .field-tags .field-tags-input
+    {
+        padding: 5px 0 !important;
+        font-size: 0.9 !important;
+    }
+
     .field-tags-auto-search-checkbox
     {
         margin-bottom: 1rem;

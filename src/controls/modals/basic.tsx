@@ -1,8 +1,29 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
-import {SVG} from 'douhub-ui-web-basic';
+import { SVG } from 'douhub-ui-web-basic';
 import { isNonEmptyString } from 'douhub-helper-util';
+import Popconfirm from '../antd/popconfirm';
+
+
+const ButtonWrapper = (props: Record<string, any>) => {
+
+    const { onClickConfirm, confirmationOk, confirmationCancel, confirmationTitle, confirmationPlacement } = props;
+
+    const onConfirm = () => {
+        if (isFunction(onClickConfirm)) onClickConfirm();
+    }
+
+    return isNonEmptyString(confirmationTitle) ? <Popconfirm
+        placement={confirmationPlacement ? confirmationPlacement : "top"}
+        title={confirmationTitle}
+        icon={<></>}
+        onConfirm={onConfirm}
+        okText={confirmationOk ? confirmationOk : 'Ok'}
+        cancelText={confirmationCancel ? confirmationCancel : 'Cancel'}>
+        {props.children}
+    </Popconfirm> : props.children;
+}
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
@@ -46,52 +67,52 @@ const BasicModal = (props: Record<string, any>) => {
             switch (button.type) {
                 case 'warning': {
                     if (!isFunction(button.onClick)) button.onClick = onSubmit;
-                    return <button
+                    return <ButtonWrapper {...button}><button
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:ring-orange-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons == index + 1 ? 'ml-2' : 'mx-2'} inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:ring-orange-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
-                    </button>
+                    </button></ButtonWrapper>
                 }
                 case 'danger': {
                     if (!isFunction(button.onClick)) button.onClick = onSubmit;
-                    return <button
+                    return <ButtonWrapper {...button}><button
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:ring-red-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons == index + 1 ? 'ml-2' : 'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:ring-red-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
-                    </button>
+                    </button></ButtonWrapper>
                 }
                 case 'cancel': {
                     if (!isFunction(button.onClick)) button.onClick = onClose;
-                    return <button
+                    return <ButtonWrapper {...button}><button
                         key={text}
                         type="button"
                         disabled={disabled}
-                        className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-800 hover:bg-gray-200 focus:ring-gray-100 sm:text-sm disabled:text-gray-200 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
+                        className={`outline-none ${totalButtons == index + 1 ? 'ml-2' : 'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-100 text-base font-medium text-gray-800 hover:bg-gray-200 focus:ring-gray-100 sm:text-sm disabled:text-gray-200 disabled:cursor-not-allowed  ${button.className ? button.className : ''}`}
                         onClick={button.onClick}
                     >
                         {button.text}
-                    </button>
+                    </button></ButtonWrapper>
                 }
                 default:
                     {
                         if (!isFunction(button.onClick)) button.onClick = onSubmit;
-                        return <button
+                        return <ButtonWrapper {...button}><button
                             key={text}
                             type="button"
                             disabled={disabled}
-                            className={`outline-none ${totalButtons==index+1?'ml-2':'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:ring-blue-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed ${button.className ? button.className : ''}`}
+                            className={`outline-none ${totalButtons == index + 1 ? 'ml-2' : 'mx-2'} inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:ring-blue-500 sm:text-sm disabled:bg-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed ${button.className ? button.className : ''}`}
                             onClick={button.onClick}
                         >
                             {button.text}
-                        </button>
+                        </button></ButtonWrapper>
                     }
             }
         })

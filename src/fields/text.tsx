@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { isNonEmptyString, isPassword, isEmail } from 'douhub-helper-util';
-import { isFunction, isNumber } from 'lodash';
-import { LabelField, NoteField, InputPassword, InputTextArea, InputText } from '../index';
+import { isFunction, isNumber, isNil } from 'lodash';
+import { LabelField, NoteField, InputPassword, InputTextArea, InputText, InputNumber, FIELD_CSS } from '../index';
 import { CSS, _window } from 'douhub-ui-web-basic';
 import { IMaskInput } from 'react-imask';
-import {FIELD_CSS} from './css';
 
 const TEXT_FIELD_CSS = `
    
@@ -16,17 +15,24 @@ const TEXT_FIELD_CSS = `
     }
 
     .field-wrapper-input input,
-    .field-wrapper-input textarea
+    .field-wrapper-input textarea,
+    .field-wrapper-input .ant-input-number
     {
         min-height: 30px;
         border-radius: 0 !important;
         font-size: 0.9rem !important;
     }
 
-    .field-text
+    .field-wrapper-input .ant-input-number-input-wrap
+    {
+        width: 100%;
+    }
+
+    .field-wrapper-input .field-text,
+    .field-wrapper-input .ant-input-number-input
     {
         padding: 5px 0 !important;
-        font-size: 1rem !important;
+        font-size: 0.9rem !important;
     }
 
     .field-text.h1
@@ -91,23 +97,22 @@ const TextField = (props: Record<string, any>) => {
     }
 
     useEffect(() => {
-        const newValue = isNonEmptyString(props.value) ? props.value : defaultValue;
+        const newValue = !isNil(props.value)? props.value : defaultValue;
+      
         setValue(newValue);
-        if (!isNonEmptyString(props.value) && isNonEmptyString(defaultValue) && newValue == defaultValue) {
-            onChange(newValue);
-        }
-
+        onChange(newValue);
+      
     }, [props.value, defaultValue]);
 
-    const onChangeText = (e: Record<string, any>) => {
-        onChange(e.target.value);
+    const onChangeText = (e: any) => {
+         onChange(isNil(e?.target?.value)?e:e?.target?.value);
     }
 
     const onChangeMaskValue = (newValue: any) => {
         onChange(newValue);
     }
 
-    const onChange = (newValue: string) => {
+    const onChange = (newValue: any) => {
         switch (type) {
             case 'password':
                 {
@@ -157,6 +162,12 @@ const TextField = (props: Record<string, any>) => {
                     inputProps.autoSize = { minRows: isNumber(minRows) ? minRows : 1, maxRows: isNumber(maxRows) ? maxRows : 100 };
                     break;
                 }
+            case 'number':
+                {
+                    InputControl = InputNumber;
+                    inputProps.controls = false;
+                    break;
+                }
             default:
                 {
                     // if (!Input) Input = logDynamic(dynamic(() => import('../../controls/antd/input'), { ssr: false }), '../controls/antd/input', DISPLAY_NAME);
@@ -194,7 +205,7 @@ const TextField = (props: Record<string, any>) => {
             className={`ant-input field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
             placeholder={placeholder}
             onChange={onChangeText}
-            value={isNonEmptyString(value) ? value : ''}
+            value={value}
             {...inputProps}
         />
     }

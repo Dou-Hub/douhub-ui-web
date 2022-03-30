@@ -4,7 +4,7 @@ import SelectOption from '../controls/antd/select-option';
 import Select from '../controls/antd/select';
 import NoteField from './note';
 import LabelField from './label';
-import {CSS} from 'douhub-ui-web-basic';
+import { CSS } from 'douhub-ui-web-basic';
 
 import { isNonEmptyString } from 'douhub-helper-util';
 
@@ -23,11 +23,10 @@ const PICKLIST_FIELD_CSS = `
     {
         border-radius: 0;
         padding: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
         height: 30px !important;
         border: none !important;
         font-size: 0.9rem;
+        text-align: left;
     }
 
     .field-picklist .ant-select-arrow
@@ -49,21 +48,21 @@ const PicklistField = (props: Record<string, any>) => {
 
     const defaultValue = isNonEmptyString(props.defaultValue) || isInteger(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
-    const [value, setValue] = useState<string | number | undefined | null>(isNil(props.value)?defaultValue:props.value);
+    const [value, setValue] = useState<string | number | undefined | null>(isNil(props.value) ? defaultValue : props.value);
     const className = isNonEmptyString(props.className) ? props.className : '';
 
-    const onChange = (newValue:any) => {
+    const onChange = (newValue: any) => {
 
         if (newValue != value || isNil(value)) {
             newValue = isNonEmptyString(newValue) || isInteger(newValue) ? newValue : defaultValue;
             setValue(newValue);
-            const option = find(props.options, (option)=>{option.value==newValue});
+            const option = find(props.options, (option) => {return option.value == newValue });
             if (isFunction(props.onChange)) props.onChange(option);
         }
     }
 
     useEffect(() => {
-       setValue(isNil(props.value)?defaultValue:props.value);
+        setValue(isNil(props.value) ? defaultValue : props.value);
     }, [props.value]);
 
     const renderSelect = () => {

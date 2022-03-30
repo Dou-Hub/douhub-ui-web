@@ -162,7 +162,7 @@ const TagsField = React.forwardRef((props: Record<string, any>) => {
             style={inputStyle}
             disabled={disabled}
             defaultValue={defaultValue}
-            className="field-tags-input field-text"
+            className="field-tags-input"
             placeholder={placeholder}
             onSubmit={onSubmitTag}
             onChange={onChangeTag}
