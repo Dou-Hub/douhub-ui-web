@@ -5,6 +5,7 @@ import { isNonEmptyString, formatText } from 'douhub-helper-util';
 import { isFunction, isNil, without } from 'lodash';
 import { FormBase } from '../../index';
 
+
 const FormFieldEditModal = (props: Record<string, any>) => {
 
     const { field } = props;
@@ -97,7 +98,18 @@ const FormFieldEditModal = (props: Record<string, any>) => {
     const onSubmit = () => {
         if (!isNonEmptyString(data.label)) return setError("Please provide a label");
         if (!isNonEmptyString(data.name)) return setError("Please provide a name");
-        if (isFunction(props.onSubmit)) props.onSubmit(data);
+        if (isFunction(props.onSubmit)) 
+        {
+            const newError = props.onSubmit(data);
+            if (isNonEmptyString(newError))
+            {
+                setError(newError);
+            }
+            else
+            {
+                onClose();
+            }
+        }
     }
 
     const onRemove = () => {
