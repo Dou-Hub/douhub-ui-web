@@ -32,6 +32,19 @@ const FormFieldEditModal = (props: Record<string, any>) => {
 
     const formInfo = {
         rows: without([
+            field.system?{
+                fields: [
+                    {
+                        name: 'alertSystemField',
+                        type: 'alert-warning',
+                        message: 'This is a system field',
+                        description: `<ul>
+                        <li>The predefined name and type can not be changed.</li>
+                        <li>The system field can not be deleted.</li>
+                        </ul>`
+                    }
+                ]
+            }:null,
             {
                 fields: [
                     {
@@ -71,6 +84,7 @@ const FormFieldEditModal = (props: Record<string, any>) => {
                             { value: 'datetime', text: 'DateTime' },
                             { value: 'tags', text: 'Tags' }
                         ],
+                        disabled: field.system,
                         alwaysShowLabel: true
                     }
                 ]
@@ -125,8 +139,8 @@ const FormFieldEditModal = (props: Record<string, any>) => {
         content={renderContent()}
         error={error}
         buttons={
-            [
-                {
+            without([
+                !field.system?{
                     text: "Remove",
                     type: "danger",
                     confirmationTitle: "Are you sure to remove this field?",
@@ -134,7 +148,7 @@ const FormFieldEditModal = (props: Record<string, any>) => {
                     className: "absolute",
                     onClick: () => { },
                     onClickConfirm: onRemove
-                },
+                }:null,
                 {
                     text: "Cancel",
                     type: "cancel",
@@ -144,7 +158,7 @@ const FormFieldEditModal = (props: Record<string, any>) => {
                     text: "Update",
                     type: "info"
                 }
-            ]}
+            ],null)}
     />
 }
 

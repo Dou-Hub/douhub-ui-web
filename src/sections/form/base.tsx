@@ -11,6 +11,7 @@ import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 import { ReactSortable } from "react-sortablejs";
 
+
 const FORM_CSS = `
     .form .form-row > div:first-child,
     .form .form-row > div:nth-child(2),
@@ -59,7 +60,7 @@ const FormBase = observer((props: Record<string, any>) => {
     useEffect(() => {
         const newForm = cloneDeep(props.form);
         setForm(newForm);
-    }, [props?.form?.name])
+    }, [props?.form?.name, props?.form?.version, props?.form?.id])
 
     useEffect(() => {
         const newData = isObject(props.data) ? cloneDeep(props.data) : {}
@@ -178,6 +179,7 @@ const FormBase = observer((props: Record<string, any>) => {
             handle=".form-row-sortable-handle"
             draggable=".form-row"
             delay={2}
+            removeProps={['list', 'setList', 'animation', 'delayOnTouchStart', 'delayOnTouchStart', 'handle', 'draggable', 'delay']}
         >
             {map(rows, (row: Record<string, any>, rowIndex: number) => {
                 return <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
@@ -250,6 +252,10 @@ const FormBase = observer((props: Record<string, any>) => {
                                         {
                                             return <AlertField key={key} {...field} type="success" />
                                         }
+                                    case 'alert-warning':
+                                        {
+                                            return <AlertField key={key} {...field} type="warning" />
+                                        }
                                     case 'alert-error':
                                         {
                                             return <AlertField key={key} {...field} type="error" />
@@ -270,7 +276,7 @@ const FormBase = observer((props: Record<string, any>) => {
                                         }
                                     default:
                                         {
-                                            return <TextField key={key} {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
+                                            return <TextField key={key} {...field} value={value} record={data} onChange={(v:any) => onChangeData(field, v)} />
 
                                         }
                                 }

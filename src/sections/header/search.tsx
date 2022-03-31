@@ -32,7 +32,7 @@ const AppHeaderSearch = observer((props:{placeholder?:string}) => {
                     value={search}
                     onChange={(v: string) => setSearch(v)}
                     onSubmit={onSubmitSearch}
-                    className="block w-full border-transparent py-5 pl-12 lg:pl-14 placeholder-gray-500 text-base text-gray-700"
+                    className="block w-full bg-white border-transparent py-5 pl-12 lg:pl-14 placeholder-gray-500 text-base text-gray-700"
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-4 lg:pl-6">
                     <SVG src="/icons/search.svg" className="h-5 w-5" aria-hidden="true" />

@@ -9,6 +9,7 @@ const ALERT_FIELD_CSS = `
     .field-alert
     {
         position: relative;
+        text-align: left;
     }
 
     .field-alert.ant-alert-error
@@ -28,7 +29,7 @@ const ALERT_FIELD_CSS = `
 
     .field-alert.ant-alert-warning
     {
-        border: 1px solid #b7eb8f !ffe58f;
+        border: 1px solid #ffe58f !important;
     }
 
     .field-alert.close-true
@@ -59,11 +60,11 @@ const AlertField = (props:Record<string,any>) => {
             <div className="ant-alert-content">
                 <div
                     style={{ display: !isNonEmptyString(message) ? 'none' : 'block' }}
-                    className="ant-alert-message text-sm"
+                    className="text-md"
                     dangerouslySetInnerHTML={{ __html: message }} />
                 <div
                     style={{ display: !isNonEmptyString(description) ? 'none' : 'block' }}
-                    className="ant-alert-description text-xs mt-2"
+                    className="text-xs mt-2"
                     dangerouslySetInnerHTML={{ __html: description }} />
             </div>
             {showCloseButton && <SVG src="/icons/x.svg" className="close" onClick={props.onClose} />}

@@ -2838,10 +2838,10 @@ douhub-ui-store@1.0.51:
     react "^17.0.2"
     react-dom "^17.0.2"
 
-douhub-ui-web-basic@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.10.tgz#a12b91416dea78dcdd2e94ff36da98cb2ca87ce1"
-  integrity sha512-SpheeAKQ9Pww+L9Nv6ywqFlGS9jKjPGmKwh19+SaUj27FWnmdK/Wt3ZgXTuPTmdcPFLDI+OiukXONDwF+Fa+Rw==
+douhub-ui-web-basic@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.12.tgz#0cc7033ac29bc57d6a4c47f740d848467b1ed1a3"
+  integrity sha512-RR900C/N8KomluIATs0zKyDadgtLtE+nok3lhLOGKVh2L2cmr4fbI85KNvW70YBR3Zlzw0SEcoKNbjRga9U5KQ==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"

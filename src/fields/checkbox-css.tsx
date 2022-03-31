@@ -125,14 +125,8 @@ export const CHECKBOX_FIELD_CSS = `
         fill: #333333 !important;
     }
 
-    .field-checkbox-selected-true.field-disabled .checkmark svg,
-    .field-checkbox-selected-true.field-disabled .checkmark svg path
-    {
-        fill: #eeeeee !important;
-    }
     .field-checkbox.field-disabled .checkbox
     {
         cursor: not-allowed;
-        border: solid 1px #eeeeee;
     }
 `;

@@ -39,6 +39,12 @@ const PICKLIST_FIELD_CSS = `
         border: none !important;
         box-shadow: none !important;
     }
+
+    .field-picklist.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector
+    {
+        color: rgba(0, 0, 0, 0.85) !important;
+        background: transparent !important;
+    }
 `;
 
 

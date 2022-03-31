@@ -19,7 +19,7 @@ export const ANT_CSS = `
 
     .ant-input[disabled]
     {
-        color: rgba(0,0,0,0.3) !important;
-        background: #ffffff;
+        color: rgba(0,0,0,0.85) !important;
+        background: transparent !important;
     }
 `
