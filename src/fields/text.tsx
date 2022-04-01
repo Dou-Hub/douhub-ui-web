@@ -126,8 +126,8 @@ const TextField = (props: Record<string, any>) => {
                 }
             case 'email':
                 {
-                    newValue = newValue.trim().toLowerCase().replace(/[ ]{2,}/gi, '');
-                    if (!isEmail(newValue)) {
+                    newValue = isNonEmptyString(newValue) ? newValue.trim().toLowerCase().replace(/[ ]{2,}/gi, '') : '';
+                    if (isNonEmptyString(newValue) && !isEmail(newValue)) {
                         setErrorMessage('Invalid Email');
                     }
                     else {

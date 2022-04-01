@@ -14,8 +14,6 @@ const SignInPageBody = (props: Record<string, any>) => {
     const [form, setForm] = useState<Record<string, any>>(isObject(props.form) ? props.form : {});
     const type = form.type == 'mobile' ? 'mobile' : 'email';
 
-    console.log({ form })
-
     useEffect(() => {
         const newForm = { email: getCookie('sign-in-email'), ...props.form };
         if (isNil(newForm.rememberMe)) newForm.rememberMe = isEmail(newForm.email);
@@ -249,13 +247,17 @@ const SignInPageBody = (props: Record<string, any>) => {
                 }
 
                 sendMessage('context-sign-in-success', 'action', result);
-                if (isFunction(props.onSuccess)) props.onSuccess(form);
+                if (isFunction(props.onSuccess)) 
+                {
+                    if (!props.onSuccess(form))
+                    {
+                        setDoing('');
+                    }
+                }
             }
             catch (error) {
                 if (_track) console.error({ error });
                 onSignInError('Failed to sign in.');
-            }
-            finally {
                 setDoing('');
             }
         })();
@@ -286,8 +288,6 @@ const SignInPageBody = (props: Record<string, any>) => {
         </>
     }
 
-
-    console.log({ errorMessage })
 
     return <>
         <div className="min-h-full flex max-w-screen-xl mx-auto py-10 px-4 sm:px-6  lg:px-8">

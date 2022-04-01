@@ -53,8 +53,6 @@ const SignUpPageBody = (props: Record<string, any>) => {
 
                 const result = await callAPIBase(`${solution.apis.organization}sign-up`, form, 'POST', {solutionId:solution.id});
 
-                setDoing('');
-
                 if (result.error) {
 
                     console.error({error: result.error});
@@ -84,7 +82,13 @@ const SignUpPageBody = (props: Record<string, any>) => {
                 }
 
                 sendMessage('context-sign-in-success', 'action', result);
-                if (isFunction(props.onSuccess)) props.onSuccess(form);
+                if (isFunction(props.onSuccess)) 
+                {
+                    if (!props.onSuccess(form))
+                    {
+                        setDoing('');
+                    }
+                }
             }
             catch (error) {
                 console.error({error});
