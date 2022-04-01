@@ -6,19 +6,23 @@ import { SVG, _window } from 'douhub-ui-web-basic';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,
+    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,showViewToggleButton,
         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
 
     // const querySelectorMinWidth = isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150
     const [query, setQuery] = useState<Record<string, any> | null>(null);
     const [status, setStatus] = useState<Record<string, any> | null>(null);
     const [showUploadModal, setShowUploadModal] = useState<string | null>(null);
-
+    const [view, setView] = useState(props.view);
     const curQueryTitleLength = isNonEmptyString(query?.title) ? query?.title?.length : 16;
     const queryTitleMaxLength = isInteger(props.queryTitleMaxLength) ? props.queryTitleMaxLength : Math.min(curQueryTitleLength, 30);
 
     const curStatusTitleLength = isNonEmptyString(status?.title) ? status?.title?.length : 16;
     const statusTitleMaxLength = isInteger(props.statusTitleMaxLength) ? props.statusTitleMaxLength : Math.min(curStatusTitleLength, 20);
+
+    useEffect(() => {
+        setView(props.view);
+    }, [props.view])
 
     useEffect(() => {
         if (isArray(queries) && queries.length > 0) {
@@ -102,6 +106,12 @@ const ListHeader = (props: Record<string, any>) => {
     //     </div>
     // </Menu.Item></Menu>
 
+    const onClickToggleView = () => {
+        const newView = view == 'table' ? 'grid' : 'table';
+        setView(newView);
+        if (isFunction(props.onChangeView)) props.onChangeView(newView);
+    }
+
     return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
 
@@ -141,20 +151,27 @@ const ListHeader = (props: Record<string, any>) => {
 
             {allowUpload && allowCreate && <div
                 onClick={onClickUpload}
-                className={`flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700'}`}>
+                className={`flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700'}`}>
                 <SVG id="upload-icon" src="/icons/upload-to-cloud.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
                 <span className="hidden sm:block sm:ml-2">Upload</span>
             </div>}
 
             {menuForCreateButton && allowCreate && <Dropdown overlay={menuForCreateButton}>
-                <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                     <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
                     <span className="hidden sm:block sm:ml-2">New</span>
                 </div>
             </Dropdown>}
 
+            {showViewToggleButton && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium border"
+                onClick={onClickToggleView}
+            >
+                <SVG id="view-table-icon" src="/icons/table-view.svg" style={{ width: 18, height: 18, marginRight: 8 }} color={view == 'table' ? '#ff0000' : '#333333'} />
+                <SVG id="view-grid-icon" src="/icons/grid-view.svg" style={{ width: 18, height: 18 }} color={view == 'grid' ? '#ff0000' : '#333333'} />
+            </div>}
 
-            {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-green-600 hover:bg-green-700"
+
+            {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700"
                 onClick={onClickCreateRecord}
             >
                 <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
@@ -164,7 +181,7 @@ const ListHeader = (props: Record<string, any>) => {
             {props.children}
 
             <div onClick={onClickRefresh}
-                className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 border border-gray-200 hover:border-gray-300 rounded-md shadow-sm text-xs font-medium bg-gray-100 hover:bg-gray-200">
+                className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow-md text-xs font-medium bg-gray-100 hover:bg-gray-200">
                 <SVG id="list-refresh-icon" src="/icons/refresh.svg" style={{ width: 22 }} color="#333333" />
             </div>
         </div>

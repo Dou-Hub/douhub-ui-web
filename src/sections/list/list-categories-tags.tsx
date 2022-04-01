@@ -37,6 +37,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
     const [categories, setCategories] = useState<Record<string, any>>({ entityName: 'Category', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [tags, setTags] = useState<Record<string, any>>({ entityName: 'Tag', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [error, setError] = useState('');
+    const [refresh, setRefresh] = useState('');
     const [doing, setDoing] = useState('Loading data ...');
     const [curTab, setCurTab] = useState({ key: "categories", label: "Categories", value: "categories" });
     const [selectedId, setSelectedId] = useState('');
@@ -68,7 +69,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                     setDoing('');
                 })
         }
-    }, [entityName, entityType])
+    }, [entityName, entityType, refresh])
 
     const onClickClose = () => {
         if (isFunction(props.onClickClose)) props.onClickClose();
@@ -104,6 +105,10 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
     const onClickAddCategory = (type: 'above' | 'below' | 'children' | 'root') => {
         setCategoryText('');
         setOp(`add-${type}`);
+    }
+
+    const onClickRefreshCategory = ()=>{
+        setRefresh(newGuid());
     }
 
     const onClickSubmitCategory = (type: string) => {
@@ -184,7 +189,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
 
             <div
                 className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center "
-                style={{ height: 68, borderColor: '#f0f0f0' }}
+                style={{ height: 68}}
             >
                 <SVG src={`/icons/hide-sidepanel.svg`}
                     style={{ width: 26, height: 26, alignSelf: 'center', cursor: 'pointer' }}
@@ -214,14 +219,14 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         okType="danger"
                         cancelText="Cancel">
                         <button style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
-                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-red-600 hover:bg-red-700">
+                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-red-600 hover:bg-red-700">
                          <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
 
                     </Popconfirm>}
                     {isNonEmptyString(selectedId) && <button
                         style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
-                        className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-sky-600 hover:bg-sky-700">
+                        className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-sky-600 hover:bg-sky-700">
                         <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#ffffff" />
                     </button>}
                     {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="topCenter" overlay={
@@ -238,19 +243,26 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         </Menu>}>
                         <button
                             style={{ height: 32, width: 32 }} 
-                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                             <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
                     </Dropdown>}
                     {!isNonEmptyString(selectedId) &&
                         <button
                             style={{ height: 32, width: 32 }} onClick={() => onClickAddCategory('root')}
-                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 border border-transparent rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
                             <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
                         </button>
                     }
 
+                    {!isNonEmptyString(selectedId) &&
+                        <button
+                            style={{ height: 32, width: 32 }} onClick={onClickRefreshCategory}
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium bg-gray-100 hover:bg-gray-200">
+                            <SVG src="/icons/refresh.svg" style={{ width: 18 }} color="#333333" />
+                        </button>
 
+                    }
 
                 </div>
                 }
@@ -281,7 +293,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 </button>
             </div>}
 
-            {isNonEmptyString(doing) && <div className="w-full flex p-6">
+            {isNonEmptyString(doing) && <div className="w-full flex p-4">
                 <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
                 <span className="pl-2">Loading ...</span>
             </div>}

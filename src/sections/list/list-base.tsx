@@ -7,12 +7,14 @@ import {
 import { SVG, hasErrorType, getLocalStorage, _window, CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
 
 import React, { useEffect, useState } from 'react';
-import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue } from 'douhub-helper-util';
+import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue, getRecordAbstract, getRecordMedia } from 'douhub-helper-util';
 import { without, throttle, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
+// import { ListHeader } from 'douhub-ui-web';
 import ListHeader from './list-header';
-// import ListHeader from 'douhub-ui-web';
+import StackGrid from "react-stack-grid";
+
 
 const NonSplitter = (props: Record<string, any>) => {
     return <div className="flex flex-row w-full">
@@ -25,9 +27,9 @@ const FORM_RESIZER_MIN_WIDTH = 500;
 const ListBase = (props: Record<string, any>) => {
     const router = useRouter();
     const solution = _window.solution;
-    const { height, entity, search, hideListCategoriesTags, selectionType, width, allowCreate, allowUpload, recordForMembership } = props;
+    const { height, entity, search, hideListCategoriesTags, selectionType, allowCreate, allowUpload, recordForMembership } = props;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
-
+    const [view, setView] = useState('table');
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
 
@@ -40,6 +42,7 @@ const ListBase = (props: Record<string, any>) => {
     const [reload, setReload] = useState('');
     const [recordSaving, setRecordSaving] = useState('');
     const [areaWidth, setAreaWidth] = useState<number>(0);
+    const [width, setWidth] = useState(0);
     const [result, setResult] = useState<Record<string, any> | null>(null);
     const [notification, setNotification] = useState<{ id: string, message: string, description: string, type: string } | null>(null);
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
@@ -67,6 +70,30 @@ const ListBase = (props: Record<string, any>) => {
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
     const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
+
+    useEffect(() => {
+        setView(props.view == 'grid' ? 'grid' : 'table');
+    }, [props.view])
+
+    const getGridColumnCount = () => {
+        if (width < 500) return 1;
+        if (width < 750) return 2;
+        if (width < 1000) return 3;
+        return 4;
+    }
+
+    const getGutterWidth = () => {
+        if (width < 750) return 20;
+        if (width < 1000) return 25;
+        return 30;
+    }
+
+    const getGridColumnWidth = () => {
+        const count = getGridColumnCount();
+        return (width - getGutterWidth() * (count + 1)) / count;
+    }
+
+    const guterWidth = getGutterWidth();
 
     useEffect(() => {
         //init form width from localstorage and props
@@ -124,9 +151,12 @@ const ListBase = (props: Record<string, any>) => {
         router.push(setWebQueryValue(`${_window.location}`, 'status', curStatus.value));
     }
 
-    const onResizeFormDetector = (width?: number) => {
+    const onResizeAreaDetector = (width?: number) => {
         setAreaWidth(width ? width : 0);
-        console.log({ width })
+    }
+
+    const onResizeListDetector = (width?: number) => {
+        setWidth(width ? width : 0);
     }
 
     useEffect(() => {
@@ -295,7 +325,7 @@ const ListBase = (props: Record<string, any>) => {
     }
 
     const renderTable = () => {
-
+        if (view == 'grid' && !currentRecord) return null;
         if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
         return <ListTable
             width={width}
@@ -304,6 +334,51 @@ const ListBase = (props: Record<string, any>) => {
             height={tableHeight - tableHeaderHeight}
             columns={columns(onClickRecord, entity)}
             data={result ? result.data : []} />
+    }
+
+    const onClickGridCard = (record:Record<string,any>)=>{
+        if (props.onClickGridCard) 
+        {
+            props.onClickGridCard(record);
+        }
+        else
+        {
+            onClickRecord(record,'edit');
+        }
+        
+    }
+
+    const rendeGrid = () => {
+        if (view == 'table' || currentRecord) return null;
+        if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
+        return <StackGrid
+            gutterWidth={guterWidth}
+            gutterHeight={guterWidth}
+            columnWidth={getGridColumnWidth()}
+            style={{ marginTop: guterWidth, marginBottom: guterWidth, marginLeft: guterWidth / 2, marginRight: guterWidth / 2 }}
+            className="w-full">
+            {map(result ? result.data : [], (item, i) => {
+                const media = getRecordMedia(item);
+                const display = getRecordDisplay(item);
+                const content = getRecordAbstract(item, 64, true);
+
+                return <div key={i} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden">
+                    {isNonEmptyString(media) && <div className="flex-shrink-0">
+                        <img className="w-full" src={media} alt="" />
+                    </div>}
+                    <div className="flex-1 bg-white p-4 flex flex-col justify-between cursor-pointer" 
+                        onClick={()=>onClickGridCard(item)}
+                    >
+                        <div className="flex-1 overflow-hidden">
+                            <div className="w-full block mt-2">
+                                <p className="text-base font-semibold text-gray-900 leading-6" dangerouslySetInnerHTML={{ __html: display }} />
+                                <p className="mt-2 text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: content }} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            })}
+        </StackGrid>
     }
 
     const onClickRefresh = () => {
@@ -425,6 +500,9 @@ const ListBase = (props: Record<string, any>) => {
                 onChangeQuery={onChangeQuery}
                 onChangeStatus={onChangeStatus}
                 selectedRecords={selectedRecords}
+                onChangeView={(newView:string)=>setView(newView)}
+                view={view}
+                showViewToggleButton={props.showViewToggleButton}
             />
             {filters.length > 0 && <ListFilters
                 onRemoveFilter={onRemoveFilter}
@@ -432,11 +510,13 @@ const ListBase = (props: Record<string, any>) => {
                 maxWidth={maxListWidth}
                 onResizeHeight={(height: number) => setFilterSectionHeight(height)}
             />}
-            <div className={`w-full h-full flex bg-white`}
+            <div className={`w-full h-full flex bg-white overflow-hidden overflow-y-auto`}
                 style={{ maxWidth: maxListWidth, height: tableHeight }}>
                 {renderTable()}
+                {rendeGrid()}
                 {renderFirstLoading()}
                 {renderFirstLoadError()}
+                <ReactResizeDetector onResize={throttle(onResizeListDetector, 300)} />
             </div>
         </div>
     }
@@ -497,7 +577,7 @@ const ListBase = (props: Record<string, any>) => {
             </div>
             }
 
-            <ReactResizeDetector onResize={throttle(onResizeFormDetector, 300)} />
+            <ReactResizeDetector onResize={throttle(onResizeAreaDetector, 300)} />
 
         </div>
     </>

@@ -1,7 +1,6 @@
 import React from 'react';
-import {  DefaultForm } from '../../index';
+import {  DefaultForm, ListHeader } from '../../index';
 import { _window } from 'douhub-ui-web-basic';
-import ListHeader from './list-header';
 import { isNumber, isFunction } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
@@ -18,16 +17,19 @@ const BaseList = observer((props: {
     Header?: any,
     selectionType?: 'checkbox' | 'radio',
     search?: string,
+    showViewToggleButton?: boolean,
     webQuery?: Record<string, any>,
     onClickRecord?: (record: Record<string, any>, action: string) => any,
     onRemoveSearch?: (filter: Record<string, any>) => any,
+    onClickGridCard?: any,
     ListCategoriesTags?: any,
     deleteButtonLabel?: string,
     deleteConfirmationMessage?: string
     maxFormWidth?:number,
     children?: any
+    view?: 'table'|'grid'
 }) => {
-    const { entity, height, width, search, webQuery, columns } = props;
+    const { entity, height, width, search, webQuery, columns, view, showViewToggleButton, onClickGridCard } = props;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
     const allowUpload = props.allowUpload == true && entity.allowUpload == true && allowCreate;
@@ -45,6 +47,8 @@ const BaseList = observer((props: {
     const onRemoveSearch = (filter: Record<string, any>) => {
         if (isFunction(props.onRemoveSearch)) props.onRemoveSearch(filter);
     }
+
+    console.log({showViewToggleButton})
 
     return (
         <>
@@ -65,6 +69,9 @@ const BaseList = observer((props: {
                 entity={entity}
                 columns={columns}
                 Form={Form}
+                view={view}
+                onClickGridCard={onClickGridCard}
+                showViewToggleButton={showViewToggleButton}
             />
             {props.children}
         </>

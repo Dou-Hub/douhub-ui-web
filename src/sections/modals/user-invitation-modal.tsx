@@ -121,7 +121,7 @@ const SendInvitationModal = (props: Record<string, any>) => {
         setError('');
         callAPI(solution, `${solution.apis.organization}send-verification-token-by-user-ids`, {
             userIds: map(users, (user) => user.id).join(','),
-            action: 'activate-without-password'
+            action: 'activate-with-password'
         }, 'POST')
             .then(() => {
                 if (isFunction(props.onSubmitSucceed)) 
