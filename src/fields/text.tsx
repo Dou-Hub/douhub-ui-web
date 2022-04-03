@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { isNonEmptyString, isPassword, isEmail } from 'douhub-helper-util';
 import { isFunction, isNumber, isNil } from 'lodash';
-import { LabelField, NoteField, InputPassword, InputTextArea, InputText, InputNumber, FIELD_CSS } from '../index';
+import { LabelField as LabelFieldInternal, NoteField, InputPassword, InputTextArea, InputText, InputNumber, FIELD_CSS } from '../index';
 import { CSS, _window } from 'douhub-ui-web-basic';
 import { IMaskInput } from 'react-imask';
 
@@ -35,12 +35,22 @@ const TEXT_FIELD_CSS = `
         font-size: 0.9rem !important;
     }
 
+    .field-wrapper-input.h1
+    {
+        padding-bottom: 0.75rem !important;
+    }
+
     .field-text.h1
     {
         font-size: 2.2rem !important;
         line-height: 1.2;
         font-weight: 700;
         min-height: 3.2rem !important;
+    }
+
+    .field-wrapper-input.h2
+    {
+        padding-bottom: 0.6rem !important;
     }
 
     .field-text.h2
@@ -51,12 +61,22 @@ const TEXT_FIELD_CSS = `
         min-height: 2.62rem !important;
     }
 
+    .field-wrapper-input.h3
+    {
+        padding-bottom: 0.45rem !important;
+    }
+
     .field-text.h3
     {
         font-size: 1.4rem !important;
         font-weight: 500;
         line-height: 1.2;
         min-height: 2.03rem !important;
+    }
+
+    .field-wrapper-input.h4
+    {
+        padding-bottom: 0.4rem !important;
     }
 
     .field-text.h4
@@ -79,10 +99,12 @@ const TextField = (props: Record<string, any>) => {
 
     const { label, disabled, type, wrapperStyle, note, minRows, inputWrapperStyle,
         maxRows, labelStyle, inputStyle, alwaysShowLabel, button,
-        hideLabel, onPressEnter } = props;
+        hideLabel, onPressEnter, headFontSize } = props;
+
+
 
     const inputControl = useRef(null);
-
+    const LabelField = isNil(props.LabelField) ? LabelFieldInternal : props.LabelField;
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState('');
@@ -197,7 +219,7 @@ const TextField = (props: Record<string, any>) => {
             unmask={true} // true|false|'typed'
             ref={inputControl}
             disabled={disabled}
-            className={`field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
+            className={`field field-text has-wrapper ${className} ${isNonEmptyString(headFontSize) ? headFontSize : ''} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
             onAccept={onChangeMaskValue}
             placeholder={placeholder}
         /> : <InputControl
@@ -206,7 +228,7 @@ const TextField = (props: Record<string, any>) => {
             disabled={disabled}
             defaultValue={defaultValue}
             onPressEnter={onPressEnter}
-            className={`ant-input field field-text has-wrapper ${className} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
+            className={`ant-input field field-text has-wrapper ${className} ${isNonEmptyString(headFontSize) ? headFontSize : ''} ${disabled ? 'field-disabled' : ''} ${type ? 'field-text-' + type : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
             placeholder={placeholder}
             onChange={onChangeText}
             value={value}
@@ -219,7 +241,7 @@ const TextField = (props: Record<string, any>) => {
         <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
-        <div style={inputWrapperStyle} className={`field-wrapper-input field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage) ? 'true' : 'false'}`}>
+        <div style={inputWrapperStyle} className={`field-wrapper-input ${isNonEmptyString(headFontSize) ? headFontSize : ''} field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage) ? 'true' : 'false'}`}>
             {renderInput()}
         </div>
         <NoteField text={note} />

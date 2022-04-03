@@ -44,7 +44,6 @@ const CheckboxField = (props: Record<string,any>) => {
                 {isNonEmptyString(subLabel) && <div className='sub-label' dangerouslySetInnerHTML={{ __html: subLabel && marked(subLabel) }} />}
                 {isFunction(props.onClickInfo) && <SVG src="/icons/info.svg" className="info" onClick={props.onClickInfo}/>}
             </div>
-            
         </div>
         <NoteField text={note} />
     </>

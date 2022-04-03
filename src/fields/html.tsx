@@ -50,8 +50,6 @@ const HtmlField = (props: Record<string, any>) => {
     const [id] = useState(newGuid());
     const layoutClassName = props.layoutClassName ? props.layoutClassName : '';
 
-    if (!_window?.HtmlFields) _window.HtmlFields = {};
-
     useEffect(() => {
         const newValue = isNonEmptyString(props.value) ? props.value : defaultValue;
         setValue(newValue);
