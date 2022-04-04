@@ -25,23 +25,10 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox.small .checkbox 
     {
-        height: 16px;
-        width: 16px;
-        min-width: 16px;
+        height: 20px;
+        width: 20px;
+        min-width: 20px;
     }
-
-    .field-checkbox .checkmark 
-    {
-        height: 28px;
-        width: 28px;
-    }
-
-    .field-checkbox .checkmark.small
-    {
-        height: 14px;
-        width: 14px;
-    }
-    
 
     .field-checkbox .text 
     {
@@ -82,7 +69,7 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox.small .text .label
     {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
         text-align: left;
     }
 
@@ -96,7 +83,7 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox.small .text .sub-label
     {
-        font-size: 0.55rem;
+        font-size: 0.65rem;
     }
 
     .field-checkbox .checkmark svg 
@@ -109,9 +96,9 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox.small .checkmark svg 
     {
-        width: 12px !important;
-        height: 12px !important;
-        margin: 1px;
+        width: 14px !important;
+        height: 14px !important;
+        margin: 2px;
     }
 
     .field-checkbox-selected-false .checkmark

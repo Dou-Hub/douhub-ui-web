@@ -49,7 +49,7 @@ const ListBase = (props: Record<string, any>) => {
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
     const [predefinedFormWidth, setPredefinedFormWidth] = useState(defaultFormWidth);
 
-    const Form = props.Form ? props.Form : DefaultForm;
+    const ListForm = props.Form ? props.Form : DefaultForm;
     const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 130;
     const Header = props.Header ? props.Header : ListHeader;
     const supportSlitter = props.supportSlitter == true
@@ -564,8 +564,8 @@ const ListBase = (props: Record<string, any>) => {
                             onClickDeleteRecord={onClickDeleteRecordFromForm}
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-8 pt-4 pb-20 overflow-hidden overflow-y-auto"
-                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 95, height: height - formHeightAdjust }}>
-                            <Form
+                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 80, height: height - formHeightAdjust }}>
+                            <ListForm
                                 entity={entity}
                                 wrapperClassName="pb-20"
                                 data={currentRecord}
