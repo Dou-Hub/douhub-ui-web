@@ -63,7 +63,7 @@ const HtmlField = (props: Record<string, any>) => {
 
         console.log({ html, action })
 
-        if ((action == 'init' || action == 'blur') && html == '<p></p>') {
+        if ((action == 'init' || action == 'blur') && (html == '<p></p>' || html == '<p></p><p></p>')) {
             if (fieldEditor) fieldEditor.className = `${fieldEditor.className} is-placeholder field-html-${id}-is-placeholder`;
             editor?.commands?.setContent(`<p>${placeholder}</p>`);
         }

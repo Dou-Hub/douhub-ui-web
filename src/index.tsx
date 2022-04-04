@@ -47,7 +47,7 @@ import FooterColumnSection from './sections/footer/column';
 //Modals
 import BasicModal from './controls/modals/basic';
 
-import FormBase from './sections/form/base';
+import FormBase, { prepareFormToSave } from './sections/form/base';
 import DefaultForm from './sections/form/default';
 
 //Fields
@@ -114,16 +114,18 @@ export {
 };
 
 //List
-export { renderIconButtonColumn, 
-    DEFAULT_COLUMNS, 
-    DEFAULT_EDIT_COLUMN, 
+export {
+    renderIconButtonColumn,
+    DEFAULT_COLUMNS,
+    DEFAULT_EDIT_COLUMN,
     DEFAULT_OPEN_IN_BROWSER_COLUMN,
     LIST_COLUMN_TOOLTIP_TYPE,
     DEFAULT_ACTION_COLUMN,
-    DEFAULT_EMAIL_COLUMN, 
+    DEFAULT_EMAIL_COLUMN,
     LIST_COLUMN_SETTINGS_TYPE,
-    rendeActionButtonColumn} from './sections/list/list-helper';
-export {LIST_CSS}  from './sections/list/list-css';
+    rendeActionButtonColumn
+} from './sections/list/list-helper';
+export { LIST_CSS } from './sections/list/list-css';
 import ListTable from './sections/list/list-table';
 import ListHeader from './sections/list/list-header';
 import ListFormResizer from './sections/list/list-resizer';
@@ -179,7 +181,7 @@ export {
 }
 
 export {
-    FormBase, DefaultForm
+    FormBase, DefaultForm, prepareFormToSave
 }
 
 export {

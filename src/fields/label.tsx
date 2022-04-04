@@ -1,6 +1,6 @@
 import React from "react";
 import { isNonEmptyString } from 'douhub-helper-util';
-import { isFunction } from 'lodash';
+import { isFunction, isNil } from 'lodash';
 import { marked } from 'marked';
 import {FIELD_CSS} from './css';
 import {CSS} from 'douhub-ui-web-basic'
@@ -38,14 +38,27 @@ const FieldLabel = (props: Record<string, any>) => {
     const onClick = (e: any) => {
         if (isFunction(props.onClick)) props.onClick(e);
     }
-    return isNonEmptyString(text) && !hidden ?
+
+    const renderContent = ()=>{
+        const Content = props.Content;
+        if (isNil(Content)) return null;
+        return <Content/>
+    }
+
+    const renderText = ()=>{
+         if (!isNonEmptyString(text)) return null;
+        return <div style={style}
+                onClick={onClick}
+                className={`w-full field-label ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(className) ? className : ''}`}
+                dangerouslySetInnerHTML={{ __html: marked(text) }}/>
+    }
+
+    return (isNonEmptyString(text) || !isNil(props.Content)) && !hidden ?
         <>
             <CSS id="field-label-css" content={LABEL_FIELD_CSS} />
             <CSS id="field-css" content={FIELD_CSS} />
-            <div style={style}
-                onClick={onClick}
-                className={`w-full field-label ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(className) ? className : ''}`}
-                dangerouslySetInnerHTML={{ __html: marked(text) }} />
+            {renderText()}
+            {renderContent()}
         </>:<></>
 }
 

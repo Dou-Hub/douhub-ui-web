@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, map, without, cloneDeep, isNil, each } from 'lodash';
+import { isFunction, map, without, cloneDeep, isNil, each, isNumber } from 'lodash';
 import {
     CheckboxGroupField, SectionField, DateTimeField,
     CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal,
@@ -11,23 +11,31 @@ import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 import { ReactSortable } from "react-sortablejs";
 
+export const prepareFormToSave = (form: Record<string, any>) => {
+    const version = isNumber(form.version) ? form.version + 1 : 1;
+    return {
+        ...form,
+        rows: map(form.rows, (row: any) => {
+            return { ...row, fields: map(row.fields, (field: any) => { return { ...field, autoNaming: false } }) }
+        }), custom: false, version
+    };
+}
+
 
 const FORM_CSS = `
-    .form .form-row > div:first-child,
-    .form .form-row > div:nth-child(2),
-    .form .form-row > div:nth-child(3)
+    .form .form-row .form-col
     {
         margin-right: 20px ;
+    }
+
+    .form .form-row .form-col-last
+    {
+        margin-right: 0 !important;
     }
 
     .form .form-row.custom > div:first-child
     {
         margin-right: 10px !important;
-    }
-
-    .form .form-row > div:last-child
-    {
-        margin-right: 0px !important;
     }
 
     .form .form-row .field-label-custom .ant-select-selector
@@ -162,6 +170,7 @@ const FormBase = observer((props: Record<string, any>) => {
                 label: 'New Field',
                 name: 'newField',
                 type: 'text',
+                autoNaming: true,
                 alwaysShowLabel: true
             }]
         });
@@ -182,7 +191,7 @@ const FormBase = observer((props: Record<string, any>) => {
             removeProps={['list', 'setList', 'animation', 'delayOnTouchStart', 'delayOnTouchStart', 'handle', 'draggable', 'delay']}
         >
             {map(rows, (row: Record<string, any>, rowIndex: number) => {
-                return <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
+                return <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row form-row-${rowIndex} ${rowIndex==0?'form-row-first':''} ${rowIndex==rows.length-1?'form-row-last':''} flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
                     {
                         [
                             customMode ? <div key="leftCustom" className="flex flex-col">
@@ -276,7 +285,7 @@ const FormBase = observer((props: Record<string, any>) => {
                                         }
                                     default:
                                         {
-                                            return <TextField key={key} {...field} value={value} record={data} onChange={(v:any) => onChangeData(field, v)} />
+                                            return <TextField key={key} {...field} value={value} record={data} onChange={(v: any) => onChangeData(field, v)} />
 
                                         }
                                 }

@@ -101,8 +101,6 @@ const TextField = (props: Record<string, any>) => {
         maxRows, labelStyle, inputStyle, alwaysShowLabel, button,
         hideLabel, onPressEnter, headFontSize } = props;
 
-
-
     const inputControl = useRef(null);
     const LabelField = isNil(props.LabelField) ? LabelFieldInternal : props.LabelField;
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
@@ -238,7 +236,8 @@ const TextField = (props: Record<string, any>) => {
     return <div className="flex flex-col w-full" style={wrapperStyle}>
         <CSS id="field-css" content={FIELD_CSS} />
         <CSS id="field-text-css" content={TEXT_FIELD_CSS} />
-        <LabelField text={label} disabled={disabled} style={labelStyle}
+        <LabelField {...(isNil(props.LabelField)?{}:props)}
+            text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
         <div style={inputWrapperStyle} className={`field-wrapper-input ${isNonEmptyString(headFontSize) ? headFontSize : ''} field-note-${isNonEmptyString(note) || isNonEmptyString(errorMessage) ? 'true' : 'false'}`}>
