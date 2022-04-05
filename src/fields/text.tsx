@@ -200,16 +200,16 @@ const TextField = (props: Record<string, any>) => {
                 }
         }
 
-        // const curInput: any = inputControl?.current;
-        // const style = curInput?.resizableTextArea?.textArea?.style;
-
-        // useEffect(() => {
-        //     const curInput: any = inputControl?.current;
-        //     const style = curInput?.resizableTextArea?.textArea?.style;
-        //     if (style && style.height == '') {
-        //         setTimeout(() => { style.height = '0px' }, 500);
-        //     }
-        // }, [style && style.height])
+        useEffect(() => {
+            const curInput: any = inputControl?.current;
+            const style = curInput?.resizableTextArea?.textArea?.style;
+           
+            if (style && style.height == '') {
+                setTimeout(() => { 
+                    curInput.resizableTextArea.resizeTextarea(); 
+                }, 300);
+            }
+        }, [value])
 
         return mask ? <IMaskInput
             mask={mask}
