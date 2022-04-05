@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, map, without, cloneDeep, isNil, each, isNumber } from 'lodash';
 import {
-    CheckboxGroupField, SectionField, DateTimeField,
+    CheckboxGroupField, SectionField, DateTimeField,UploadPhotoField,
     CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal,
     PlaceholderField, HtmlField, LookupField, TagsField, LabelField
 } from '../../index';
@@ -10,6 +10,7 @@ import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 import { ReactSortable } from "react-sortablejs";
+
 
 export const prepareFormToSave = (form: Record<string, any>) => {
     const version = isNumber(form.version) ? form.version + 1 : 1;
@@ -26,6 +27,7 @@ const FORM_CSS = `
     .form .form-row .form-col
     {
         margin-right: 20px ;
+        width: 100%;
     }
 
     .form .form-row .form-col-last
@@ -178,6 +180,100 @@ const FormBase = observer((props: Record<string, any>) => {
         setEditRowIndex(rowIndex + 1);
     }
 
+    const renderField = (field: Record<string,any>)=>{
+
+        const dataValue = data && data[field.name];
+        const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
+
+        switch (field.type) {
+            case 'upload-photo':
+                {
+                    return <UploadPhotoField {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
+                }
+            case 'checkbox':
+                {
+                    if (isNonEmptyString(field.groupValue)) {
+                        return <CheckboxGroupField  {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
+                    }
+                    else {
+                        return <CheckboxField {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
+                    }
+
+                }
+            case 'date':
+                {
+                    return <DateTimeField {...field} value={value} record={data} format="date" onChange={(v: string) => onChangeData(field, v)} />
+                }
+            case 'time':
+                {
+                    return <DateTimeField {...field} value={value} record={data} format="time" onChange={(v: string) => onChangeData(field, v)} />
+
+                }
+            case 'datetime':
+                {
+                    return <DateTimeField {...field} value={value} record={data} format="datetime" onChange={(v: string) => onChangeData(field, v)} />
+
+                }
+            case 'html':
+                {
+                    return <HtmlField {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
+
+                }
+            case 'lookup':
+                {
+                    return <LookupField {...field} value={data && data[`${field.name}_data`]} onChange={(record: Record<string, any>) => onChangeLookupData(field, record)} />
+                }
+            case 'placeholder':
+                {
+                    return <PlaceholderField {...field} />
+                }
+            case 'tags':
+                {
+                    return <TagsField {...field} value={value} record={data} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
+
+                }
+            case 'label':
+                {
+                    return <LabelField {...field} />
+                }
+            case 'alert-info':
+                {
+                    return <AlertField {...field} type="info" />
+                }
+            case 'alert-success':
+                {
+                    return <AlertField {...field} type="success" />
+                }
+            case 'alert-warning':
+                {
+                    return <AlertField {...field} type="warning" />
+                }
+            case 'alert-error':
+                {
+                    return <AlertField {...field} type="error" />
+                }
+            case 'section':
+                {
+                    return <SectionField {...field} />
+                }
+            case 'picklist':
+                {
+                    return <PicklistField {...field} value={value}
+                        onChange={(option: { value: number | string, text: string }) => onChangePicklist(field, option)} />
+                }
+            case 'custom':
+                {
+                    const Content = field.content;
+                    return Content && <Content data={data} name={field.name} onChange={onChangeCustom} />
+                }
+            default:
+                {
+                    return <TextField {...field} value={value} record={data} onChange={(v: any) => onChangeData(field, v)} />
+
+                }
+        }
+    }
+
     const renderForm = () => {
         const rows = form.rows;
         return <Row
@@ -194,103 +290,20 @@ const FormBase = observer((props: Record<string, any>) => {
                 return <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row form-row-${rowIndex} ${rowIndex==0?'form-row-first':''} ${rowIndex==rows.length-1?'form-row-last':''} flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
                     {
                         [
-                            customMode ? <div key="leftCustom" className="flex flex-col">
+                            customMode ? <div key="col-leftCustom" className="flex flex-col">
                                 <div className="form-row-sortable-handle cursor-pointer">
                                     <SVG src="/icons/sort.svg" style={{ width: 22 }} />
                                 </div>
                             </div> : <></>,
-                            ...map(row.fields, (f) => {
-                                const field = cloneDeep(f);
-                                const key = field.id || field.name;
-                                const dataValue = data && data[field.name];
-                                const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
-
-                                switch (field.type) {
-                                    case 'checkbox':
-                                        {
-                                            if (isNonEmptyString(field.groupValue)) {
-                                                return <CheckboxGroupField key={`${key}-${field.groupValue}`} {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
-                                            }
-                                            else {
-                                                return <CheckboxField key={key} {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
-                                            }
-
-                                        }
-                                    case 'date':
-                                        {
-                                            return <DateTimeField key={key} {...field} value={value} record={data} format="date" onChange={(v: string) => onChangeData(field, v)} />
-
-                                        }
-                                    case 'time':
-                                        {
-                                            return <DateTimeField key={key} {...field} value={value} record={data} format="time" onChange={(v: string) => onChangeData(field, v)} />
-
-                                        }
-                                    case 'datetime':
-                                        {
-                                            return <DateTimeField key={key} {...field} value={value} record={data} format="datetime" onChange={(v: string) => onChangeData(field, v)} />
-
-                                        }
-                                    case 'html':
-                                        {
-                                            return <HtmlField key={key} {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />
-
-                                        }
-                                    case 'lookup':
-                                        {
-                                            return <LookupField key={key} {...field} value={data && data[`${field.name}_data`]} onChange={(record: Record<string, any>) => onChangeLookupData(field, record)} />
-                                        }
-                                    case 'placeholder':
-                                        {
-                                            return <PlaceholderField key={key} {...field} />
-                                        }
-                                    case 'tags':
-                                        {
-                                            return <TagsField key={key} {...field} value={value} record={data} onChange={(v: Array<Record<string, any>>) => onChangeTags(field, v)} />
-
-                                        }
-                                    case 'label':
-                                        {
-                                            return <LabelField key={key} {...field} />
-                                        }
-                                    case 'alert-info':
-                                        {
-                                            return <AlertField key={key} {...field} type="info" />
-                                        }
-                                    case 'alert-success':
-                                        {
-                                            return <AlertField key={key} {...field} type="success" />
-                                        }
-                                    case 'alert-warning':
-                                        {
-                                            return <AlertField key={key} {...field} type="warning" />
-                                        }
-                                    case 'alert-error':
-                                        {
-                                            return <AlertField key={key} {...field} type="error" />
-                                        }
-                                    case 'section':
-                                        {
-                                            return <SectionField key={key} {...field} />
-                                        }
-                                    case 'picklist':
-                                        {
-                                            return <PicklistField key={key} {...field} value={value}
-                                                onChange={(option: { value: number | string, text: string }) => onChangePicklist(field, option)} />
-                                        }
-                                    case 'custom':
-                                        {
-                                            const Content = field.content;
-                                            return Content && <Content key={key} data={data} name={field.name} onChange={onChangeCustom} />
-                                        }
-                                    default:
-                                        {
-                                            return <TextField key={key} {...field} value={value} record={data} onChange={(v: any) => onChangeData(field, v)} />
-
-                                        }
-                                }
+                            ...map(row.fields, (field, colIndex: number) => {
+                                //const field = cloneDeep(f);
+                                return <div key={`col-${rowIndex}-${colIndex}`} 
+                                        style={isObject(field.colStyle)?field.colStyle:{}}
+                                        className={`form-col flex flex-row  form-col-${colIndex} ${colIndex==0?'form-col-first':''} ${colIndex==row.fields.length-1?'form-col-last':''} ${field.hidden == true ? 'hidden' : ''} ${isNonEmptyString(field.colClassName)?field.colClassName:''}`}>
+                                        {renderField(field)}
+                                    </div>
                             }),
-                            customMode ? <div className="flex flex-col">
+                            customMode ? <div key="col-rightCustom" className="flex flex-col ml-2">
                                 <div className="cursor-pointer" onClick={() => { setEditRowIndex(rowIndex) }}>
                                     <SVG src="/icons/edit-property.svg" style={{ width: 18 }} />
                                 </div>

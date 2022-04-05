@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-util';
 import { callAPI, _window, _track, SVG } from 'douhub-ui-web-basic';
-
+import { Popconfirm } from '../index';
 import { Upload } from 'antd';
-import { isFunction, isNil, assign } from 'lodash';
+import { isFunction,  throttle, assign } from 'lodash';
+import ReactResizeDetector from 'react-resize-detector';
 
 //NOTE: 
 //If you run into "The bucket does not allow ACLs" error when uploading the file
@@ -41,6 +42,7 @@ const Uploader = (props: {
     signedUrlFormat?: 'original' | 'webp',
     onStart?: any,
     onSuccess?: any,
+    onRemove?: any,
     onError?: any,
     value?: string,
     uiFormat?: 'photo' | 'icon',
@@ -48,33 +50,54 @@ const Uploader = (props: {
     accept?: string,
     fileNamePrefix?: string,
     hideLabel?: boolean,
+    hideDeleteButton?: boolean,
+    autoPreviewResize?: boolean,
     resultType?: "content" | "upload" | "both"
 }) => {
 
     const { entityName, recordId, attributeName, wrapperStyle, label,
-        fileNamePrefix,
+        fileNamePrefix, autoPreviewResize, 
         signedUrlFormat, fileType, iconUrl } = props;
-
+    const [width, setWidth] = useState<number>(0);
     const resultType = props.resultType ? props.resultType : 'upload';
     const solution = _window.solution;
     const [files, setFiles] = useState<Array<any>>([]);
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [value, setValue] = useState<string | undefined>(undefined);
     const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
+    const [previewSizeRatio, setPreviewSizeRatio] = useState<number>(0);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
-    const hideLabel = props.hideLabel == true ? true : false;
+    const hideLabel = props.hideLabel == true;
+    const hideDeleteButton = props.hideDeleteButton == true;
     const iconSyle = { ...{ width: 30, height: 30 }, ...props.iconStyle };
 
     const uiFormat = props.uiFormat == 'photo' ? 'photo' : 'icon';
 
     useEffect(() => {
-        setValue(props.value);
-        if (isNil(previewValue)) setPreviewValue(props.value);
+        setPreviewValue(props.value);
     }, [props.value])
 
-    const previewUrl = isNonEmptyString(previewValue) ? previewValue : value;
-    const photoStyle = uiFormat == 'photo' && fileType == 'Photo' && isNonEmptyString(previewUrl) ? { backgroundImage: `url(${previewUrl})` } : {};
+    useEffect(() => {
+
+        if (isNonEmptyString(previewValue) && autoPreviewResize == true) {
+            const img: any = new Image()
+            img.onload = () => {
+                setPreviewSizeRatio(1.0 * img.height / img.width);
+            }
+            img.src = previewValue;
+        }
+        else {
+            setPreviewSizeRatio(0);
+        }
+    }, [previewValue]);
+
+    const onResize = (newWidth?: number) => {
+        setWidth(newWidth ? newWidth : 0);
+    }
+
+
+    const photoStyle = uiFormat == 'photo' && fileType == 'Photo' && isNonEmptyString(previewValue) ? { backgroundImage: `url(${previewValue})` } : {};
+    const photoSizeStyle = width > 0 && previewSizeRatio > 0 ? { height: width * previewSizeRatio } : {};
 
     const onBeforeUpload = (file: Record<string, any>) => {
         if (isFunction(props.onStart)) props.onStart(file);
@@ -106,7 +129,7 @@ const Uploader = (props: {
         const fExt = fNameInfo.pop(0);
         const fileName = (fNameInfo.join('.').replace(/[^a-z0-9-]/gi, '_') + '.' + fExt).toLowerCase();
 
-        if (_track) console.log({fileName});
+        if (_track) console.log({ fileName });
 
         const s3Setting = await callAPI(solution, `${solution.apis.file}upload-setting`,
             { fileName, entityName, recordId, attributeName },
@@ -132,7 +155,7 @@ const Uploader = (props: {
                     'GET');
                 setPreviewValue(cfSignedRawResult.signedUrl);
             }
-            setValue(cfSignedResult.signedUrl);
+            
         }
         else {
             const url = `${solution.cloudFront[fileType.toLocaleLowerCase()]}${s3Setting.s3FileName}`;
@@ -188,8 +211,6 @@ const Uploader = (props: {
             }
             //let uploadRes = await uploadToS3(serverUrl.data.body, base64imageData);  
         })();
-
-
     }
 
     const renderPhotoUI = () => {
@@ -198,8 +219,8 @@ const Uploader = (props: {
             {files.length == 0 && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
                 <SVG src="/icons/upload-to-cloud.svg" style={iconSyle} />
-                {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
-                {isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
+                {!isNonEmptyString(error) && !hideLabel && <div className="mt-1 text-sm">{label ? label : 'Upload'}</div>}
+                {isNonEmptyString(error) && !hideLabel && <div className="mt-1 text-center text-xs text-red-600 p-2">{error}</div>}
             </div>}
             {uploading && <div className="flex flex-col items-center p-2"
                 style={{ background: 'rgba(255,255,255,0.8)' }}>
@@ -213,8 +234,8 @@ const Uploader = (props: {
         return <>
             {files.length == 0 && !uploading && <div className="flex flex-col items-center">
                 <SVG src={iconUrl ? iconUrl : "/icons/upload-to-cloud.svg"} style={iconSyle} color={error ? '#ff0000' : '#000000'} />
-                {!isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-sm">{label ? label : 'Upload'}</span>}
-                {isNonEmptyString(error) && !hideLabel && <span className="mt-1 text-center text-xs text-red-600 p-2">{error}</span>}
+                {!isNonEmptyString(error) && !hideLabel && <div className="mt-1 text-sm">{label ? label : 'Upload'}</div>}
+                {isNonEmptyString(error) && !hideLabel && <div className="mt-1 text-center text-xs text-red-600 p-2">{error}</div>}
             </div>
             }
             {uploading && <div className="flex flex-col items-center">
@@ -224,8 +245,13 @@ const Uploader = (props: {
         </>
     }
 
-    return <div className="flex flex-col h-full w-full content-center bg-cover bg-center"
-        style={{ border: 'dashed 1px #cccccc', ...photoStyle, ...wrapperStyle }}>
+    const onConfirmRemove = () => {
+        setPreviewValue('');
+        if (isFunction(props.onRemove)) props.onRemove();
+    }
+
+    return <div className="flex flex-col h-full w-full content-center bg-cover bg-center  relative"
+        style={{ border: 'dashed 1px #cccccc', ...photoStyle, ...wrapperStyle, ...photoSizeStyle }}>
         <div className="m-auto">
             <Upload
                 accept={getAccept()}
@@ -240,6 +266,18 @@ const Uploader = (props: {
                 {renderIconUI()}
             </Upload>
         </div>
+        {!isNonEmptyString(error) && isNonEmptyString(previewValue) && !hideDeleteButton && <Popconfirm
+            placement="top"
+            title="Remove the photo?"
+            okType="danger"
+            onConfirm={onConfirmRemove}
+            okText="Remove"
+            cancelText="Canel">
+            <div
+                className="text-2xs text-white absolute py-1 px-2 cursor-pointer m-1"
+                style={{ background: 'rgba(255,0,0,0.5)', right: 0, bottom: 0 }}>Delete</div>
+        </Popconfirm>}
+        <ReactResizeDetector onResize={throttle(onResize, 300)} />
     </div>
 };
 

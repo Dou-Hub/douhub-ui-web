@@ -51,6 +51,7 @@ import FormBase, { prepareFormToSave } from './sections/form/base';
 import DefaultForm from './sections/form/default';
 
 //Fields
+import UploadPhotoField from './fields/upload-photo';
 import LabelField from './fields/label';
 import TagsField from './fields/tags';
 import TreeField from './fields/tree';
@@ -185,6 +186,7 @@ export {
 }
 
 export {
+    UploadPhotoField,
     LabelField,
     TreeField,
     NoteField,

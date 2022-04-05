@@ -22,6 +22,34 @@ const NonSplitter = (props: Record<string, any>) => {
     </div>
 }
 
+const DefaultNoData = (props: Record<string, any>) => {
+
+    const { entity, search } = props;
+
+    const onClickCreateRecord = ()=>{
+        if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
+    }
+
+    return <div className="w-full">
+        <p>There is no {entity.uiName?.toLowerCase()} returned from the query.</p>
+        {!isNonEmptyString(search) && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
+        {!isNonEmptyString(search) && <div 
+            onClick={onClickCreateRecord}
+            className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center py-2 px-4 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+            <span className="hidden sm:block">Create your first {entity.uiName?.toLowerCase()}</span>
+        </div>}
+
+
+        {isNonEmptyString(search) && <p><b>Hope the tips below can help you.</b></p>}
+        {isNonEmptyString(search) && <ul>
+            <li>1. Check the spelling of your keyword</li>
+            <li>2. Broaden your search by using fewer or more general words</li>
+            <li>3. Select one or more categories to filter by categories</li>
+            <li>4. Select one or more tags to filter by tags</li>
+        </ul>}
+    </div>
+}
+
 const FORM_RESIZER_MIN_WIDTH = 500;
 
 const ListBase = (props: Record<string, any>) => {
@@ -29,10 +57,10 @@ const ListBase = (props: Record<string, any>) => {
     const solution = _window.solution;
     const { height, entity, search, hideListCategoriesTags, selectionType, allowCreate, allowUpload, recordForMembership } = props;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
-    const [view, setView] = useState('table');
+    const [view, setView] = useState(props.view);
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
-
+    const NoData = props.NoData ? props.NoData : DefaultNoData;
     const sidePanelCacheKey = `list-sidePanel-${entity?.entityName}-${entity?.entityType}`;
     const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
 
@@ -303,11 +331,19 @@ const ListBase = (props: Record<string, any>) => {
         if (isFunction(props.onClickRecord)) props.onClickRecord(record, action);
     }
 
+    const renderNoData = () => {
+        if (isNonEmptyString(firstLoadError)) return null;
+        if (firtsLoading) return null;
+        if (result?.data?.length > 0) return null;
+        return <div className="w-full flex p-4">
+                <NoData entity={entity} search={search} onClickCreateRecord={onClickCreateRecord}/>
+            </div>
+    }
+
     const renderFirstLoadError = () => {
         if (!isNonEmptyString(firstLoadError)) return null;
         return <div className="w-full flex p-4">
             <AlertField className="pl-2" type="error" message={firstLoadError} />
-
         </div>
     }
 
@@ -327,6 +363,8 @@ const ListBase = (props: Record<string, any>) => {
     const renderTable = () => {
         if (view == 'grid' && !currentRecord) return null;
         if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
+        if (isNil(result) || result?.data?.length == 0) return null;
+
         return <ListTable
             width={width}
             selectionType={selectionType} //undefined|checkbox|radio
@@ -336,21 +374,21 @@ const ListBase = (props: Record<string, any>) => {
             data={result ? result.data : []} />
     }
 
-    const onClickGridCard = (record:Record<string,any>)=>{
-        if (props.onClickGridCard) 
-        {
+    const onClickGridCard = (record: Record<string, any>) => {
+        if (props.onClickGridCard) {
             props.onClickGridCard(record);
         }
-        else
-        {
-            onClickRecord(record,'edit');
+        else {
+            onClickRecord(record, 'edit');
         }
-        
+
     }
 
-    const rendeGrid = () => {
+    const renderGrid = () => {
         if (view == 'table' || currentRecord) return null;
         if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
+        if (isNil(result) || result?.data?.length == 0) return null;
+
         return <StackGrid
             gutterWidth={guterWidth}
             gutterHeight={guterWidth}
@@ -363,11 +401,11 @@ const ListBase = (props: Record<string, any>) => {
                 const content = getRecordAbstract(item, 64, true);
 
                 return <div key={i} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden">
-                    {isNonEmptyString(media) && <div className="flex-shrink-0">
+                    {isNonEmptyString(media) && <div className="flex-shrink-0 cursor-pointer" onClick={() => onClickGridCard(item)}>
                         <img className="w-full" src={media} alt="" />
                     </div>}
-                    <div className="flex-1 bg-white p-4 flex flex-col justify-between cursor-pointer" 
-                        onClick={()=>onClickGridCard(item)}
+                    <div className="flex-1 bg-white p-4 flex flex-col justify-between cursor-pointer"
+                        onClick={() => onClickGridCard(item)}
                     >
                         <div className="flex-1 overflow-hidden">
                             <div className="w-full block mt-2">
@@ -500,7 +538,7 @@ const ListBase = (props: Record<string, any>) => {
                 onChangeQuery={onChangeQuery}
                 onChangeStatus={onChangeStatus}
                 selectedRecords={selectedRecords}
-                onChangeView={(newView:string)=>setView(newView)}
+                onChangeView={(newView: string) => setView(newView)}
                 view={view}
                 showViewToggleButton={props.showViewToggleButton}
             />
@@ -510,12 +548,13 @@ const ListBase = (props: Record<string, any>) => {
                 maxWidth={maxListWidth}
                 onResizeHeight={(height: number) => setFilterSectionHeight(height)}
             />}
-            <div className={`w-full h-full flex bg-white overflow-hidden overflow-y-auto`}
+            <div className={`list-main w-full h-full flex bg-white overflow-hidden overflow-y-auto`}
                 style={{ maxWidth: maxListWidth, height: tableHeight }}>
                 {renderTable()}
-                {rendeGrid()}
+                {renderGrid()}
                 {renderFirstLoading()}
                 {renderFirstLoadError()}
+                {renderNoData()}
                 <ReactResizeDetector onResize={throttle(onResizeListDetector, 300)} />
             </div>
         </div>
