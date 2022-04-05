@@ -283,7 +283,7 @@ const ColumnsSection = (props) => {
             {data.length > 1 && <Popconfirm key="remove"
                 placement="top"
                 title="Are you sure you want to remove this item?"
-                icon={<></>}
+                okButtonProps={{danger:true}}
                 onConfirm={() => onConfirmRemove(item)}
                 okText="Remove"
                 cancelText="Cancel">

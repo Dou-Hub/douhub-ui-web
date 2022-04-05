@@ -126,6 +126,7 @@ const UserProfileModal = (props: Record<string, any>) => {
         return <div className="flex flex-col">
             <div className="flex mb-6">
                 <Uploader
+                    hideDeleteButton={true}
                     uiFormat='photo'
                     value={data.avatar}
                     fileType="Photo"

@@ -8,7 +8,8 @@ import Popconfirm from '../antd/popconfirm';
 
 const ButtonWrapper = (props: Record<string, any>) => {
 
-    const { onClickConfirm, confirmationOk, confirmationCancel, confirmationTitle, confirmationPlacement } = props;
+    const { onClickConfirm, confirmationOk, confirmationCancel, confirmationOkType,
+        confirmationTitle, confirmationPlacement } = props;
 
     const onConfirm = () => {
         if (isFunction(onClickConfirm)) onClickConfirm();
@@ -17,7 +18,7 @@ const ButtonWrapper = (props: Record<string, any>) => {
     return isNonEmptyString(confirmationTitle) ? <Popconfirm
         placement={confirmationPlacement ? confirmationPlacement : "top"}
         title={confirmationTitle}
-        icon={<></>}
+        okType={confirmationOkType}
         onConfirm={onConfirm}
         okText={confirmationOk ? confirmationOk : 'Ok'}
         cancelText={confirmationCancel ? confirmationCancel : 'Cancel'}>
@@ -61,7 +62,7 @@ const BasicModal = (props: Record<string, any>) => {
     const renderButtons = () => {
         if (!isNil(processing)) return null;
         const totalButtons = buttons.length;
-        return map(buttons, (button, index: number) => {
+        return map(buttons, (button:any, index: number) => {
             const text = isNonEmptyString(button.text) ? button.text : '...';
             const disabled = button == button.disabled;
             switch (button.type) {

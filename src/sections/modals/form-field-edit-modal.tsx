@@ -201,6 +201,7 @@ const FormFieldEditModal = (props: Record<string, any>) => {
                     type: "danger",
                     confirmationTitle: "Are you sure to remove this field?",
                     confirmationOk: "Yes",
+                    confirmationOkType: "danger",
                     className: "absolute",
                     onClick: () => { },
                     onClickConfirm: onRemove

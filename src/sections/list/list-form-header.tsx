@@ -28,6 +28,7 @@ const ListFormHeader = (props: Record<string, any>) => {
                     placement="bottom"
                     title={deleteConfirmationMessage}
                     onConfirm={() => { isFunction(props.onClickDeleteRecord) && props.onClickDeleteRecord() }}
+                    okType="danger"
                     okText="Yes"
                     cancelText="No">
                     <div

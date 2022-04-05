@@ -147,7 +147,8 @@ const HomeFunctionArea = (props) => {
             <ReactSVG src="/icons/up-down.svg" className={`button button-relocate-${relocateSection}`}
                 onClick={onClickRelocateSection} />
         </Tooltip>,
-        dataChanged && !doing && <Popconfirm key="rollback" placement="right"
+        dataChanged && !doing && <Popconfirm 
+            key="rollback" placement="right"
             title="Are you sure to rollback latest changes to this page?"
             onConfirm={onConfirmRollback}
             onCancel={onCancelRollback}

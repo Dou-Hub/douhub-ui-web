@@ -238,6 +238,7 @@ const UploadModalStep3 = (props: {
                                 title="Remove this column?"
                                 onCancel={() => { }}
                                 onConfirm={() => onRemoveColumn(columnName)}
+                                okType="danger"
                                 okText="Remove"
                                 cancelText="Cancel">
                                 <Tooltip color="#ff0000" placement='bottom' title={`Remove`}>

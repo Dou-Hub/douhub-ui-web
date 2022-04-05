@@ -31,6 +31,7 @@ export const rendeActionButtonColumn = (
                     {isNonEmptyString(menuItem.confirmation) ?
                         <Popconfirm
                             placement="left"
+                            okType={menuItem.okType}
                             title={menuItem.confirmation}
                             onConfirm={() => { onClick(r, menuItem.action, entity, rowIndex) }}
                             okText="Yes"
