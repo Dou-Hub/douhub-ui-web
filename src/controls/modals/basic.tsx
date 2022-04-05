@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
-import { SVG } from 'douhub-ui-web-basic';
+import { SVG, _window } from 'douhub-ui-web-basic';
 import { isNonEmptyString } from 'douhub-helper-util';
 import Popconfirm from '../antd/popconfirm';
-
+import { useEnvStore } from 'douhub-ui-store';
 
 const ButtonWrapper = (props: Record<string, any>) => {
 
@@ -28,11 +28,30 @@ const ButtonWrapper = (props: Record<string, any>) => {
 
 const BasicModal = (props: Record<string, any>) => {
     //const [open, setOpen] = useState(true)
-    const { show, title, content, Content, icon, titleClassName, className, style } = props;
+    const { show, title, content, Content, icon, titleClassName, className, style, id } = props;
     const buttons = isArray(props.buttons) ? props.buttons : [];
     const [processing, setProcessing] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const overlayClosable: any = props.overlayClosable == true ? true : false;
+    const envStore = useEnvStore();
+    const winHeight = envStore.height;
+    const dialogId = `modal-${id}`;
+
+    const updateMaxHeight = ()=>{
+        const dialog = _window.document.getElementById(dialogId);
+        if (dialog) 
+        {
+            dialog.style['max-height'] = `${winHeight-250}px`;
+        }
+        else
+        {
+            setTimeout(updateMaxHeight, 300);
+        }
+    }
+
+    useEffect(() => {
+        updateMaxHeight();
+    }, [winHeight]);
 
     useEffect(() => {
         setProcessing(props.processing);
@@ -163,10 +182,10 @@ const BasicModal = (props: Record<string, any>) => {
                                     {isNonEmptyString(title) && <Dialog.Title as="h3" className={`text-lg mx-2 leading-6 font-medium text-gray-900 ${titleClassName ? titleClassName : ''}`}>
                                         {title}
                                     </Dialog.Title>}
-                                    <div className="my-6 mx-2 text-align">
+                                    {dialogId && <div id={dialogId} className="my-6 mx-2 text-align" style={{overflow:'hidden', overflowY:'auto'}}>
                                         {content}
                                         {Content && <Content {...props} />}
-                                    </div>
+                                    </div>}
                                 </div>}
                             </div>
                             {isNonEmptyString(error) && <div className="text-red-600 text-right">{error}</div>}

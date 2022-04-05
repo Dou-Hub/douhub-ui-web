@@ -167,6 +167,7 @@ const UserProfileModal = (props: Record<string, any>) => {
     }
 
     return <BasicModal
+        id="user-profile"
         titleClassName="text-left"
         show={show}
         onClose={onClose}

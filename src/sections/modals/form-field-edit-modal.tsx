@@ -187,6 +187,7 @@ const FormFieldEditModal = (props: Record<string, any>) => {
     }
 
     return <BasicModal
+        id={`field-edit-${field.name}`}
         titleClassName="text-left"
         show={show}
         onClose={onClose}
