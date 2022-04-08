@@ -38,20 +38,24 @@ const BasicModal = (props: Record<string, any>) => {
     const dialogId = `modal-${id}`;
 
     const updateMaxHeight = ()=>{
-        const dialog = _window.document.getElementById(dialogId);
-        if (dialog) 
+        if (show)
         {
-            dialog.style['max-height'] = `${winHeight-250}px`;
-        }
-        else
-        {
-            setTimeout(updateMaxHeight, 300);
+            const dialog = _window.document.getElementById(dialogId);
+            if (dialog) 
+            {
+                dialog.style['max-height'] = `${winHeight-250}px`;
+            }
+            else
+            {
+                console.log(`retry dialog ${winHeight-250}px`);
+                setTimeout(updateMaxHeight, 300);
+            }
         }
     }
 
     useEffect(() => {
         updateMaxHeight();
-    }, [winHeight]);
+    }, [winHeight, show]);
 
     useEffect(() => {
         setProcessing(props.processing);
