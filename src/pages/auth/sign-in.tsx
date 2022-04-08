@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { isEmail, isObject } from 'douhub-helper-util';
+import { isEmail, isNonEmptyString, isObject } from 'douhub-helper-util';
 import { sendMessage } from 'douhub-ui-store';
 import { cloneDeep, isNil, isFunction } from 'lodash';
 import { SignInSection, MessageField } from '../../index';
@@ -13,6 +13,7 @@ const SignInPageBody = (props: Record<string, any>) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [form, setForm] = useState<Record<string, any>>(isObject(props.form) ? props.form : {});
     const type = form.type == 'mobile' ? 'mobile' : 'email';
+    const coverPhoto = isNonEmptyString(solution?.site?.coverPhoto)?solution?.site?.coverPhoto:'/images/cover.jpeg';
 
     useEffect(() => {
         const newForm = { email: getCookie('sign-in-email'), ...props.form };
@@ -294,8 +295,8 @@ const SignInPageBody = (props: Record<string, any>) => {
             <div className="hidden lg:block relative w-0 flex-1">
                 <img
                     className="absolute inset-0 h-full w-full object-cover"
-                    src="/images/cover.jpeg"
-                    alt="/images/cover.jpeg"
+                    src={coverPhoto}
+                    alt={coverPhoto}
                 />
             </div>
             <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -340,10 +341,10 @@ const SignInPageBody = (props: Record<string, any>) => {
                                 <button className="my-10 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 " onClick={onSubmit}>
                                     {getButtonTitle()}
                                 </button>}
-                            <MessageField
+                            {solution?.site?.supportSignUp!=false &&  <MessageField
                                 className="underline-offset-2 cursor-pointer"
                                 content="Do not have a user account? Click here to sign up."
-                                type="info" onClick={onClickSignUp} />
+                                type="info" onClick={onClickSignUp} />}
                             {form.action != 'reset-password' && <MessageField className="underline-offset-2 cursor-pointer"
                                 content="Forgot your password? Click here to reset."
                                 type="info" onClick={onClickResetPassword} />}

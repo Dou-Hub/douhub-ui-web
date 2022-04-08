@@ -4,7 +4,7 @@ import { sendMessage } from 'douhub-ui-store';
 import {SignUpSection, MessageField} from '../../index';
 import { callAPIBase,getCookie,_window } from 'douhub-ui-web-basic';
 import { isNil, isFunction } from 'lodash';
-import { isEmail } from 'douhub-helper-util';
+import { isEmail, isNonEmptyString } from 'douhub-helper-util';
 
 const SignUpPageBody = (props: Record<string, any>) => {
 
@@ -12,7 +12,8 @@ const SignUpPageBody = (props: Record<string, any>) => {
     const [doing, setDoing] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [form, setForm] = useState<Record<string, any>>({});
-  
+    const coverPhoto = isNonEmptyString(solution?.site?.coverPhoto)?solution?.site?.coverPhoto:'/images/cover.jpeg';
+
     useEffect(() => {
         const newForm = { email: getCookie('sign-in-email'), ...props.data };
         if (isNil(newForm.rememberMe)) newForm.rememberMe = isEmail(newForm.email);
@@ -106,8 +107,8 @@ const SignUpPageBody = (props: Record<string, any>) => {
             <div className="hidden lg:block relative w-0 flex-1">
                 <img
                     className="absolute inset-0 h-full w-full object-cover"
-                    src="/images/cover.jpeg"
-                    alt="/images/cover.jpeg"
+                    src={coverPhoto}
+                    alt={coverPhoto}
                 />
             </div>
             <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
