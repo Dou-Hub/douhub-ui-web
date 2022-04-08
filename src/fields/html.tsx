@@ -27,7 +27,7 @@ import lowlight from 'lowlight';
 
 const FLOAT_MENU_STYLE = {
     border: 'solid 1px #333333',
-    backgroundColor:'#ffffff',
+    backgroundColor: '#ffffff',
     padding: 2,
     marginLeft: 10,
     fontSize: 14,
@@ -42,6 +42,7 @@ const HtmlField = (props: Record<string, any>) => {
         labelStyle, alwaysShowLabel,
         name, wrapperStyle, supportSourceCode,
         hideLabel, hideH1, hideH2, hideH3,
+        readonly,
         hideH4, record } = props;
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : '';
@@ -299,7 +300,7 @@ const HtmlField = (props: Record<string, any>) => {
                         className={`menu-icon ${editor.isActive('link') ? 'active' : ''}`} />
                 </div>
             </BubbleMenu>}
-            <EditorContent editor={editor} className="field-html-editor" />
+            <EditorContent editor={editor} className={`field-html-editor ${readonly==true?'readonly':''}`} />
             <div id={`field-html-for-init-${id}`} onClick={onInitValue} />
             <div id={`field-html-for-sync-${id}`} onClick={onSyncValue} />
         </div>
@@ -308,5 +309,4 @@ const HtmlField = (props: Record<string, any>) => {
 
 HtmlField.displayName = DISPLAY_NAME;
 export default HtmlField;
-
 

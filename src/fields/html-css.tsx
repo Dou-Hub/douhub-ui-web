@@ -38,6 +38,12 @@ export const HTML_FIELD_CSS = `
     min-height: 26px;
 }
 
+.field-html .field-html-editor.readonly
+{
+    flex: 1;
+    min-height: auto;
+}
+
 .field-html .ProseMirror
 { 
     outline: none !important;
