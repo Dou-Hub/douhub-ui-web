@@ -3,7 +3,7 @@ import { isNonEmptyString, uploadToS3, getAcceptExtention } from 'douhub-helper-
 import { callAPI, _window, _track, SVG } from 'douhub-ui-web-basic';
 import { Popconfirm } from '../index';
 import { Upload } from 'antd';
-import { isFunction,  throttle, assign } from 'lodash';
+import { isFunction, throttle, assign } from 'lodash';
 import ReactResizeDetector from 'react-resize-detector';
 
 //NOTE: 
@@ -52,12 +52,13 @@ const Uploader = (props: {
     hideLabel?: boolean,
     hideDeleteButton?: boolean,
     autoPreviewResize?: boolean,
-    resultType?: "content" | "upload" | "both"
+    resultType?: "content" | "upload" | "both",
+    disabled?: boolean
 }) => {
 
     const { entityName, recordId, attributeName, wrapperStyle, label,
-        fileNamePrefix, autoPreviewResize, 
-        signedUrlFormat, fileType, iconUrl } = props;
+        fileNamePrefix, autoPreviewResize,
+        signedUrlFormat, fileType, iconUrl, disabled } = props;
     const [width, setWidth] = useState<number>(0);
     const resultType = props.resultType ? props.resultType : 'upload';
     const solution = _window.solution;
@@ -155,7 +156,7 @@ const Uploader = (props: {
                     'GET');
                 setPreviewValue(cfSignedRawResult.signedUrl);
             }
-            
+
         }
         else {
             const url = `${solution.cloudFront[fileType.toLocaleLowerCase()]}${s3Setting.s3FileName}`;
@@ -257,7 +258,7 @@ const Uploader = (props: {
                 accept={getAccept()}
                 listType="text"
                 onChange={onAfterUpload}
-                disabled={files.length > 0}
+                disabled={files.length > 0 || disabled==true}
                 beforeUpload={onBeforeUpload}
                 fileList={[]}
                 maxCount={1}
