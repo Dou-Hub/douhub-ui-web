@@ -99,6 +99,13 @@ const PageHead = (props: {
         <link rel="apple-touch-icon" sizes="180x180" href={`${headManifestUrl}/apple-touch-icon.png`} />
         <link rel="icon" type="image/png" sizes="32x32" href={`${headManifestUrl}/favicon-32x32.png`} />
         <link rel="icon" type="image/png" sizes="16x16" href={`${headManifestUrl}/favicon-16x16.png`} />
+
+
+        <link rel="mask-icon" href={`${headManifestUrl}/safari-pinned-tab.svg`} color={site.tileColor ? site.tileColor : site.themeColor} />
+        <meta name="msapplication-TileColor" content={site.tileColor ? site.tileColor : site.themeColor} />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
+        
         <link rel="manifest" href={`${headManifestUrl}/site.webmanifest`} />
 
         {/* 
