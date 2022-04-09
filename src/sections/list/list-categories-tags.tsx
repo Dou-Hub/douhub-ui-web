@@ -188,7 +188,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             style={{ height }}>
 
             <div
-                className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center "
+                className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center bg-gray-50"
                 style={{ height: 68}}
             >
                 <SVG src={`/icons/hide-sidepanel.svg`}
@@ -219,15 +219,15 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         okType="danger"
                         cancelText="Cancel">
                         <button style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
-                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-red-600 hover:bg-red-700">
-                         <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#ffffff" />
+                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-red-50">
+                         <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
 
                     </Popconfirm>}
                     {isNonEmptyString(selectedId) && <button
                         style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
-                        className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-sky-600 hover:bg-sky-700">
-                        <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#ffffff" />
+                        className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-sky-50">
+                        <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#333333" />
                     </button>}
                     {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="topCenter" overlay={
                         <Menu>
@@ -243,22 +243,22 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         </Menu>}>
                         <button
                             style={{ height: 32, width: 32 }} 
-                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
+                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
                     </Dropdown>}
                     {!isNonEmptyString(selectedId) &&
                         <button
                             style={{ height: 32, width: 32 }} onClick={() => onClickAddCategory('root')}
-                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#ffffff" />
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
+                            <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
                     }
 
                     {!isNonEmptyString(selectedId) &&
                         <button
                             style={{ height: 32, width: 32 }} onClick={onClickRefreshCategory}
-                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium bg-gray-100 hover:bg-gray-200">
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">
                             <SVG src="/icons/refresh.svg" style={{ width: 18 }} color="#333333" />
                         </button>
 
@@ -267,7 +267,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 </div>
                 }
             </div>
-            {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-b" style={{ background: 'rgb(249 250 251)', height: 55 }}>
+            {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-dashed border-b bg-white" style={{height: 55 }}>
                 <TextField
                     inputWrapperStyle={{ marginBottom: 0, borderBottom: 'none' }}
                     inputStyle={{ fontSize: 12, height: 30, background: 'transparent' }}
@@ -281,15 +281,15 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 />
                 <button
                     style={{ height: 20 }}
-                    className="mr-1 cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow-md font-medium text-white bg-gray-100 hover:bg-gray-200"
+                    className="mr-1 cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow hover:shadow-lg font-medium bg-gray-50 "
                     onClick={() => setOp('')}>
-                    <SVG src="/icons/x.svg" style={{ width: 12 }} />
+                    <SVG src="/icons/x.svg" style={{ width: 12 }}  color="#333333"/>
                 </button>
                 <button
                     style={{ height: 20 }}
-                    className="cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow-md font-medium text-white bg-sky-600 hover:bg-sky-700"
+                    className="cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow hover:shadow-lg font-medium bg-sky-50"
                     onClick={() => onClickSubmitCategory(op)}>
-                    <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="white" />
+                    <SVG src="/icons/checkmark.svg" style={{ width: 12 }} color="#333333" />
                 </button>
             </div>}
 

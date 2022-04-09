@@ -26,14 +26,14 @@ const DefaultNoData = (props: Record<string, any>) => {
 
     const { entity, search } = props;
 
-    const onClickCreateRecord = ()=>{
+    const onClickCreateRecord = () => {
         if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
     }
 
     return <div className="w-full">
         <p>There is no {entity.uiName?.toLowerCase()} returned from the query.</p>
         {!isNonEmptyString(search) && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
-        {!isNonEmptyString(search) && <div 
+        {!isNonEmptyString(search) && <div
             onClick={onClickCreateRecord}
             className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center py-2 px-4 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
             <span className="hidden sm:block">Create your first {entity.uiName?.toLowerCase()}</span>
@@ -78,7 +78,7 @@ const ListBase = (props: Record<string, any>) => {
     const [predefinedFormWidth, setPredefinedFormWidth] = useState(defaultFormWidth);
 
     const ListForm = props.Form ? props.Form : DefaultForm;
-    const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 130;
+    const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 100;
     const Header = props.Header ? props.Header : ListHeader;
     const supportSlitter = props.supportSlitter == true
     const Splitter = supportSlitter ? SplitterInternal : NonSplitter;
@@ -336,8 +336,8 @@ const ListBase = (props: Record<string, any>) => {
         if (firtsLoading) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
-                <NoData entity={entity} search={search} onClickCreateRecord={onClickCreateRecord}/>
-            </div>
+            <NoData entity={entity} search={search} onClickCreateRecord={onClickCreateRecord} />
+        </div>
     }
 
     const renderFirstLoadError = () => {
@@ -390,6 +390,7 @@ const ListBase = (props: Record<string, any>) => {
         if (isNil(result) || result?.data?.length == 0) return null;
 
         return <StackGrid
+            itemComponent="div"
             gutterWidth={guterWidth}
             gutterHeight={guterWidth}
             columnWidth={getGridColumnWidth()}
@@ -400,7 +401,7 @@ const ListBase = (props: Record<string, any>) => {
                 const display = getRecordDisplay(item);
                 const content = getRecordAbstract(item, 64, true);
 
-                return <div key={i} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden">
+                return <div key={i} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg">
                     {isNonEmptyString(media) && <div className="flex-shrink-0 cursor-pointer" onClick={() => onClickGridCard(item)}>
                         <img className="w-full" src={media} alt="" />
                     </div>}
@@ -548,7 +549,7 @@ const ListBase = (props: Record<string, any>) => {
                 maxWidth={maxListWidth}
                 onResizeHeight={(height: number) => setFilterSectionHeight(height)}
             />}
-            <div className={`list-main w-full h-full flex bg-white overflow-hidden overflow-y-auto`}
+            <div className={`list-main w-full h-full flex bg-gray-30 overflow-hidden overflow-y-auto`}
                 style={{ maxWidth: maxListWidth, height: tableHeight }}>
                 {renderTable()}
                 {renderGrid()}
@@ -603,7 +604,7 @@ const ListBase = (props: Record<string, any>) => {
                             onClickDeleteRecord={onClickDeleteRecordFromForm}
                         />
                         {isObject(currentRecord) && <div className="list-form-body w-full flex flex-row px-8 pt-4 pb-20 overflow-hidden overflow-y-auto"
-                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 80, height: height - formHeightAdjust }}>
+                            style={{ borderTop: 'solid 1rem #ffffff', marginTop: 70, height: height - formHeightAdjust }}>
                             <ListForm
                                 entity={entity}
                                 wrapperClassName="pb-20"

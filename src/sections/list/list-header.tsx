@@ -112,7 +112,7 @@ const ListHeader = (props: Record<string, any>) => {
         if (isFunction(props.onChangeView)) props.onChangeView(newView);
     }
 
-    return <div className="douhub-list-header bg-white w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
+    return <div className="douhub-list-header bg-gray-50 w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
 
         {sidePanel == false && <SVG src="/icons/show-sidepanel.svg"
@@ -151,37 +151,37 @@ const ListHeader = (props: Record<string, any>) => {
 
             {allowUpload && allowCreate && <div
                 onClick={onClickUpload}
-                className={`flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700'}`}>
-                <SVG id="upload-icon" src="/icons/upload-to-cloud.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
+                <SVG id="upload-icon" src="/icons/upload-to-cloud.svg" style={{ width: 18, height: 18 }} color="#333333" />
                 <span className="hidden sm:block sm:ml-2">Upload</span>
             </div>}
 
             {menuForCreateButton && allowCreate && <Dropdown overlay={menuForCreateButton}>
-                <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
-                    <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
+                    <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#333333" />
                     <span className="hidden sm:block sm:ml-2">New</span>
                 </div>
             </Dropdown>}
 
-            {showViewToggleButton && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium border"
+            {showViewToggleButton && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white"
                 onClick={onClickToggleView}
             >
-                <SVG id="view-table-icon" src="/icons/table-view.svg" style={{ width: 18, height: 18, marginRight: 8 }} color={view == 'table' ? '#ff0000' : '#333333'} />
-                <SVG id="view-grid-icon" src="/icons/grid-view.svg" style={{ width: 18, height: 18 }} color={view == 'grid' ? '#ff0000' : '#333333'} />
+                <SVG id="view-table-icon" src="/icons/table-view.svg" style={{ width: 18, height: 18, marginRight: 8 }} color={view == 'table' ? '#38bdf8' : '#333333'} />
+                <SVG id="view-grid-icon" src="/icons/grid-view.svg" style={{ width: 18, height: 18 }} color={view == 'grid' ? '#38bdf8' : '#333333'} />
             </div>}
 
 
-            {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700"
+            {!menuForCreateButton && allowCreate && <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50"
                 onClick={onClickCreateRecord}
             >
-                <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#ffffff" />
+                <SVG id="add-row-icon" src="/icons/add-row.svg" style={{ width: 18, height: 18 }} color="#333333" />
                 <span className="hidden sm:block sm:ml-2">New</span>
             </div>}
 
             {props.children}
 
             <div onClick={onClickRefresh}
-                className="cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow-md text-xs font-medium bg-gray-100 hover:bg-gray-200">
+                className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow-md shadow hover:shadow-lg text-xs font-medium bg-white">
                 <SVG id="list-refresh-icon" src="/icons/refresh.svg" style={{ width: 22 }} color="#333333" />
             </div>
         </div>

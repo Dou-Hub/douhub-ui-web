@@ -23,6 +23,12 @@ export const LIST_CSS = `
         content: "";
     }
 
+    .douhub-list .ant-table-tbody>tr>td.ant-table-cell-row-hover,
+    .douhub-list .ant-table-tbody>tr.ant-table-row:hover>td
+    {
+        background: rgb(251,252,253) !important;
+    }
+
     .douhub-list .ant-table-tbody>tr>td:last-child:before,
     .douhub-list .ant-table-selection-column:before
     {
@@ -31,7 +37,7 @@ export const LIST_CSS = `
     
     .douhub-list .ant-table-thead>tr>th
     {
-        background: rgb(249 250 251);
+        background: rgb(251,252,253) !important;
     }
 
     .douhub-list .ant-table-selection-column

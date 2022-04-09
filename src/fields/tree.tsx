@@ -39,13 +39,13 @@ const TreeField = (props: Record<string, any>) => {
     const { label, disabled, labelStyle, alwaysShowLabel, hideLabel, expendedIds, doing, selectedId, value } = props;
 
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
-    const solution = _window.solution;
-    const TREE_ITEM_CSS = solution.theme.color ? `
-    .field-tree-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected
-    {
-        background-color: ${solution.theme.color["100"]}
-    }
-    `: '';
+    const TREE_ITEM_CSS = `
+        .field-tree-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected
+        {
+            background-color: #f1f5f9;
+            border-radius: 10px !important;
+        }
+    `;
     const onDragEnter = (info: Record<string, any>) => {
         console.log(info);
     };
