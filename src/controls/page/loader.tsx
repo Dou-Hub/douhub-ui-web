@@ -3,8 +3,13 @@ import React from 'react';
 import {SVG} from 'douhub-ui-web-basic';
 
 const PageLoader = (props: Record<string, any>) => {
+
+    const {solution} = props;
+
     const iconSrc = isNonEmptyString(props.iconSrc) ? props.iconSrc : '/logo.svg';
-    const color = isNonEmptyString(props.color) ? props.color : '#ff0000';
+    const themeColor = solution?.theme?.color;
+    const color = themeColor && isNonEmptyString(themeColor["500"]) ? themeColor["500"] : 'black';
+
     const showText = props.showText == true;
 
     return <div className="flex flex-col h-screen my-auto items-center bgimg bg-cover">

@@ -24,7 +24,7 @@ const NonSplitter = (props: Record<string, any>) => {
 
 const DefaultNoData = (props: Record<string, any>) => {
 
-    const { entity, search } = props;
+    const { entity, search, allowCreate } = props;
 
     const onClickCreateRecord = () => {
         if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
@@ -32,8 +32,8 @@ const DefaultNoData = (props: Record<string, any>) => {
 
     return <div className="w-full">
         <p>There is no {entity.uiName?.toLowerCase()} returned from the query.</p>
-        {!isNonEmptyString(search) && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
-        {!isNonEmptyString(search) && <div
+        {!isNonEmptyString(search) && allowCreate && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
+        {!isNonEmptyString(search) && allowCreate && <div
             onClick={onClickCreateRecord}
             className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center py-2 px-4 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
             <span className="hidden sm:block">Create your first {entity.uiName?.toLowerCase()}</span>
@@ -336,7 +336,7 @@ const ListBase = (props: Record<string, any>) => {
         if (firtsLoading) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
-            <NoData entity={entity} search={search} onClickCreateRecord={onClickCreateRecord} />
+            <NoData {...props} entity={entity} search={search} onClickCreateRecord={onClickCreateRecord} />
         </div>
     }
 

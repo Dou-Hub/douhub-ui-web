@@ -82,7 +82,7 @@ const SignUpPageBody = (props: Record<string, any>) => {
                     }
                 }
 
-                sendMessage('context-sign-in-success', 'action', result);
+                sendMessage('context-sign-up-success', 'action', result);
                 if (isFunction(props.onSuccess)) 
                 {
                     if (!props.onSuccess(form))

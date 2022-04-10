@@ -137,6 +137,8 @@ import ListBase from './sections/list/list-base';
 import DefaultList from './sections/list/default';
 import BaseList from './sections/list/base';
 
+export { ListColumnTags } from './sections/list/list-column-tags';
+
 export {
     ListTable, ListFormResizer, ListHeader, ListBase, DefaultList,
     ListFilters, ListFormHeader, ListCategoriesTags, BaseList
