@@ -133,7 +133,6 @@ const UploadModal = observer((props: Record<string, any>) => {
     const modalStyle: Record<string, any> = getModalStyle();
 
     const renderContent = () => {
-        console.log({ stepIndex })
         switch (stepIndex) {
             case 0: return <Step1 entity={entity} recordId={`${entity.entityName}${entity.entitytype ? '-' + entity.entitytype : ''}-${getDateTimeString()}`}
                 modalStyle={modalStyle}

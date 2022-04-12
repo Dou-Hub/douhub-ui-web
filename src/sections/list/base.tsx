@@ -16,10 +16,12 @@ const BaseList = observer((props: {
     Header?: any,
     selectionType?: 'checkbox' | 'radio',
     search?: string,
+    tags?: string[],
     showViewToggleButton?: boolean,
     webQuery?: Record<string, any>,
     onClickRecord?: (record: Record<string, any>, action: string) => any,
     onRemoveSearch?: (filter: Record<string, any>) => any,
+    onRemoveTag?: (filter: Record<string, any>) => any,
     onClickGridCard?: any,
     ListCategoriesTags?: any,
     deleteButtonLabel?: string,
@@ -27,9 +29,10 @@ const BaseList = observer((props: {
     maxFormWidth?:number,
     ListBase?: any,
     children?: any
+    sidePaneKey?:string,
     view?: 'table'|'grid'
 }) => {
-    const { entity, height, width, search, webQuery, columns, 
+    const { entity, height, width, search, webQuery, columns, tags,
         view, showViewToggleButton, onClickGridCard } = props;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
@@ -50,6 +53,10 @@ const BaseList = observer((props: {
         if (isFunction(props.onRemoveSearch)) props.onRemoveSearch(filter);
     }
 
+    const onRemoveTag = (filter: Record<string, any>) => {
+        if (isFunction(props.onRemoveTag)) props.onRemoveTag(filter);
+    }
+
     return (
         <>
             <ListBase
@@ -60,7 +67,9 @@ const BaseList = observer((props: {
                 queryId={webQuery && webQuery.query}
                 statusId={webQuery && webQuery.status}
                 search={search}
+                tags={tags}
                 onRemoveSearch={onRemoveSearch}
+                onRemoveTag={onRemoveTag}
                 onClickRecord={onClickRecord}
                 selectionType={selectionType}
                 width={isNumber(width) ? width : 500}

@@ -5,16 +5,17 @@ import {
     Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
 import { SVG, hasErrorType, getLocalStorage, _window, CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
-
+import { observer } from 'mobx-react-lite';
+import { useEnvStore } from 'douhub-ui-store';
 import React, { useEffect, useState } from 'react';
 import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue, getRecordAbstract, getRecordMedia } from 'douhub-helper-util';
-import { without, throttle, isNumber, map, isFunction, isArray, find, isNil } from 'lodash';
+import { without, throttle, isNumber, map, isFunction, isArray, find, isNil, each } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
 // import { ListHeader } from 'douhub-ui-web';
 import ListHeader from './list-header';
 import StackGrid from "react-stack-grid";
-
+import ListCard from './list-card';
 
 const NonSplitter = (props: Record<string, any>) => {
     return <div className="flex flex-row w-full">
@@ -24,48 +25,60 @@ const NonSplitter = (props: Record<string, any>) => {
 
 const DefaultNoData = (props: Record<string, any>) => {
 
-    const { entity, search, allowCreate } = props;
+    const { entity, search, allowCreate, tags } = props;
 
     const onClickCreateRecord = () => {
         if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
     }
 
+    const hasSearch = isNonEmptyString(search);
+    const hasTags = isArray(tags) && tags.length > 0;
+    const hasNoFilter = !hasSearch && !hasTags;
+
     return <div className="w-full">
         <p>There is no {entity.uiName?.toLowerCase()} returned from the query.</p>
-        {!isNonEmptyString(search) && allowCreate && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
-        {!isNonEmptyString(search) && allowCreate && <div
+
+        {hasNoFilter && allowCreate && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
+        {hasNoFilter && allowCreate && <div
             onClick={onClickCreateRecord}
             className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center py-2 px-4 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
             <span className="hidden sm:block">Create your first {entity.uiName?.toLowerCase()}</span>
         </div>}
 
 
-        {isNonEmptyString(search) && <p><b>Hope the tips below can help you.</b></p>}
-        {isNonEmptyString(search) && <ul>
-            <li>1. Check the spelling of your keyword</li>
-            <li>2. Broaden your search by using fewer or more general words</li>
-            <li>3. Select one or more categories to filter by categories</li>
-            <li>4. Select one or more tags to filter by tags</li>
+        {(hasSearch || hasTags) && <p><b>Hope the tips below can help you.</b></p>}
+        {(hasSearch || hasTags) && <ul>
+            {hasSearch && <li>* Check the spelling of your keyword</li>}
+            {hasTags && <li>* Check the spelling of your tag(s)</li>}
+            {hasSearch && <li>* Broaden your search by using fewer or more general word(s)</li>}
+            {hasTags && <li>* Broaden your search by using fewer or more general tag(s)</li>}
+            <li>* Select one or more categories to filter by categories</li>
+            {!hasTags && <li>* Select one or more tags to filter by tags</li>}
         </ul>}
     </div>
 }
 
 const FORM_RESIZER_MIN_WIDTH = 500;
 
-const ListBase = (props: Record<string, any>) => {
+const ListBase = observer((props: Record<string, any>) => {
+
+    const { height, entity, search, tags, hideListCategoriesTags, selectionType,
+        sidePaneKey,
+        allowCreate, allowUpload, recordForMembership } = props;
+
     const router = useRouter();
     const solution = _window.solution;
-    const { height, entity, search, hideListCategoriesTags, selectionType, allowCreate, allowUpload, recordForMembership } = props;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
     const [view, setView] = useState(props.view);
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
     const NoData = props.NoData ? props.NoData : DefaultNoData;
-    const sidePanelCacheKey = `list-sidePanel-${entity?.entityName}-${entity?.entityType}`;
+    const Card = props.CardView ? props.CardView : ListCard;
     const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
 
-    const sidePanelCacheValue = getLocalStorage(sidePanelCacheKey, true);
-    const [sidePanel, setSidePanel] = useState(!isNil(sidePanelCacheValue) ? sidePanelCacheValue : true);
+    const envStore = useEnvStore();
+    const envData = JSON.parse(envStore.data);
+
     const [firstLoadError, setFirstLoadError] = useState('');
     const [reload, setReload] = useState('');
     const [recordSaving, setRecordSaving] = useState('');
@@ -86,18 +99,21 @@ const ListBase = (props: Record<string, any>) => {
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
 
-    let maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : (isNumber(entity.maxFormWidth) ? entity.maxFormWidth : 1000);
+    let maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : (isNumber(entity.maxFormWidth) ? entity.maxFormWidth : 900) + 106;
     maxFormWidth = maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth;
 
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
-    const showSidePanel = sidePanel && !hideListCategoriesTags && !currentRecord;
+
     const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
     const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel) ? props.deleteButtonLabel : 'Delete';
     const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
     const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
+
+    const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags && !currentRecord;
+
 
     useEffect(() => {
         setView(props.view == 'grid' ? 'grid' : 'table');
@@ -110,18 +126,19 @@ const ListBase = (props: Record<string, any>) => {
         return 4;
     }
 
-    const getGutterWidth = () => {
-        if (width < 750) return 20;
-        if (width < 1000) return 25;
-        return 30;
-    }
+    // const getGutterWidth = () => {
+    //     if (width < 750) return 20;
+    //     if (width < 1000) return 25;
+    //     return 30;
+    // }
+
+    const guterWidth = 20;
 
     const getGridColumnWidth = () => {
         const count = getGridColumnCount();
-        return (width - getGutterWidth() * (count + 1)) / count;
+        return (width - guterWidth * (count + 1)) / count;
     }
 
-    const guterWidth = getGutterWidth();
 
     useEffect(() => {
         //init form width from localstorage and props
@@ -151,18 +168,16 @@ const ListBase = (props: Record<string, any>) => {
     const curStatusCode = isNonEmptyString(statusId) && find(statusCodes, (s) => { return s.id == statusId });
 
     const filters = without([
-        isNonEmptyString(search) ? { type: 'search', search } : null
+        isNonEmptyString(search) ? { type: 'search', text: search } : null
     ], null);
+
+    each(tags, (tag: string) => {
+        filters.push({ type: 'tag', text: tag })
+    })
 
     const listHeaderHeight = 68;
     const tableHeaderHeight = 55;
     const tableHeight = height - listHeaderHeight - (filters.length == 0 ? 0 : filterSectionHeight);
-
-    without([
-        isNonEmptyString(search) ? { id: newGuid(), type: 'search', search } : null
-    ], null);
-
-
 
     const onUpdateFormWidth = (newWidth: number) => {
         setPredefinedFormWidth(newWidth);
@@ -186,6 +201,8 @@ const ListBase = (props: Record<string, any>) => {
     const onResizeListDetector = (width?: number) => {
         setWidth(width ? width : 0);
     }
+
+    const reloadFeed = `${search}-${tags}-${queryId}-${statusId}-${reload}-${entity?.entityName}-${entity?.entityType}`;
 
     useEffect(() => {
 
@@ -217,6 +234,10 @@ const ListBase = (props: Record<string, any>) => {
             query.keywords = search;
         }
 
+        if (isArray(tags) && tags.length > 0) {
+            query.tags = tags;
+        }
+
         callAPI(solution, apiEndpoint, { query }, 'post')
             .then((newResult: any) => {
                 setResult({ ...newResult });
@@ -228,7 +249,7 @@ const ListBase = (props: Record<string, any>) => {
             .finally(() => {
                 setFirstLoading(false);
             })
-    }, [entity, reload, search, queryId, statusId])
+    }, [reloadFeed])
 
     const onClickCreateRecord = () => {
         const newRecord: Record<string, any> = { id: newGuid(), entityName: entity.entityName };
@@ -238,7 +259,7 @@ const ListBase = (props: Record<string, any>) => {
 
     const onClickDeleteRecordFromForm = () => {
         onClickDeleteRecord({ ...currentRecord });
-        setCurrentRecord(null);
+        updateCurrentRecord(currentRecord);
     }
 
     const onClickDeleteRecordInternal = async (entity: Record<string, any>, record: Record<string, any>, recordForMembership?: Record<string, any>) => {
@@ -320,7 +341,7 @@ const ListBase = (props: Record<string, any>) => {
             case 'create':
             case 'edit':
                 {
-                    setCurrentRecord(record);
+                    updateCurrentRecord(record);
                     break;
                 }
             default:
@@ -336,7 +357,7 @@ const ListBase = (props: Record<string, any>) => {
         if (firtsLoading) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
-            <NoData {...props} entity={entity} search={search} onClickCreateRecord={onClickCreateRecord} />
+            <NoData {...props} entity={entity} search={search} tags={tags} onClickCreateRecord={onClickCreateRecord} />
         </div>
     }
 
@@ -401,21 +422,7 @@ const ListBase = (props: Record<string, any>) => {
                 const display = getRecordDisplay(item);
                 const content = getRecordAbstract(item, 64, true);
 
-                return <div key={i} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg">
-                    {isNonEmptyString(media) && <div className="flex-shrink-0 cursor-pointer" onClick={() => onClickGridCard(item)}>
-                        <img className="w-full" src={media} alt="" />
-                    </div>}
-                    <div className="flex-1 bg-white p-4 flex flex-col justify-between cursor-pointer"
-                        onClick={() => onClickGridCard(item)}
-                    >
-                        <div className="flex-1 overflow-hidden">
-                            <div className="w-full block mt-2">
-                                <p className="text-base font-semibold text-gray-900 leading-6" dangerouslySetInnerHTML={{ __html: display }} />
-                                <p className="mt-2 text-sm text-gray-500" dangerouslySetInnerHTML={{ __html: content }} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                return <Card key={i} media={media} item={item} display={display} content={content} onClickGridCard={onClickGridCard} />
             })}
         </StackGrid>
     }
@@ -461,7 +468,7 @@ const ListBase = (props: Record<string, any>) => {
                     });
                 }
                 setResult(newResult);
-                setCurrentRecord(newRecord);
+                updateCurrentRecord(newRecord);
                 if (closeForm) onClickCloseForm();
             })
             .catch((error: any) => {
@@ -478,36 +485,43 @@ const ListBase = (props: Record<string, any>) => {
             })
     }
 
+    const updateCurrentRecord = (newCurrentRecord: Record<string, any> | null) => {
+        envStore.setValue('currentRecord', newCurrentRecord);
+        setCurrentRecord(newCurrentRecord);
+    }
+
     const onClickCloseForm = () => {
-        setCurrentRecord(null);
+        updateCurrentRecord(null);
     }
 
     const onChangeCurrentRecord = (newData: Record<string, any>) => {
-        setCurrentRecord({ ...newData, display: getRecordDisplay(newData) })
-    }
-
-    const onClickShowSidePanel = () => {
-        setLocalStorage(sidePanelCacheKey, true);
-        setSidePanel(true);
+        updateCurrentRecord({ ...newData, display: getRecordDisplay(newData) })
     }
 
     const onRemoveFilter = (filter: Record<string, any>) => {
+        console.log({ onRemoveFilter: filter, onRemoveTag: props.onRemoveTag })
         switch (filter.type) {
             case 'search':
                 {
-                    if (isFunction(props.onRemoveSearch)) props.onRemoveSearch(filter);
+                    if (isFunction(props.onRemoveSearch)) props.onRemoveSearch(filter, filters);
+                    break;
+                }
+            case 'tag':
+                {
+                    if (isFunction(props.onRemoveTag)) props.onRemoveTag(filter, filters);
+                    break;
                 }
         }
     }
 
     const onClickCloseListCategoriesTags = () => {
-        console.log('onClickCloseListCategoriesTags');
-        setLocalStorage(sidePanelCacheKey, false);
-        setSidePanel(false);
+        if (sidePaneKey) {
+            envStore.setValue(sidePaneKey, false);
+        }
     }
 
     const renderListCategoriesTags = () => {
-        return <div className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePanel ? '' : 'hidden'}`}
+        return <div className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePane ? '' : 'hidden'}`}
             style={supportSlitter ? {} : { width: 320 }}>
             <CurrentListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} onClickClose={onClickCloseListCategoriesTags} />
         </div>
@@ -516,7 +530,7 @@ const ListBase = (props: Record<string, any>) => {
 
     const renderListSection = () => {
         return <div
-            className={`w-full h-full flex-1 overflow-hidden  ${showSidePanel ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
+            className={`w-full h-full flex-1 overflow-hidden  ${showSidePane ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
         >
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
@@ -526,14 +540,12 @@ const ListBase = (props: Record<string, any>) => {
                 recordForMembership={recordForMembership}
                 allowCreate={allowCreate}
                 allowUpload={allowUpload}
-                sidePanel={hideListCategoriesTags ? 'none' : sidePanel}
                 statusCodes={statusCodes}
                 statusId={statusId}
                 queries={queries}
                 queryId={queryId}
                 entity={entity}
                 maxWidth={maxListWidth}
-                onClickShowSidePanel={onClickShowSidePanel}
                 onClickRefresh={onClickRefresh}
                 onClickCreateRecord={onClickCreateRecord}
                 onChangeQuery={onChangeQuery}
@@ -568,11 +580,11 @@ const ListBase = (props: Record<string, any>) => {
         .douhub-list .layout-pane:last-child
         {
             min-width: ${areaWidth - 350}px;
-            ${!sidePanel && 'width: 100% !important;'}
+            ${!showSidePane && 'width: 100% !important;'}
         }
         `} />
 
-        <div className={`douhub-list relative bg-white flex flex-row overflow-hidden douhub-list-${areaWidth < 650 ? 'full' : ''} douhub-list-sidepanel-${showSidePanel ? 'show' : 'hidden'}`}
+        <div className={`douhub-list relative bg-white flex flex-row overflow-hidden douhub-list-${areaWidth < 650 ? 'full' : ''} douhub-list-sidepanel-${showSidePane ? 'show' : 'hidden'}`}
             style={{ backgroundColor: '#fafafa', minHeight: height }}>
             <Splitter
                 secondaryInitialSize={secondaryInitialSize}
@@ -621,6 +633,7 @@ const ListBase = (props: Record<string, any>) => {
 
         </div>
     </>
-};
+});
+
 
 export default ListBase

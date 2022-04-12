@@ -24,7 +24,14 @@ const ListFilters = (props: Record<string, any>) => {
                     return <div key={filter.id}
                         className="float-left flex px-2 py-1 mb-2 mr-1 shadow-sm border border-gray-100 rounded-md bg-white items-center">
                         <SVG src='/icons/search.svg' style={{ width: 12 }} />
-                        <span className="text-2xs ml-1 mr-1">{filter.search.length>24?`${filter.search.substring(0,24)} ...`:filter.search}</span>
+                        <span className="text-xs ml-1 mr-1">{filter.text.length>24?`${filter.text.substring(0,24)} ...`:filter.text}</span>
+                        <SVG src='/icons/delete.svg' style={{ width: 12, cursor:'pointer' }} onClick={()=>onRemoveFilter(filter)}/>
+                    </div>
+                }
+                case 'tag': {
+                    return <div key={filter.id}
+                        className="float-left flex px-2 py-1 mb-2 mr-1 shadow-sm border border-gray-100 rounded-md bg-white items-center">
+                        <span className="text-xs ml-1 mr-1"># {filter.text.length>24?`${filter.text.substring(0,24)} ...`:filter.text}</span>
                         <SVG src='/icons/delete.svg' style={{ width: 12, cursor:'pointer' }} onClick={()=>onRemoveFilter(filter)}/>
                     </div>
                 }
@@ -36,7 +43,7 @@ const ListFilters = (props: Record<string, any>) => {
     }
 
     return <div 
-        className="douhub-list-filters float-left bg-gray-50 w-full  px-4 pt-4 pb-2 border border-0 border-b border-r"
+        className="douhub-list-filters float-left bg-gray-50 w-full  px-4 pt-4 pb-2 border border-0 border-b"
         style={{ maxWidth }}>
         {renderFilters()}
         <ReactResizeDetector onResize={throttle(onResize, 300)} />

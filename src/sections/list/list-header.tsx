@@ -6,7 +6,7 @@ import { SVG, _window } from 'douhub-ui-web-basic';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { sidePanel, queries, statusCodes, entity, maxWidth, queryId,showViewToggleButton,
+    const { queries, statusCodes, entity, maxWidth, queryId, showViewToggleButton,
         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
 
     // const querySelectorMinWidth = isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150
@@ -62,10 +62,6 @@ const ListHeader = (props: Record<string, any>) => {
 
     }, [statusCodes, statusId])
 
-    const onClickShowSidePanel = () => {
-        if (isFunction(props.onClickShowSidePanel)) props.onClickShowSidePanel();
-    }
-
     const onChangeQuery = (curQuery: Record<string, any>) => {
         const newQuery = { ...curQuery, id: curQuery.key, title: curQuery.label };
         setQuery(newQuery);
@@ -115,12 +111,7 @@ const ListHeader = (props: Record<string, any>) => {
     return <div className="douhub-list-header bg-gray-50 w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
 
-        {sidePanel == false && <SVG src="/icons/show-sidepanel.svg"
-            style={{ width: 26, height: 26, alignSelf: 'center', cursor: 'pointer' }}
-            onClick={onClickShowSidePanel} />}
-
-
-        <div className={`douhub-list-title ${sidePanel == false ? 'ml-2' : ''}`}>
+        <div className="douhub-list-title">
             {isArray(queries) && queries.length > 0 ?
                 <Select
                     // style={{ minWidth: querySelectorMinWidth }}
@@ -181,16 +172,16 @@ const ListHeader = (props: Record<string, any>) => {
             {props.children}
 
             <div onClick={onClickRefresh}
-                className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow-md shadow hover:shadow-lg text-xs font-medium bg-white">
+                className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">
                 <SVG id="list-refresh-icon" src="/icons/refresh.svg" style={{ width: 22 }} color="#333333" />
             </div>
         </div>
-        <UploadModal
+        {isNonEmptyString(showUploadModal) && <UploadModal
             recordForMembership={recordForMembership}
             onSubmitSucceed={() => { }}
             entity={entity}
             show={showUploadModal}
-            onClose={() => { setShowUploadModal(null) }} />
+            onClose={() => { setShowUploadModal(null) }} />}
     </div>
 };
 

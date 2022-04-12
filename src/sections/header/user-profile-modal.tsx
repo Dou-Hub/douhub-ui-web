@@ -8,8 +8,9 @@ import { hasRole, isObject, isNonEmptyString } from 'douhub-helper-util';
 import { isArray, isFunction, map, uniq } from 'lodash';
 import FormBase from '../form/base';
 import { useContextStore } from 'douhub-ui-store';
+import { observer } from 'mobx-react-lite';
 
-const UserProfileModal = (props: Record<string, any>) => {
+const UserProfileModal = observer((props: Record<string, any>) => {
 
     const { show } = props;
     const title = props.title ? props.title : 'Update User Profile';
@@ -189,6 +190,6 @@ const UserProfileModal = (props: Record<string, any>) => {
                 }
             ]}
     />
-}
+});
 
 export default UserProfileModal;

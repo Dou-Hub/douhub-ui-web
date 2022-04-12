@@ -3,11 +3,11 @@ import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
 } from 'douhub-helper-util';
-import {Select, SelectOption,  Popconfirm,
-    Dropdown, Menu, TextField,  TagsField, TreeField
+import {
+    Select, SelectOption, Popconfirm, Tooltip,
+    Dropdown, Menu, TextField, TagsField, TreeField
 } from '../../index';
-
-import { _window,CSS,SVG, callAPI } from 'douhub-ui-web-basic';
+import { _window, CSS, SVG, callAPI } from 'douhub-ui-web-basic';
 import React, { useEffect, useState } from 'react';
 
 const LIST_CATEGORIES_TAGS_CSS = `
@@ -107,7 +107,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
         setOp(`add-${type}`);
     }
 
-    const onClickRefreshCategory = ()=>{
+    const onClickRefreshCategory = () => {
         setRefresh(newGuid());
     }
 
@@ -188,15 +188,15 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
             style={{ height }}>
 
             <div
-                className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center bg-gray-50"
-                style={{ height: 68}}
+                className="w-full flex flex-row border-b py-4 px-4 pr-8 flex flex-row items-center bg-gray-50"
+                style={{ height: 68 }}
             >
-                <SVG src={`/icons/hide-sidepanel.svg`}
+                {/* <SVG src={`/icons/hide-sidepanel.svg`}
                     style={{ width: 26, height: 26, alignSelf: 'center', cursor: 'pointer' }}
                     onClick={onClickClose}
-                />
+                /> */}
 
-                <div className="flex flex-col ml-2">
+                <div className="flex flex-col">
                     <Select
                         // style={{ minWidth: querySelectorMinWidth }}
                         labelInValue
@@ -209,6 +209,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         <SelectOption key="tags" value="tags">Tags</SelectOption>
                     </Select>
                 </div>
+
                 {!isNonEmptyString(doing) && <div className="flex-1 flex flex-row">
                     <div className="flex-1"></div>
                     {isNonEmptyString(selectedId) && <Popconfirm
@@ -219,8 +220,8 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         okType="danger"
                         cancelText="Cancel">
                         <button style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
-                         className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-red-50">
-                         <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#333333" />
+                            className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-red-50">
+                            <SVG src="/icons/delete-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
 
                     </Popconfirm>}
@@ -242,7 +243,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                             </Menu.Item>
                         </Menu>}>
                         <button
-                            style={{ height: 32, width: 32 }} 
+                            style={{ height: 32, width: 32 }}
                             className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
                             <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
@@ -266,8 +267,16 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
 
                 </div>
                 }
+
+                <Tooltip color="#aaaaaa" placement='top' title="Close">
+                    <div onClick={onClickClose} style={{ height: 30, top: 0, right: 0 }}
+                        className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
+                        <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
+                    </div>
+                </Tooltip>
+
             </div>
-            {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-dashed border-b bg-white" style={{height: 55 }}>
+            {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-dashed border-b bg-white" style={{ height: 55 }}>
                 <TextField
                     inputWrapperStyle={{ marginBottom: 0, borderBottom: 'none' }}
                     inputStyle={{ fontSize: 12, height: 30, background: 'transparent' }}
@@ -283,7 +292,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                     style={{ height: 20 }}
                     className="mr-1 cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow hover:shadow-lg font-medium bg-gray-50 "
                     onClick={() => setOp('')}>
-                    <SVG src="/icons/x.svg" style={{ width: 12 }}  color="#333333"/>
+                    <SVG src="/icons/x.svg" style={{ width: 12 }} color="#333333" />
                 </button>
                 <button
                     style={{ height: 20 }}
