@@ -50,8 +50,9 @@ const PICKLIST_FIELD_CSS = `
 
 const PicklistField = (props: Record<string, any>) => {
 
-    const { label, disabled, note, style, labelStyle, inputStyle, alwaysShowLabel, hideLabel, wrapperStyle } = props;
-
+    const { label, disabled, note, style, labelStyle, inputStyle, alwaysShowLabel,  wrapperStyle } = props;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
+   
     const defaultValue = isNonEmptyString(props.defaultValue) || isInteger(props.defaultValue) ? props.defaultValue : null;
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState<string | number | undefined | null>(isNil(props.value) ? defaultValue : props.value);

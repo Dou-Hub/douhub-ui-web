@@ -7,8 +7,8 @@ import { _window } from 'douhub-ui-web-basic';
 const UploadPhotoField = (props: Record<string, any>) => {
 
     const { label, disabled, uploaderLabel, wrapperStyle, note, labelStyle, record, alwaysShowLabel,
-        name, allowEditUrl,
-        hideLabel } = props;
+        name, allowEditUrl } = props;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const LabelField = isNil(props.LabelField) ? LabelFieldInternal : props.LabelField;
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;
     const [value, setValue] = useState('');

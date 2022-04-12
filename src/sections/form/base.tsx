@@ -3,7 +3,7 @@ import { isFunction, map, without, cloneDeep, isNil, each, isNumber } from 'loda
 import {
     CheckboxGroupField, SectionField, DateTimeField,UploadPhotoField,
     CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal,
-    PlaceholderField, HtmlField, LookupField, TagsField, LabelField
+    PlaceholderField, HtmlField, LookupField, TagsField, LabelField, TreeSelectField
 } from '../../index';
 import { CSS, SVG, Div } from 'douhub-ui-web-basic';
 import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
@@ -148,6 +148,23 @@ const FormBase = observer((props: Record<string, any>) => {
         updateData(newData);
     }
 
+    const onChangeTreeSelectData = (field: Record<string, any>, node: Record<string, any>) => {
+
+        const newData: any = isObject(data) ? cloneDeep(data) : {};
+        const attributeName = field.name;
+        if (isObject(node)) {
+            const { id, text } = node;
+            newData[attributeName] = id;
+            newData[`${attributeName}_data`] = { id, text };
+        }
+        else {
+            delete newData[attributeName];
+            delete newData[`${attributeName}_data`];
+        }
+
+        updateData(newData);
+    }
+
     const renderError = () => {
         if (!isNonEmptyString(error)) return null;
         return <div className="text-red-600 text-left w-full">{error}</div>
@@ -186,6 +203,13 @@ const FormBase = observer((props: Record<string, any>) => {
         const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
 
         switch (field.type) {
+            case 'tree-select':
+                {
+                    return <LookupField 
+                    {...field} 
+                    value={value} 
+                    onChange={(node: Record<string, any>) => onChangeTreeSelectData(field, node)} />
+                }
             case 'upload-photo':
                 {
                     return <UploadPhotoField {...field} value={value} record={data} onChange={(v: string) => onChangeData(field, v)} />

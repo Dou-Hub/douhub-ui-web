@@ -99,8 +99,9 @@ const TextField = (props: Record<string, any>) => {
 
     const { label, disabled, type, wrapperStyle, note, minRows, inputWrapperStyle,
         maxRows, labelStyle, inputStyle, alwaysShowLabel, button,
-        hideLabel, onPressEnter, headFontSize } = props;
-
+         onPressEnter, headFontSize } = props;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
+  
     const inputControl = useRef(null);
     const LabelField = isNil(props.LabelField) ? LabelFieldInternal : props.LabelField;
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : null;

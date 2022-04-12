@@ -68,7 +68,8 @@ const Uploader = (props: {
     const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
     const [previewSizeRatio, setPreviewSizeRatio] = useState<number>(0);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
-    const hideLabel = props.hideLabel == true;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
+
     const hideDeleteButton = props.hideDeleteButton == true;
     const iconSyle = { ...{ width: 30, height: 30 }, ...props.iconStyle };
 

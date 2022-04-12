@@ -290,7 +290,7 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                 />
                 <button
                     style={{ height: 20 }}
-                    className="mr-1 cursor-pointer inline-flex mr-1 items-center self-center justify-center py-2 px-1 rounded-sm shadow hover:shadow-lg font-medium bg-gray-50 "
+                    className="mr-1 cursor-pointer inline-flex items-center self-center justify-center py-2 px-1 rounded-sm shadow hover:shadow-lg font-medium bg-gray-50 "
                     onClick={() => setOp('')}>
                     <SVG src="/icons/x.svg" style={{ width: 12 }} color="#333333" />
                 </button>

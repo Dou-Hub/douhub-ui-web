@@ -31,8 +31,9 @@ const processValue = (value: Array<string>, defaultValue?: Array<string>): Array
 const TagsField = React.forwardRef((props: Record<string, any>) => {
 
     const { label, disabled, note, supportUrl, labelStyle, wrapperStyle,
-        inputStyle, alwaysShowLabel, hideLabel, supportAutoSearch } = props;
-
+        inputStyle, alwaysShowLabel,  supportAutoSearch } = props;
+      const hideLabel = props.hideLabel || !isNonEmptyString(label);
+   
     const defaultValue = isArray(props.defaultValue) ? props.defaultValue : [];
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const [value, setValue] = useState<Array<Record<string, any>>>([]);

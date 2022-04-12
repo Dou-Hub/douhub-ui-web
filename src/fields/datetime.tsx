@@ -57,12 +57,12 @@ const styles = {
 const DateTimeField = (props: Record<string, any>) => {
 
     const { label, disabled, format, wrapperStyle,
-        labelStyle, alwaysShowLabel, defaultValue,
-        hideLabel } = props;
+        labelStyle, alwaysShowLabel, defaultValue} = props;
 
     const showDatePicker = format != 'time';
     const showTimePicker = format != 'date';
     const [value, setValue] = useState(props.value);
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
 
     useEffect(() => {
         setValue(props.value);

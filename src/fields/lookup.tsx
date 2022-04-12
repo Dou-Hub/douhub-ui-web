@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { map, find, isNil, debounce, isFunction, isInteger, isArray } from 'lodash';
 import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
-import { LabelField, NoteField, Select,   SelectProps } from '../index';
-import { callAPI, CSS,SVG,_window, _track} from 'douhub-ui-web-basic';
+import { LabelField, NoteField, Select, SelectProps } from '../index';
+import { callAPI, CSS, SVG, _window, _track } from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'LookupField';
 const DEFAULT_LOOKUP_ATTRIBUTES = 'id,avatar,firstName,lastName,fullName,name,title,display,text,entityName,entityType,modifiedOn';
@@ -79,7 +79,7 @@ export interface DebounceSelectProps<ValueType = any>
     extends Omit<SelectProps<ValueType>, 'options' | 'children'> {
     fetchOptions: (search: string) => Promise<ValueType[]>;
     debounceTimeout?: number;
-    records?:Record<string,any>[]
+    records?: Record<string, any>[]
 }
 function DebounceSelect<
     ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
@@ -136,9 +136,9 @@ function DebounceSelect<
 const LookupField = (props: Record<string, any>) => {
 
     const { label, disabled, note, style, labelStyle, inputStyle,
-        entityName, entityType, searchOnly, fullRecord, 
-        alwaysShowLabel, hideLabel, wrapperStyle } = props;
-
+        entityName, entityType, searchOnly, fullRecord,
+        alwaysShowLabel, wrapperStyle } = props;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const searchMethod = `${props.searchMethod}`.toLowerCase() == 'elastic' ? 'elastic' : 'contain';
     const solution = _window.solution;
     const defaultValue: Record<string, any> | null = isObject(props.defaultValue) ? props.defaultValue : null;

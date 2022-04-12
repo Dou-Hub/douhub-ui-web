@@ -36,8 +36,8 @@ const TREE_CSS = `
 
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel, hideLabel, expendedIds, doing, selectedId, value } = props;
-
+    const { label, disabled, labelStyle, alwaysShowLabel,  expendedIds, doing, selectedId, value } = props;
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const TREE_ITEM_CSS = `
         .field-tree-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected

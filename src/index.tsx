@@ -36,6 +36,8 @@ import Drawer from './controls/antd/drawer';
 import Tree from './controls/antd/tree';
 import TimePicker from './controls/antd/timepicker';
 import DatePicker from './controls/antd/datepicker';
+import TreeSelect from './controls/antd/tree-select';
+import TreeNode from './controls/antd/tree-node';
 
 //Sections
 import LogosSection from './sections/logos';
@@ -55,6 +57,7 @@ import UploadPhotoField from './fields/upload-photo';
 import LabelField from './fields/label';
 import TagsField from './fields/tags';
 import TreeField from './fields/tree';
+import TreeSelectField from './fields/tree-select';
 import NoteField from './fields/note';
 import SectionField from './fields/section';
 import PicklistField from './fields/picklist';
@@ -110,7 +113,7 @@ export {
     Logo, Input, InputTextArea, Checkbox, Tags, Popover,
     Table, Tooltip, Slider, Switch, Select, SelectOption, SelectProps,
     InputPassword, InputNumber, InputText, Notification, Splitter,
-    Popconfirm, Dropdown, Menu, Alert, Button,
+    Popconfirm, Dropdown, Menu, Alert, Button, TreeSelect, TreeNode,
     Affix, Drawer, Uploader, Tree, TimePicker, DatePicker
 };
 
@@ -191,6 +194,7 @@ export {
     UploadPhotoField,
     LabelField,
     TreeField,
+    TreeSelectField,
     NoteField,
     SectionField,
     PicklistField,

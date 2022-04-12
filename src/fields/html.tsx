@@ -41,9 +41,10 @@ const HtmlField = (props: Record<string, any>) => {
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
         name, wrapperStyle, supportSourceCode,
-        hideLabel, hideH1, hideH2, hideH3,
+         hideH1, hideH2, hideH3,
         readonly,
         hideH4, record } = props;
+     const hideLabel = props.hideLabel || !isNonEmptyString(label);
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : '';
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
