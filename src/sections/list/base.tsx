@@ -1,5 +1,5 @@
 import React from 'react';
-import {  DefaultForm, ListHeader, ListBase as ListBaseInternal } from '../../index';
+import { DefaultForm, ListHeader, ListBase as ListBaseInternal } from '../../index';
 import { _window } from 'douhub-ui-web-basic';
 import { isNumber, isFunction, isNil } from 'lodash';
 import { observer } from 'mobx-react-lite';
@@ -17,22 +17,24 @@ const BaseList = observer((props: {
     selectionType?: 'checkbox' | 'radio',
     search?: string,
     tags?: string[],
+    categories?:string[],
     showViewToggleButton?: boolean,
     webQuery?: Record<string, any>,
     onClickRecord?: (record: Record<string, any>, action: string) => any,
     onRemoveSearch?: (filter: Record<string, any>) => any,
     onRemoveTag?: (filter: Record<string, any>) => any,
+    onRemoveCategory?: (filter: Record<string, any>) => any,
     onClickGridCard?: any,
     ListCategoriesTags?: any,
     deleteButtonLabel?: string,
     deleteConfirmationMessage?: string
-    maxFormWidth?:number,
+    maxFormWidth?: number,
     ListBase?: any,
     children?: any
-    sidePaneKey?:string,
-    view?: 'table'|'grid'
+    sidePaneKey?: string,
+    view?: 'table' | 'grid'
 }) => {
-    const { entity, height, width, search, webQuery, columns, tags,
+    const { entity, height, width, search, webQuery, columns, tags, categories,
         view, showViewToggleButton, onClickGridCard } = props;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
@@ -42,7 +44,7 @@ const BaseList = observer((props: {
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
     const recordForMembership = context.recordByMembership;
-    const ListBase = !isNil(props.ListBase)? props.ListBase: ListBaseInternal;
+    const ListBase = !isNil(props.ListBase) ? props.ListBase : ListBaseInternal;
     // const solution = _window.solution;
 
     const onClickRecord = (record: Record<string, any>, action: string) => {
@@ -57,6 +59,10 @@ const BaseList = observer((props: {
         if (isFunction(props.onRemoveTag)) props.onRemoveTag(filter);
     }
 
+    const onRemoveCategory = (filter: Record<string, any>) => {
+        if (isFunction(props.onRemoveCategory)) props.onRemoveCategory(filter);
+    }
+
     return (
         <>
             <ListBase
@@ -68,8 +74,10 @@ const BaseList = observer((props: {
                 statusId={webQuery && webQuery.status}
                 search={search}
                 tags={tags}
+                categories={categories}
                 onRemoveSearch={onRemoveSearch}
                 onRemoveTag={onRemoveTag}
+                onRemoveCategory={onRemoveCategory}
                 onClickRecord={onClickRecord}
                 selectionType={selectionType}
                 width={isNumber(width) ? width : 500}

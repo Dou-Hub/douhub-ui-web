@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, map, without, cloneDeep, isNil, each, isNumber } from 'lodash';
+import { isFunction, map, without, cloneDeep, isNil, each, isNumber, isEmpty, isArray } from 'lodash';
 import {
     CheckboxGroupField, SectionField, DateTimeField,UploadPhotoField,
-    CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal,
-    PlaceholderField, HtmlField, LookupField, TagsField, LabelField, TreeSelectField
+    CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal, TreeMultiSelectField,
+    PlaceholderField, HtmlField, LookupField, TagsField, LabelField, TreeSingleSelectField
 } from '../../index';
 import { CSS, SVG, Div } from 'douhub-ui-web-basic';
 import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
@@ -148,14 +148,30 @@ const FormBase = observer((props: Record<string, any>) => {
         updateData(newData);
     }
 
-    const onChangeTreeSelectData = (field: Record<string, any>, node: Record<string, any>) => {
+    const onChangeTreeSingleSelectData = (field: Record<string, any>, node: Record<string, any>) => {
 
         const newData: any = isObject(data) ? cloneDeep(data) : {};
         const attributeName = field.name;
-        if (isObject(node)) {
+        if (isObject(node) && !isEmpty(node)) {
             const { id, text } = node;
             newData[attributeName] = id;
             newData[`${attributeName}_data`] = { id, text };
+        }
+        else {
+            delete newData[attributeName];
+            delete newData[`${attributeName}_data`];
+        }
+
+        updateData(newData);
+    }
+
+    const onChangeTreeMultiSelectData = (field: Record<string, any>, nodes: Record<string, any>[]) => {
+
+        const newData: any = isObject(data) ? cloneDeep(data) : {};
+        const attributeName = field.name;
+        if (isArray(nodes) && nodes.length>0) {
+            newData[attributeName] = map(nodes,(node)=>{return node.id});
+            newData[`${attributeName}_data`] = cloneDeep(nodes);
         }
         else {
             delete newData[attributeName];
@@ -203,12 +219,19 @@ const FormBase = observer((props: Record<string, any>) => {
         const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
 
         switch (field.type) {
-            case 'tree-select':
+            case 'tree-single-select':
                 {
-                    return <LookupField 
+                    return <TreeSingleSelectField 
                     {...field} 
                     value={value} 
-                    onChange={(node: Record<string, any>) => onChangeTreeSelectData(field, node)} />
+                    onChange={(node: Record<string, any>) => onChangeTreeSingleSelectData(field, node)} />
+                }
+            case 'tree-multi-select':
+                {
+                    return <TreeMultiSelectField 
+                    {...field} 
+                    value={value} 
+                    onChange={(nodes: Record<string, any>[]) => onChangeTreeMultiSelectData(field, nodes)} />
                 }
             case 'upload-photo':
                 {

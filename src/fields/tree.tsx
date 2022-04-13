@@ -1,8 +1,8 @@
 import React from 'react';
 import { isFunction, map, cloneDeep } from 'lodash';
-import { LabelField,  Tree  } from '../index';
-import { isNonEmptyString} from 'douhub-helper-util';
-import {CSS, _window} from 'douhub-ui-web-basic';
+import { LabelField, Tree } from '../index';
+import { isNonEmptyString } from 'douhub-helper-util';
+import { CSS, _window } from 'douhub-ui-web-basic';
 
 const TREE_CSS = `
 .field-tree {
@@ -36,7 +36,7 @@ const TREE_CSS = `
 
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel,  expendedIds, doing, selectedId, value } = props;
+    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, doing, selectedId, checkedIds, value } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const TREE_ITEM_CSS = `
@@ -92,9 +92,9 @@ const TreeField = (props: Record<string, any>) => {
         } else {
             let ar: Array<Record<string, any>> = [];
             let i: number = 0;
-           
+
             loop(data, dropKey, (item: Record<string, any>, index: number, arr: Array<Record<string, any>>) => {
-                item==null;
+                item == null;
                 ar = arr;
                 i = index;
             });
@@ -113,12 +113,12 @@ const TreeField = (props: Record<string, any>) => {
         if (isFunction(props.onSelect)) props.onSelect(selectedKeys.length > 0 ? `${selectedKeys[0]}` : '');
     };
 
-    const onCheck = (checkedKeys: any, info: any) => {
-        console.log('onCheck', checkedKeys, info);
+    const onCheck = (checkedKeys: any) => {
+        if (isFunction(props.onCheck)) props.onCheck(map(checkedKeys, (key: any) => `${key}`));
     };
 
-    const onExpand = (checkedKeys: React.Key[]) => {
-        if (isFunction(props.onExpand)) props.onExpand(map(checkedKeys, (key: any) => `${key}`));
+    const onExpand = (expendedKeys: React.Key[]) => {
+        if (isFunction(props.onExpand)) props.onExpand(map(expendedKeys, (key: any) => `${key}`));
     };
 
     return <>
@@ -141,6 +141,7 @@ const TreeField = (props: Record<string, any>) => {
                     blockNode
                     selectedKeys={isNonEmptyString(selectedId) ? [selectedId] : []}
                     expandedKeys={expendedIds}
+                    checkedKeys={checkedIds}
                     onExpand={onExpand}
                     onDragEnter={onDragEnter}
                     onDrop={onDrop}
@@ -149,7 +150,7 @@ const TreeField = (props: Record<string, any>) => {
                     treeData={value}
                 />
             </div>
-            
+
         </div>
 
     </>

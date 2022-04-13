@@ -25,7 +25,7 @@ const NonSplitter = (props: Record<string, any>) => {
 
 const DefaultNoData = (props: Record<string, any>) => {
 
-    const { entity, search, allowCreate, tags } = props;
+    const { entity, search, allowCreate, tags, categories } = props;
 
     const onClickCreateRecord = () => {
         if (isFunction(props.onClickCreateRecord)) props.onClickCreateRecord();
@@ -33,7 +33,8 @@ const DefaultNoData = (props: Record<string, any>) => {
 
     const hasSearch = isNonEmptyString(search);
     const hasTags = isArray(tags) && tags.length > 0;
-    const hasNoFilter = !hasSearch && !hasTags;
+    const hasCategories = isArray(categories) && categories.length > 0;
+    const hasNoFilter = !hasSearch && !hasTags && !hasCategories;
 
     return <div className="w-full">
         <p>There is no {entity.uiName?.toLowerCase()} returned from the query.</p>
@@ -46,13 +47,13 @@ const DefaultNoData = (props: Record<string, any>) => {
         </div>}
 
 
-        {(hasSearch || hasTags) && <p><b>Hope the tips below can help you.</b></p>}
-        {(hasSearch || hasTags) && <ul>
+        {(hasSearch || hasTags || hasCategories) && <p><b>Hope the tips below can help you.</b></p>}
+        {(hasSearch || hasTags || hasCategories) && <ul>
             {hasSearch && <li>* Check the spelling of your keyword</li>}
             {hasTags && <li>* Check the spelling of your tag(s)</li>}
             {hasSearch && <li>* Broaden your search by using fewer or more general word(s)</li>}
             {hasTags && <li>* Broaden your search by using fewer or more general tag(s)</li>}
-            <li>* Select one or more categories to filter by categories</li>
+            {!hasCategories && <li>* Select one or more categories to filter by categories</li>}
             {!hasTags && <li>* Select one or more tags to filter by tags</li>}
         </ul>}
     </div>
@@ -62,8 +63,7 @@ const FORM_RESIZER_MIN_WIDTH = 500;
 
 const ListBase = observer((props: Record<string, any>) => {
 
-    const { height, entity, search, tags, hideListCategoriesTags, selectionType,
-        sidePaneKey,
+    const { height, entity, search, tags, categories, hideListCategoriesTags, selectionType,
         allowCreate, allowUpload, recordForMembership } = props;
 
     const router = useRouter();
@@ -75,6 +75,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const NoData = props.NoData ? props.NoData : DefaultNoData;
     const Card = props.CardView ? props.CardView : ListCard;
     const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
+    const sidePaneKey = props.sidePaneKey ? props.sidePaneKey : `sidePane-${entity?.entityName}-${entity?.entityType}`;
 
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
@@ -119,26 +120,13 @@ const ListBase = observer((props: Record<string, any>) => {
         setView(props.view == 'grid' ? 'grid' : 'table');
     }, [props.view])
 
-    const getGridColumnCount = () => {
-        if (width < 500) return 1;
-        if (width < 750) return 2;
-        if (width < 1000) return 3;
-        return 4;
-    }
-
-    // const getGutterWidth = () => {
-    //     if (width < 750) return 20;
-    //     if (width < 1000) return 25;
-    //     return 30;
-    // }
 
     const guterWidth = 20;
 
     const getGridColumnWidth = () => {
-        const count = getGridColumnCount();
+        let count = width < 500 ? 1 : Math.floor(width / 250);
         return (width - guterWidth * (count + 1)) / count;
     }
-
 
     useEffect(() => {
         //init form width from localstorage and props
@@ -173,6 +161,10 @@ const ListBase = observer((props: Record<string, any>) => {
 
     each(tags, (tag: string) => {
         filters.push({ type: 'tag', text: tag })
+    })
+
+    each(categories, (category: string) => {
+        filters.push({ type: 'category', text: category })
     })
 
     const listHeaderHeight = 68;
@@ -357,7 +349,13 @@ const ListBase = observer((props: Record<string, any>) => {
         if (firtsLoading) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
-            <NoData {...props} entity={entity} search={search} tags={tags} onClickCreateRecord={onClickCreateRecord} />
+            <NoData 
+            {...props} 
+            entity={entity} 
+            search={search} 
+            tags={tags} 
+            categories={categories} 
+            onClickCreateRecord={onClickCreateRecord} />
         </div>
     }
 
@@ -499,7 +497,6 @@ const ListBase = observer((props: Record<string, any>) => {
     }
 
     const onRemoveFilter = (filter: Record<string, any>) => {
-        console.log({ onRemoveFilter: filter, onRemoveTag: props.onRemoveTag })
         switch (filter.type) {
             case 'search':
                 {
@@ -509,6 +506,11 @@ const ListBase = observer((props: Record<string, any>) => {
             case 'tag':
                 {
                     if (isFunction(props.onRemoveTag)) props.onRemoveTag(filter, filters);
+                    break;
+                }
+            case 'category':
+                {
+                    if (isFunction(props.onRemoveCategory)) props.onRemoveCategory(filter, filters);
                     break;
                 }
         }

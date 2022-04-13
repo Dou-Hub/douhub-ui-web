@@ -33,7 +33,7 @@ const ListFormHeader = (props: Record<string, any>) => {
                     cancelText="No">
                     <div
                         style={{ height: 30 }}
-                        className="hidden ml-2 sm:flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-red-600 rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600">
+                        className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-red-600 rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600">
                         <SVG src="/icons/delete.svg" color="#ffffff" style={{ width: 18 }} />
                     </div>
                 </Popconfirm>
@@ -41,14 +41,14 @@ const ListFormHeader = (props: Record<string, any>) => {
             {recordSaving == '' && <Tooltip color="rgb(14 165 233)" placement='top' title="Save">
                 <div
                     onClick={() => { isFunction(props.onClickSaveRecord) && props.onClickSaveRecord(false) }} style={{ height: 30 }}
-                    className="hidden ml-2 sm:flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
+                    className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
                     <SVG src="/icons/save.svg" color="#ffffff" style={{ width: 18 }} />
                 </div>
             </Tooltip>}
             {recordSaving == '' && <Tooltip color="rgb(14 165 233)" placement='top' title="Save &amp; Close">
                 <div
                     onClick={() => { isFunction(props.onClickSaveRecord) && props.onClickSaveRecord(true) }} style={{ height: 30 }}
-                    className="hidden ml-2 sm:flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
+                    className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
                     <SVG src="/icons/save-close.svg" color="#ffffff" style={{ width: 18 }} />
                 </div>
             </Tooltip>

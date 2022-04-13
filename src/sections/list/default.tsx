@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
 const DefaultList = observer((props: Record<string, any>) => {
-    const { entity, height, search, webQuery, tags } = props;
+    const { entity, height, search, webQuery, tags, categories } = props;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
 
@@ -51,8 +51,10 @@ const DefaultList = observer((props: Record<string, any>) => {
             webQuery={webQuery}
             search={search}
             tags={tags}
+            categories={categories}
             onRemoveSearch={props.onRemoveSearch}
             onRemoveTag={props.onRemoveTag}
+            onRemoveCategory={props.onRemoveCategory}
             onClickRecord={onClickRecord}
             selectionType="checkbox"
             width={500}

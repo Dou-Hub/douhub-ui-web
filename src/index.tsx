@@ -57,7 +57,8 @@ import UploadPhotoField from './fields/upload-photo';
 import LabelField from './fields/label';
 import TagsField from './fields/tags';
 import TreeField from './fields/tree';
-import TreeSelectField from './fields/tree-select';
+import TreeSingleSelectField from './fields/tree-select-single';
+import TreeMultiSelectField from './fields/tree-select-multi';
 import NoteField from './fields/note';
 import SectionField from './fields/section';
 import PicklistField from './fields/picklist';
@@ -194,7 +195,8 @@ export {
     UploadPhotoField,
     LabelField,
     TreeField,
-    TreeSelectField,
+    TreeSingleSelectField,
+    TreeMultiSelectField,
     NoteField,
     SectionField,
     PicklistField,

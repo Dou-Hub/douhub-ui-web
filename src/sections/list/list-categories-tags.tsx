@@ -1,4 +1,4 @@
-import { cloneDeep, each, find, isFunction } from 'lodash';
+import { cloneDeep, each, find, isFunction, isArray } from 'lodash';
 import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
@@ -9,6 +9,7 @@ import {
 } from '../../index';
 import { _window, CSS, SVG, callAPI } from 'douhub-ui-web-basic';
 import React, { useEffect, useState } from 'react';
+import { useEnvStore } from 'douhub-ui-store';
 
 const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select
@@ -30,10 +31,16 @@ const LIST_CATEGORIES_TAGS_CSS = `
     }
 `
 
-const ListCategoriesTags = (props: { entityName: string, entityType?: string, height: number, onClickClose?: any }) => {
+const ListCategoriesTags = (props: { 
+    entityName: string, entityType?: string, 
+    filterEnvKey?:string,
+    height: number, onClickClose?: any }) => {
+    const envStore = useEnvStore();
+   
     const { entityName, entityType, height } = props;
     const solution = _window.solution;
     const [categoriesExpendedIds, setCategoriesExpendedIds] = useState<Array<string>>([]);
+    const [categoriesCheckedIds, setCategoriesCheckedIds] = useState<Array<string>>([]);
     const [categories, setCategories] = useState<Record<string, any>>({ entityName: 'Category', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [tags, setTags] = useState<Record<string, any>>({ entityName: 'Tag', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [error, setError] = useState('');
@@ -44,6 +51,8 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
     const [op, setOp] = useState('');
     const [categoryText, setCategoryText] = useState('');
     const uiName = curTab.value == 'categories' ? 'Category' : 'Tag';
+    const filterEnvKey = props.filterEnvKey?props.filterEnvKey: `sidePane-${entityName}-${entityType}`;
+
     // const uiCollectionName = curTab.value == 'categories' ? 'Categories' : 'Tags';
 
     useEffect(() => {
@@ -102,9 +111,27 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
         setCurTab(newTab);
     }
 
-    const onClickAddCategory = (type: 'above' | 'below' | 'children' | 'root') => {
+    const onClickAddCategory = (type: 'above' | 'below' | 'children' | 'root' | 'filter') => {
         setCategoryText('');
         setOp(`add-${type}`);
+    }
+
+    const getFilterIds = ()=>{
+        if (isArray(categoriesCheckedIds) && categoriesCheckedIds.length>0)
+        {
+            return categoriesCheckedIds;
+        }
+        else
+        {
+            if (isNonEmptyString(selectedId)) return [selectedId];
+        }
+        return null;
+    }
+
+    const onClickFilterByCategory = () => {
+        const filterIds = getFilterIds();
+        console.log({filterIds});
+        envStore.setValue(filterEnvKey, filterIds);
     }
 
     const onClickRefreshCategory = () => {
@@ -170,6 +197,10 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
         setCategoriesExpendedIds(newExpendedIds);
     }
 
+    const onCheckCategory = (newCkeckedIds: string[]) => {
+        setCategoriesCheckedIds(newCkeckedIds);
+    }
+
     const onSelectCategory = (newSelectId: string) => {
         setSelectedId(newSelectId);
         setOp('');
@@ -225,11 +256,13 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                         </button>
 
                     </Popconfirm>}
+
                     {isNonEmptyString(selectedId) && <button
                         style={{ height: 32, width: 32 }} onClick={onClickEditCategory}
                         className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-sky-50">
                         <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#333333" />
                     </button>}
+
                     {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="topCenter" overlay={
                         <Menu>
                             <Menu.Item onClick={() => onClickAddCategory('above')}>
@@ -248,6 +281,15 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                             <SVG src="/icons/add-subnode.svg" style={{ width: 18 }} color="#333333" />
                         </button>
                     </Dropdown>}
+
+                    {getFilterIds() && <Tooltip color="#aaaaaa" placement='bottom' title="Filter by category">
+                        <button
+                            style={{ height: 32, width: 32 }} onClick={onClickFilterByCategory}
+                            className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">
+                            <SVG src="/icons/filter.svg" style={{ width: 18 }} color="#333333" />
+                        </button>
+                    </Tooltip>}
+
                     {!isNonEmptyString(selectedId) &&
                         <button
                             style={{ height: 32, width: 32 }} onClick={() => onClickAddCategory('root')}
@@ -262,7 +304,6 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                             className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">
                             <SVG src="/icons/refresh.svg" style={{ width: 18 }} color="#333333" />
                         </button>
-
                     }
 
                 </div>
@@ -318,9 +359,11 @@ const ListCategoriesTags = (props: { entityName: string, entityType?: string, he
                     disabled={isNonEmptyString(doing)}
                     value={categories.data}
                     expendedIds={categoriesExpendedIds}
+                    checkedIds={categoriesCheckedIds}
                     uiName="category"
                     selectedId={selectedId}
                     onExpand={onExpandCategory}
+                    onCheck={onCheckCategory}
                     onDrop={onDropCategory}
                     uiCollectionName="categories"
                     onSelect={onSelectCategory}
