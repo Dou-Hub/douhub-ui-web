@@ -18,8 +18,8 @@ export const ListCard = (props: Record<string, any>) => {
         <div className="flex-1 bg-white p-4 flex flex-col justify-between" >
             <div className="flex-1 overflow-hidden">
                 <div className="w-full block mt-2 flex flex-col">
-                    <div className="w-full text-base font-semibold text-gray-900 leading-5 cursor-pointer" dangerouslySetInnerHTML={{ __html: display }}  onClick={onClickGridCard}/>
-                    {isArray(item.tags) && item.tags.length > 0 && <div className="w-full mt-1"><LisTags tags={item.tags} wrapperClassName="mt-1" /></div>}
+                    <div className="w-full text-base mb-2 font-semibold text-gray-900 leading-5 cursor-pointer" dangerouslySetInnerHTML={{ __html: display }}  onClick={onClickGridCard}/>
+                    {isArray(item.tags) && item.tags.length > 0 && <div className="w-full"><LisTags tags={item.tags} wrapperClassName="mt-1" /></div>}
                     <div className="w-full mt-2 text-sm text-gray-500 cursor-pointer" dangerouslySetInnerHTML={{ __html: content }}  onClick={onClickGridCard}/>
                 </div>
             </div>

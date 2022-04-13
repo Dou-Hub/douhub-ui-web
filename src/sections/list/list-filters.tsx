@@ -18,11 +18,11 @@ const ListFilters = (props: Record<string, any>) => {
     }
 
     const renderFilters = () => {
-        return without(map(filters, (filter) => {
+        return without(map(filters, (filter, index:number) => {
             const text = filter.text.length>24?`${filter.text.substring(0,24)} ...`:filter.text;
             switch (filter.type) {
                 case 'search': {
-                    return <div key={filter.id}
+                    return <div key={index}
                         className="float-left flex px-2 py-1 mb-2 mr-1 shadow-sm border border-gray-100 rounded-md bg-white items-center">
                         <SVG src='/icons/search.svg' style={{ width: 12 }} />
                         <span className="text-xs ml-1 mr-1">{text}</span>
@@ -30,16 +30,16 @@ const ListFilters = (props: Record<string, any>) => {
                     </div>
                 }
                 case 'tag': {
-                    return <div key={filter.id}
+                    return <div key={index}
                         className="float-left flex px-2 py-1 mb-2 mr-1 shadow-sm border border-gray-100 rounded-md bg-white items-center">
                         <span className="text-xs ml-1 mr-1"># {text}</span>
                         <SVG src='/icons/delete.svg' style={{ width: 12, cursor:'pointer' }} onClick={()=>onRemoveFilter(filter)}/>
                     </div>
                 }
                 case 'category': {
-                    return <div key={filter.id}
+                    return <div key={index}
                     className="float-left flex px-2 py-1 mb-2 mr-1 shadow-sm border border-gray-100 rounded-md bg-white items-center">
-                    <SVG src='/icons/search.svg' style={{ width: 12 }} />
+                    <SVG src='/icons/category.svg' style={{ width: 12 }} />
                     <span className="text-xs ml-1 mr-1">{text}</span>
                     <SVG src='/icons/delete.svg' style={{ width: 12, cursor:'pointer' }} onClick={()=>onRemoveFilter(filter)}/>
                 </div>

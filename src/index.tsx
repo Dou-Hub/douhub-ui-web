@@ -49,7 +49,7 @@ import FooterColumnSection from './sections/footer/column';
 //Modals
 import BasicModal from './controls/modals/basic';
 
-import FormBase, { prepareFormToSave } from './sections/form/base';
+import FormBase from './sections/form/base';
 import DefaultForm from './sections/form/default';
 
 //Fields
@@ -187,8 +187,11 @@ export {
     BasicModal
 }
 
+
+export { prepareFormToSave, FormPreviewButton } from './sections/form/base';
+
 export {
-    FormBase, DefaultForm, prepareFormToSave
+    FormBase, DefaultForm
 }
 
 export {

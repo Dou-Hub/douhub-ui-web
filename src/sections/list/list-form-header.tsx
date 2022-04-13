@@ -1,15 +1,16 @@
 import React from 'react';
 import { Popconfirm, Tooltip } from '../../index';
-import { getRecordDisplay } from 'douhub-helper-util';
+import { getRecordDisplay, isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
 import { SVG } from 'douhub-ui-web-basic';
 
 const ListFormHeader = (props: Record<string, any>) => {
 
-    const { entity, recordSaving, currentRecord } = props;
+    const { entity, recordSaving, currentRecord, currentRecordChanged } = props;
     const deleteConfirmationMessage = props.deleteConfirmationMessage ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const deleteButtonLabel = props.deleteButtonLabel ? props.deleteButtonLabel : `Delete`;
     const display = getRecordDisplay(currentRecord ? currentRecord : {});
+    console.log({currentRecordChanged});
     // const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
     return <div style={{ height: 68 }}
@@ -23,7 +24,7 @@ const ListFormHeader = (props: Record<string, any>) => {
                 <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
                 <span className="pl-2">{recordSaving == 'create' ? 'Creating ...' : 'Updating ...'}</span>
             </div>}
-            {recordSaving == '' && <Tooltip color="red" placement='top' title={deleteButtonLabel}>
+            {recordSaving == '' && isNonEmptyString(currentRecord._rid) && <Tooltip color="red" placement='top' title={deleteButtonLabel}>
                 <Popconfirm
                     placement="bottom"
                     title={deleteConfirmationMessage}
@@ -33,23 +34,23 @@ const ListFormHeader = (props: Record<string, any>) => {
                     cancelText="No">
                     <div
                         style={{ height: 30 }}
-                        className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-red-600 rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600">
-                        <SVG src="/icons/delete.svg" color="#ffffff" style={{ width: 18 }} />
+                        className="ml-2 flex self-center cursor-pointer inline-flex items-center justify-center px-3 py-1 rounded-md bg-red-50 shadow hover:shadow-lg">
+                        <SVG src="/icons/delete.svg" color="#333333" style={{ width: 18 }} />
                     </div>
                 </Popconfirm>
             </Tooltip>}
-            {recordSaving == '' && <Tooltip color="rgb(14 165 233)" placement='top' title="Save">
+            {recordSaving == '' && currentRecordChanged && <Tooltip color="rgb(14 165 233)" placement='top' title="Save">
                 <div
                     onClick={() => { isFunction(props.onClickSaveRecord) && props.onClickSaveRecord(false) }} style={{ height: 30 }}
-                    className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
-                    <SVG src="/icons/save.svg" color="#ffffff" style={{ width: 18 }} />
+                    className="ml-2 flex self-center cursor-pointer inline-flex items-center justify-center px-3 py-1 rounded-md bg-sky-50 shadow hover:shadow-lg">
+                    <SVG src="/icons/save.svg" color="#333333" style={{ width: 18 }} />
                 </div>
             </Tooltip>}
-            {recordSaving == '' && <Tooltip color="rgb(14 165 233)" placement='top' title="Save &amp; Close">
+            {recordSaving == '' && currentRecordChanged && <Tooltip color="rgb(14 165 233)" placement='top' title="Save &amp; Close">
                 <div
                     onClick={() => { isFunction(props.onClickSaveRecord) && props.onClickSaveRecord(true) }} style={{ height: 30 }}
-                    className="ml-2 flex self-center cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-3 py-1 border border-sky-600 rounded-md shadow-sm text-xs font-medium text-white bg-sky-500 hover:bg-sky-600">
-                    <SVG src="/icons/save-close.svg" color="#ffffff" style={{ width: 18 }} />
+                    className="ml-2 flex self-center cursor-pointer inline-flex items-center justify-center px-3 py-1 rounded-md bg-sky-50 shadow hover:shadow-lg">
+                    <SVG src="/icons/save-close.svg" color="#333333" style={{ width: 18 }} />
                 </div>
             </Tooltip>
             }

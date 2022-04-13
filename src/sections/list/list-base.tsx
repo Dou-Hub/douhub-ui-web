@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import { useEnvStore } from 'douhub-ui-store';
 import React, { useEffect, useState } from 'react';
 import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue, getRecordAbstract, getRecordMedia } from 'douhub-helper-util';
-import { without, throttle, isNumber, map, isFunction, isArray, find, isNil, each } from 'lodash';
+import { without, throttle, isNumber, map, isFunction, isArray, find, isNil, each, cloneDeep } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
 // import { ListHeader } from 'douhub-ui-web';
@@ -80,6 +80,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
 
+
     const [firstLoadError, setFirstLoadError] = useState('');
     const [reload, setReload] = useState('');
     const [recordSaving, setRecordSaving] = useState('');
@@ -88,6 +89,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const [result, setResult] = useState<Record<string, any> | null>(null);
     const [notification, setNotification] = useState<{ id: string, message: string, description: string, type: string } | null>(null);
     const [currentRecord, setCurrentRecord] = useState<Record<string, any> | null>(null);
+    const [oriCurrentRecord, setOriCurrentRecord] = useState<Record<string, any> | null>(null);
     const [selectedRecords, setSelectedRecords] = useState<Record<string, any>>([]);
     const [predefinedFormWidth, setPredefinedFormWidth] = useState(defaultFormWidth);
 
@@ -114,6 +116,19 @@ const ListBase = observer((props: Record<string, any>) => {
     const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
 
     const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags && !currentRecord;
+    const currentRecordChanged = isObject(oriCurrentRecord) && isObject(currentRecord) && JSON.stringify(oriCurrentRecord) != JSON.stringify(currentRecord);
+
+    useEffect(() => {
+        const newEnvData = cloneDeep(envData);
+        delete newEnvData.currentRecord;
+        delete newEnvData.search;
+        delete newEnvData.tags;
+        delete newEnvData.categories;
+        envStore.setData(newEnvData);
+        setCurrentRecord(null);
+        setOriCurrentRecord(null)
+    }, [entity.entityName, entity.entityType]);
+
 
 
     useEffect(() => {
@@ -155,7 +170,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const statusId = props.statusId ? props.statusId : (statusCodes.length > 0 && statusCodes[0].id);
     const curStatusCode = isNonEmptyString(statusId) && find(statusCodes, (s) => { return s.id == statusId });
 
-    const filters = without([
+    const filters: any[] = without([
         isNonEmptyString(search) ? { type: 'search', text: search } : null
     ], null);
 
@@ -163,8 +178,8 @@ const ListBase = observer((props: Record<string, any>) => {
         filters.push({ type: 'tag', text: tag })
     })
 
-    each(categories, (category: string) => {
-        filters.push({ type: 'category', text: category })
+    each(categories, (category: Record<string, any>) => {
+        filters.push({ ...category, type: 'category' });
     })
 
     const listHeaderHeight = 68;
@@ -230,6 +245,10 @@ const ListBase = observer((props: Record<string, any>) => {
             query.tags = tags;
         }
 
+        if (isArray(categories) && categories.length > 0) {
+            query.categoryIds = map(categories, (category: any) => { return category.id });
+        }
+
         callAPI(solution, apiEndpoint, { query }, 'post')
             .then((newResult: any) => {
                 setResult({ ...newResult });
@@ -250,8 +269,9 @@ const ListBase = observer((props: Record<string, any>) => {
     }
 
     const onClickDeleteRecordFromForm = () => {
-        onClickDeleteRecord({ ...currentRecord });
-        updateCurrentRecord(currentRecord);
+        if (currentRecord) {
+            onClickDeleteRecord(cloneDeep(currentRecord));
+        }
     }
 
     const onClickDeleteRecordInternal = async (entity: Record<string, any>, record: Record<string, any>, recordForMembership?: Record<string, any>) => {
@@ -286,26 +306,26 @@ const ListBase = observer((props: Record<string, any>) => {
 
         callToDelete(entity, record, recordForMembership)
             .then(() => {
-                if (!props.keepRecordInListAfterDelete) {
-                    const newResult: Record<string, any> = {
-                        ...result, data: without(map(result?.data, (r) => {
-                            delete r.uiDoing;
-                            delete r.uiDisabled;
-                            return r.id == record.id ? null : r;
-                        }), null)
-                    };
-                    setResult(newResult);
-                }
-                else {
-                    setResult({
-                        ...result, data: map(result?.data, (r) => {
-                            delete r.uiDoing;
-                            delete r.uiDisabled;
-                            return r;
-                        })
-                    });
-                }
-
+                // if (!props.keepRecordInListAfterDelete) {
+                const newResult: Record<string, any> = {
+                    ...result, data: without(map(result?.data, (r) => {
+                        delete r.uiDoing;
+                        delete r.uiDisabled;
+                        return r.id == record.id ? null : r;
+                    }), null)
+                };
+                setResult(newResult);
+                // }
+                // else {
+                //     setResult({
+                //         ...result, data: map(result?.data, (r) => {
+                //             delete r.uiDoing;
+                //             delete r.uiDisabled;
+                //             return r;
+                //         })
+                //     });
+                // }
+                updateCurrentRecord(null);
             })
             .catch((error: any) => {
                 console.error(error);
@@ -333,7 +353,7 @@ const ListBase = observer((props: Record<string, any>) => {
             case 'create':
             case 'edit':
                 {
-                    updateCurrentRecord(record);
+                    updateCurrentRecord(record, true);
                     break;
                 }
             default:
@@ -349,13 +369,13 @@ const ListBase = observer((props: Record<string, any>) => {
         if (firtsLoading) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
-            <NoData 
-            {...props} 
-            entity={entity} 
-            search={search} 
-            tags={tags} 
-            categories={categories} 
-            onClickCreateRecord={onClickCreateRecord} />
+            <NoData
+                {...props}
+                entity={entity}
+                search={search}
+                tags={tags}
+                categories={categories}
+                onClickCreateRecord={onClickCreateRecord} />
         </div>
     }
 
@@ -483,9 +503,22 @@ const ListBase = observer((props: Record<string, any>) => {
             })
     }
 
-    const updateCurrentRecord = (newCurrentRecord: Record<string, any> | null) => {
-        envStore.setValue('currentRecord', newCurrentRecord);
-        setCurrentRecord(newCurrentRecord);
+    const updateCurrentRecord = (newRecord: Record<string, any> | null, init?: boolean) => {
+        if (!isNil(newRecord)) {
+            const newCurrentRecord = cloneDeep(newRecord);
+            newCurrentRecord.display = getRecordDisplay(newCurrentRecord);
+            envStore.setValue('currentRecord', newCurrentRecord);
+            setCurrentRecord(newCurrentRecord);
+            if (init) {
+                setOriCurrentRecord(isNonEmptyString(newCurrentRecord?._rid) ? cloneDeep(newCurrentRecord) : {});
+            }
+        }
+        else {
+            envStore.setValue('currentRecord', null);
+            setOriCurrentRecord(null);
+            setCurrentRecord(null);
+        }
+
     }
 
     const onClickCloseForm = () => {
@@ -493,7 +526,7 @@ const ListBase = observer((props: Record<string, any>) => {
     }
 
     const onChangeCurrentRecord = (newData: Record<string, any>) => {
-        updateCurrentRecord({ ...newData, display: getRecordDisplay(newData) })
+        updateCurrentRecord(newData)
     }
 
     const onRemoveFilter = (filter: Record<string, any>) => {
@@ -612,6 +645,7 @@ const ListBase = observer((props: Record<string, any>) => {
                             deleteButtonLabel={deleteButtonLabel}
                             deleteConfirmationMessage={deleteConfirmationMessage}
                             currentRecord={currentRecord}
+                            currentRecordChanged={currentRecordChanged}
                             recordSaving={recordSaving}
                             onClickClose={onClickCloseForm}
                             onClickSaveRecord={onClickSaveRecord}

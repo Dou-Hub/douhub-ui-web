@@ -1,4 +1,4 @@
-import { cloneDeep, each, find, isFunction, isArray } from 'lodash';
+import { cloneDeep, each, find, isFunction, isArray, map } from 'lodash';
 import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
@@ -33,7 +33,6 @@ const LIST_CATEGORIES_TAGS_CSS = `
 
 const ListCategoriesTags = (props: { 
     entityName: string, entityType?: string, 
-    filterEnvKey?:string,
     height: number, onClickClose?: any }) => {
     const envStore = useEnvStore();
    
@@ -41,6 +40,7 @@ const ListCategoriesTags = (props: {
     const solution = _window.solution;
     const [categoriesExpendedIds, setCategoriesExpendedIds] = useState<Array<string>>([]);
     const [categoriesCheckedIds, setCategoriesCheckedIds] = useState<Array<string>>([]);
+    const [categoriesCheckedNodes, setCategoriesCheckedNodes] = useState<Array<string>>([]);
     const [categories, setCategories] = useState<Record<string, any>>({ entityName: 'Category', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [tags, setTags] = useState<Record<string, any>>({ entityName: 'Tag', regardingEntityName: entityName, regardingEntityType: entityType, data: [] });
     const [error, setError] = useState('');
@@ -48,11 +48,11 @@ const ListCategoriesTags = (props: {
     const [doing, setDoing] = useState('Loading data ...');
     const [curTab, setCurTab] = useState({ key: "categories", label: "Categories", value: "categories" });
     const [selectedId, setSelectedId] = useState('');
+    const [selectedNode, setSelectedNode] = useState<Record<string,any>|null>(null);
     const [op, setOp] = useState('');
     const [categoryText, setCategoryText] = useState('');
     const uiName = curTab.value == 'categories' ? 'Category' : 'Tag';
-    const filterEnvKey = props.filterEnvKey?props.filterEnvKey: `sidePane-${entityName}-${entityType}`;
-
+   
     // const uiCollectionName = curTab.value == 'categories' ? 'Categories' : 'Tags';
 
     useEffect(() => {
@@ -116,22 +116,25 @@ const ListCategoriesTags = (props: {
         setOp(`add-${type}`);
     }
 
-    const getFilterIds = ()=>{
-        if (isArray(categoriesCheckedIds) && categoriesCheckedIds.length>0)
+    const getFilterNodes = ()=>{
+        if (isArray(categoriesCheckedNodes) && categoriesCheckedNodes.length>0)
         {
-            return categoriesCheckedIds;
+            return categoriesCheckedNodes;
         }
         else
         {
-            if (isNonEmptyString(selectedId)) return [selectedId];
+            if (isObject(selectedNode)) return [selectedNode];
         }
         return null;
     }
 
     const onClickFilterByCategory = () => {
-        const filterIds = getFilterIds();
-        console.log({filterIds});
-        envStore.setValue(filterEnvKey, filterIds);
+        const filterNodes = getFilterNodes();
+       
+        console.log({filterNodes});
+        envStore.setValue('categories', map(filterNodes,(node:any)=>{
+            return {id: node.id, text: node.text}
+        }));
     }
 
     const onClickRefreshCategory = () => {
@@ -197,12 +200,16 @@ const ListCategoriesTags = (props: {
         setCategoriesExpendedIds(newExpendedIds);
     }
 
-    const onCheckCategory = (newCkeckedIds: string[]) => {
+    const onCheckCategory = (newCkeckedIds: string[], e:any ) => {
+        const {checkedNodes} = e;
         setCategoriesCheckedIds(newCkeckedIds);
+        setCategoriesCheckedNodes(checkedNodes);
     }
 
-    const onSelectCategory = (newSelectId: string) => {
+    const onSelectCategory = (newSelectId: string, e:any) => {
+        const {node} = e;
         setSelectedId(newSelectId);
+        setSelectedNode(node);
         setOp('');
         setCategoryText('');
     }
@@ -263,7 +270,7 @@ const ListCategoriesTags = (props: {
                         <SVG src="/icons/edit-node.svg" style={{ width: 18 }} color="#333333" />
                     </button>}
 
-                    {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="topCenter" overlay={
+                    {isNonEmptyString(selectedId) && <Dropdown trigger={['click']} placement="top" overlay={
                         <Menu>
                             <Menu.Item onClick={() => onClickAddCategory('above')}>
                                 Above the selected
@@ -282,7 +289,7 @@ const ListCategoriesTags = (props: {
                         </button>
                     </Dropdown>}
 
-                    {getFilterIds() && <Tooltip color="#aaaaaa" placement='bottom' title="Filter by category">
+                    {getFilterNodes() && <Tooltip color="#aaaaaa" placement='bottom' title="Filter by category">
                         <button
                             style={{ height: 32, width: 32 }} onClick={onClickFilterByCategory}
                             className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">

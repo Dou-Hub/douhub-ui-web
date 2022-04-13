@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, map, without, cloneDeep, isNil, each, isNumber, isEmpty, isArray } from 'lodash';
 import {
-    CheckboxGroupField, SectionField, DateTimeField,UploadPhotoField,
+    CheckboxGroupField, SectionField, DateTimeField, UploadPhotoField, 
     CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal, TreeMultiSelectField,
     PlaceholderField, HtmlField, LookupField, TagsField, LabelField, TreeSingleSelectField
 } from '../../index';
-import { CSS, SVG, Div } from 'douhub-ui-web-basic';
+import { CSS, SVG, _window, Div, callAPI } from 'douhub-ui-web-basic';
 import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
@@ -50,6 +50,33 @@ const FORM_CSS = `
         box-shadow: none !important;
     }
 `
+export const FormPreviewButton = (props: Record<string, any>) => {
+    const { data } = props;
+    const solution = _window.solution;
+    const [doing, setDoing] = useState('');
+    const baseUrl = isNonEmptyString(props.baseUrl) ? props.baseUrl : '/read/';
+
+    const onClick = () => {
+        if (data.isGlobal) return _window.open(`${baseUrl}${data.slug}`);
+
+        setDoing('Creating link ...');
+        callAPI(solution, `${solution.apis.data}token`, { id: data.id }, 'POST')
+            .then((r: any) => {
+                _window.open(`${baseUrl}${data.slug}?token=${r.result}`)
+            })
+            .catch((error) => {
+                console.error({ error });
+            })
+            .finally(() => {
+                setDoing('');
+            })
+    }
+
+    return <button onClick={onClick} style={{ height: 28, marginTop: -5 }}
+        className="flex flex-col cursor-pointer whitespace-nowrap justify-center py-2 px-8 rounded-md shadow text-xs font-medium hover:shadow-lg">
+        {isNonEmptyString(doing) ? doing : 'Preview'}
+    </button>
+}
 
 const DISPLAY_NAME = 'FormBase';
 const FormBase = observer((props: Record<string, any>) => {
@@ -91,7 +118,14 @@ const FormBase = observer((props: Record<string, any>) => {
     const onChangeData = (field: Record<string, any>, value: any) => {
 
         let newData: any = cloneDeep(data);
-        newData[field.name] = value;
+
+        if (isNil(value)) {
+            delete newData[field.name];
+        }
+        else {
+            newData[field.name] = value;
+        }
+
 
         if (isFunction(field.onChange)) {
             newData = field.onChange(field, value, newData);
@@ -169,8 +203,8 @@ const FormBase = observer((props: Record<string, any>) => {
 
         const newData: any = isObject(data) ? cloneDeep(data) : {};
         const attributeName = field.name;
-        if (isArray(nodes) && nodes.length>0) {
-            newData[attributeName] = map(nodes,(node)=>{return node.id});
+        if (isArray(nodes) && nodes.length > 0) {
+            newData[attributeName] = map(nodes, (node) => { return node.id });
             newData[`${attributeName}_data`] = cloneDeep(nodes);
         }
         else {
@@ -213,7 +247,7 @@ const FormBase = observer((props: Record<string, any>) => {
         setEditRowIndex(rowIndex + 1);
     }
 
-    const renderField = (field: Record<string,any>)=>{
+    const renderField = (field: Record<string, any>) => {
 
         const dataValue = data && data[field.name];
         const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
@@ -221,17 +255,17 @@ const FormBase = observer((props: Record<string, any>) => {
         switch (field.type) {
             case 'tree-single-select':
                 {
-                    return <TreeSingleSelectField 
-                    {...field} 
-                    value={value} 
-                    onChange={(node: Record<string, any>) => onChangeTreeSingleSelectData(field, node)} />
+                    return <TreeSingleSelectField
+                        {...field}
+                        value={value}
+                        onChange={(node: Record<string, any>) => onChangeTreeSingleSelectData(field, node)} />
                 }
             case 'tree-multi-select':
                 {
-                    return <TreeMultiSelectField 
-                    {...field} 
-                    value={value} 
-                    onChange={(nodes: Record<string, any>[]) => onChangeTreeMultiSelectData(field, nodes)} />
+                    return <TreeMultiSelectField
+                        {...field}
+                        value={value}
+                        onChange={(nodes: Record<string, any>[]) => onChangeTreeMultiSelectData(field, nodes)} />
                 }
             case 'upload-photo':
                 {
@@ -334,7 +368,7 @@ const FormBase = observer((props: Record<string, any>) => {
             removeProps={['list', 'setList', 'animation', 'delayOnTouchStart', 'delayOnTouchStart', 'handle', 'draggable', 'delay']}
         >
             {map(rows, (row: Record<string, any>, rowIndex: number) => {
-                return <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row form-row-${rowIndex} ${rowIndex==0?'form-row-first':''} ${rowIndex==rows.length-1?'form-row-last':''} flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
+                return isNil(row) ? <></> : <div key={`row${rowIndex}`} className={`${customMode ? 'custom' : ''} h-full form-row form-row-${rowIndex} ${rowIndex == 0 ? 'form-row-first' : ''} ${rowIndex == rows.length - 1 ? 'form-row-last' : ''} flex flex-row ${row.hidden == true ? 'hidden' : ''}`}>
                     {
                         [
                             customMode ? <div key="col-leftCustom" className="flex flex-col">
@@ -344,11 +378,11 @@ const FormBase = observer((props: Record<string, any>) => {
                             </div> : <></>,
                             ...map(row.fields, (field, colIndex: number) => {
                                 //const field = cloneDeep(f);
-                                return <div key={`col-${rowIndex}-${colIndex}`} 
-                                        style={isObject(field.colStyle)?field.colStyle:{}}
-                                        className={`form-col flex flex-row  form-col-${colIndex} ${colIndex==0?'form-col-first':''} ${colIndex==row.fields.length-1?'form-col-last':''} ${field.hidden == true ? 'hidden' : ''} ${isNonEmptyString(field.colClassName)?field.colClassName:''}`}>
-                                        {renderField(field)}
-                                    </div>
+                                return <div key={`col-${rowIndex}-${colIndex}`}
+                                    style={isObject(field.colStyle) ? field.colStyle : {}}
+                                    className={`form-col flex flex-row  form-col-${colIndex} ${colIndex == 0 ? 'form-col-first' : ''} ${colIndex == row.fields.length - 1 ? 'form-col-last' : ''} ${field.hidden == true ? 'hidden' : ''} ${isNonEmptyString(field.colClassName) ? field.colClassName : ''}`}>
+                                    {renderField(field)}
+                                </div>
                             }),
                             customMode ? <div key="col-rightCustom" className="flex flex-col ml-2">
                                 <div className="cursor-pointer" onClick={() => { setEditRowIndex(rowIndex) }}>
