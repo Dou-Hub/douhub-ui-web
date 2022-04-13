@@ -26,8 +26,7 @@ const CheckboxGroupField = (props: Record<string,any>) => {
             newValue = uniq([...newValue,groupValue]);
         }
 
-        console.log({newValue});
-
+        if (newValue.length==0) newValue=null;
         setValue(newValue);
         if (isFunction(props.onChange)) props.onChange(newValue);
        

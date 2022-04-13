@@ -109,16 +109,16 @@ const TreeField = (props: Record<string, any>) => {
         if (isFunction(props.onDrop)) props.onDrop(data);
     }
 
-    const onSelect = (selectedKeys: React.Key[]) => {
-        if (isFunction(props.onSelect)) props.onSelect(selectedKeys.length > 0 ? `${selectedKeys[0]}` : '');
+    const onSelect = (selectedKeys: React.Key[], e: any) => {
+        if (isFunction(props.onSelect)) props.onSelect(selectedKeys.length > 0 ? `${selectedKeys[0]}` : '', e);
     };
 
-    const onCheck = (checkedKeys: any) => {
-        if (isFunction(props.onCheck)) props.onCheck(map(checkedKeys, (key: any) => `${key}`));
+    const onCheck = (checkedKeys: any, e: any) => {
+        if (isFunction(props.onCheck)) props.onCheck(map(checkedKeys, (key: any) => `${key}`), e);
     };
 
-    const onExpand = (expendedKeys: React.Key[]) => {
-        if (isFunction(props.onExpand)) props.onExpand(map(expendedKeys, (key: any) => `${key}`));
+    const onExpand = (expendedKeys: React.Key[], e:any) => {
+        if (isFunction(props.onExpand)) props.onExpand(map(expendedKeys, (key: any) => `${key}`), e);
     };
 
     return <>

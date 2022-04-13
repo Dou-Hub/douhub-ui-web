@@ -57,6 +57,11 @@ const LOOKUP_FIELD_CSS = `
         text-align: left;
     }
 
+    .field-lookup .ant-select-selection-item
+    {
+        margin-right: 36px !important;
+    }
+
     .field-lookup  .ant-select-selection-search
     {
         left: 0 !important;
