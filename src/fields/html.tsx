@@ -142,7 +142,7 @@ const HtmlField = (props: Record<string, any>) => {
         onDestroy() {
             // The editor is being destroyed.
         }
-    });
+    }, [record?.id]);
 
     const onClickLink = () => {
 
