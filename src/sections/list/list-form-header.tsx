@@ -26,7 +26,7 @@ const ListFormHeader = (props: Record<string, any>) => {
             </div>}
             {recordSaving == '' && isNonEmptyString(currentRecord._rid) && <Tooltip color="red" placement='top' title={deleteButtonLabel}>
                 <Popconfirm
-                    placement="bottom"
+                    placement="left"
                     title={deleteConfirmationMessage}
                     onConfirm={() => { isFunction(props.onClickDeleteRecord) && props.onClickDeleteRecord() }}
                     okType="danger"

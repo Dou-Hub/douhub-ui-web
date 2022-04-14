@@ -1,24 +1,23 @@
 import React from 'react';
-import { isArray, isFunction, isNumber, map, uniq } from 'lodash';
-import { shortenString, isNonEmptyString} from 'douhub-helper-util';
+import { isArray, isFunction, isNumber, map, uniq, find } from 'lodash';
+import { shortenString, isNonEmptyString } from 'douhub-helper-util';
 import { Tooltip } from '../../index';
 import { useEnvStore } from 'douhub-ui-store';
 
- const ListTags = (props: Record<string, any>) => {
-    const { tags } = props;
-    const maxLength = isNumber(props.maxLength)?props.maxLength:12;
-    const className = `cursor-pointer float-left mb-1 rounded-lg whitespace-nowrap bg-gray-50 mr-2 px-1 my-1 leading-none self-center px-2 py-1 shadow hover:shadow-md ${isNonEmptyString(props.className)?props.className:''}`;
-    const wrapperClassName = `w-full block text-2xs ${isNonEmptyString(props.wrapperClassName)?props.wrapperClassName:''}`;
+const ListTags = (props: Record<string, any>) => {
+   
+    const { tags, selectedTags } = props;
+    const maxLength = isNumber(props.maxLength) ? props.maxLength : 12;
+    const className = `cursor-pointer float-left flex h-5 items-center mb-1 rounded-lg whitespace-nowrap bg-gray-50 mr-2 px-1 my-1 leading-none self-center px-2 py-1 shadow hover:shadow-md ${isNonEmptyString(props.className) ? props.className : ''}`;
+    const wrapperClassName = `w-full block text-2xs ${isNonEmptyString(props.wrapperClassName) ? props.wrapperClassName : ''}`;
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
-  
-    const onClick = (tag: string)=>{
-        if (isFunction(props.onClick)) 
-        {
+
+    const onClick = (tag: string) => {
+        if (isFunction(props.onClick)) {
             props.onClick(tag);
         }
-        else
-        {
+        else {
             let tags = envData['tags'];
             if (!isArray(tags)) tags = [];
             tags.push(tag);
@@ -28,17 +27,26 @@ import { useEnvStore } from 'douhub-ui-store';
 
     return isArray(tags) && tags.length > 0 ? <div className={wrapperClassName}>
         {map(isArray(tags) ? tags : [], (tag: string, index: number) => {
-            const shortTag = shortenString(tag, maxLength);
+
+            const selected = find(selectedTags, (selectedTag: string) => {
+                return selectedTag.toLowerCase() == tag.toLowerCase();
+            });
+
+            let shortTag = shortenString(tag, maxLength);
             if (shortTag == tag) {
-                return <span onClick={()=>onClick(tag)} 
-                style={{width: 'max-content'}} 
-                className={className}>{shortTag}</span>
+                return <div key={index} onClick={() => onClick(tag)}
+                    style={{ width: 'max-content' }}
+                    className={className}>
+                        <span className={`leading-none ${selected?'search-highlight':''}`}>{shortTag}</span>
+                    </div>
             }
             else {
                 return <Tooltip key={index} color="#aaaaaa" placement='top' title={tag}>
-                    <span onClick={()=>onClick(tag)}
-                    style={{width: 'max-content'}} 
-                    className={className}>{shortTag}</span>
+                    <div onClick={() => onClick(tag)}
+                        style={{ width: 'max-content' }}
+                        className={className}>
+                            <span className={`leading-none ${selected?'search-highlight':''}`}>{shortTag}</span>
+                        </div>
                 </Tooltip>
             }
         })}</div> : null;

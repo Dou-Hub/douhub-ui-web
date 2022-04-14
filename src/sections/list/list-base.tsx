@@ -4,6 +4,7 @@ import {
     ListCategoriesTags, ListFilters, ListFormHeader,
     Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
+import { notification as antNotification } from 'antd';
 import { SVG, hasErrorType, getLocalStorage, _window, CSS, _track, callAPI, setLocalStorage } from 'douhub-ui-web-basic';
 import { observer } from 'mobx-react-lite';
 import { useEnvStore } from 'douhub-ui-store';
@@ -353,7 +354,17 @@ const ListBase = observer((props: Record<string, any>) => {
             case 'create':
             case 'edit':
                 {
-                    updateCurrentRecord(record, true);
+                    if (currentRecordChanged) {
+                        antNotification.warning({
+                            message: 'Record has been changed',
+                            description:
+                                'Please save or cancel the changes to the current record in the edit form.',
+                            placement: 'top'
+                        });
+                    }
+                    else {
+                        updateCurrentRecord(record, true);
+                    }
                     break;
                 }
             default:
@@ -438,9 +449,23 @@ const ListBase = observer((props: Record<string, any>) => {
             {map(result ? result.data : [], (item, i) => {
                 const media = getRecordMedia(item);
                 const display = getRecordDisplay(item);
-                const content = getRecordAbstract(item, 64, true);
+                let content = '';
 
-                return <Card key={i} media={media} item={item} display={display} content={content} onClickGridCard={onClickGridCard} />
+                if (isArray(item?.highlight?.searchContent) && item?.highlight?.searchContent?.length > 0) {
+                    content = item.highlight.searchContent[0];
+                }
+                else {
+                    content = getRecordAbstract(item, 128, true);
+                }
+
+                return <Card key={i}
+                    media={media}
+                    item={item}
+                    tags={tags}
+                    categories={categories}
+                    display={display}
+                    content={content}
+                    onClickGridCard={onClickGridCard} />
             })}
         </StackGrid>
     }
