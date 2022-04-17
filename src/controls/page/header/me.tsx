@@ -35,7 +35,7 @@ const PageHeaderMe = observer((props: Record<string, any>) => {
         ];
 
 
-    return <Avatar {...props} menu={menu} data={user} realtimeStatus={props.realtimeStatus} />
+    return <Avatar {...props} menu={menu} data={user}/>
 });
 
 export default PageHeaderMe
