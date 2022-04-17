@@ -1,9 +1,9 @@
-import { isNonEmptyString,  _process, _track, isObject } from 'douhub-helper-util';
+import { isNonEmptyString, _process, _track, isObject } from 'douhub-helper-util';
 import { assign, isNil } from 'lodash';
 import nookies from 'nookies';
 // import {  callAPIBase } from '../call-api';
 
-export const getServerSidePropsForPage = async ( props: Record<string, any>): Promise<Record<string, any>> => {
+export const getServerSidePropsForPage = async (props: Record<string, any>): Promise<Record<string, any>> => {
 
     const { query, req, resolvedUrl,
         locale, locales, settings, pageProps
@@ -39,7 +39,7 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
     const solution = props.solution;
 
     if (isNil(solution)) console.error('solution os not provided.');
-    
+
     //let solution: Record<string, any> = { solutionId: settings.solutionId, host, country };
     // const currentContext = isObject(props.currentContext)?props.currentContext: await callAPIBase(
     //     getPlatformApiEndpoint(settings, 'context', ''),
@@ -48,12 +48,12 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
     //     solution = { ...currentContext?.context?.solution, host, country };
     // }
 
-    const site = solution?.site?solution.site:{};
+    const site = solution?.site ? solution.site : {};
     if (!isObject(site.host)) site.host = {};
-   
+
     solution.stage = settings.stage;
-    solution.version = settings.version?settings.version:'';
-    solution.host = isNonEmptyString(site.host[host])?site.host[host]:host;
+    solution.version = settings.version ? settings.version : '';
+    solution.host = isNonEmptyString(site.host[host]) ? site.host[host] : host;
     solution.country = country;
 
     const passPreReleaseCode = !solution.preReleaseMode || solution.preReleaseMode && cookies && cookies['pre-release-code'] == solution.version;
@@ -88,8 +88,14 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
     }
 
     //get the user context
+
+
+    const path = resolvedUrl.split('?')[0].split('/');
+    if (isNonEmptyString(locale) && path[0].length == 0) path[0] = locale;
+
     const context = {
         // headers: req.headers,
+        locale, mobile, tablet, userAgent, path, query, url: req.url,
         city: isNonEmptyString(city) ? city : '',
         country: isNonEmptyString(country) ? country : '',
         countryName: isNonEmptyString(countryName) ? countryName : '',
@@ -102,11 +108,6 @@ export const getServerSidePropsForPage = async ( props: Record<string, any>): Pr
         timeZone: isNonEmptyString(timeZone) ? timeZone : '',
         referer: isNonEmptyString(referer) ? referer : ''
     }
-
-    const path = resolvedUrl.split('?')[0].split('/');
-    if (isNonEmptyString(locale) && path[0].length == 0) path[0] = locale;
-
-    
 
     return {
         props: assign(
