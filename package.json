@@ -39,7 +39,7 @@
     "axios": "^0.25.0",
     "douhub-helper-util": "1.0.85",
     "douhub-ui-store": "1.0.53",
-    "douhub-ui-web-basic": "^1.0.18",
+    "douhub-ui-web-basic": "^1.0.19",
     "lodash": "^4.17.21",
     "marked": "^4.0.7",
     "next": "^12.1.0",
