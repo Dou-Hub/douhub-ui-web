@@ -7,19 +7,19 @@ import { useContextStore } from 'douhub-ui-store';
 
 const BaseList = observer((props: {
     entity: Record<string, any>,
-    allowCreate: boolean,
-    allowUpload: boolean,
+    allowCreate?: boolean,
+    allowUpload?: boolean,
     columns: Record<string, any>,
-    height: number,
+    height?: number,
     width?: number,
     Form?: any,
     Header?: any,
     selectionType?: 'checkbox' | 'radio',
     search?: string,
     tags?: string[],
-    categories?:string[],
+    categories?: Record<string, any>[],
     showViewToggleButton?: boolean,
-    webQuery?: Record<string, any>,
+    query?: Record<string, any>,
     onClickRecord?: (record: Record<string, any>, action: string) => any,
     onRemoveSearch?: (filter: Record<string, any>) => any,
     onRemoveTag?: (filter: Record<string, any>) => any,
@@ -34,8 +34,10 @@ const BaseList = observer((props: {
     sidePaneKey?: string,
     view?: 'table' | 'grid'
 }) => {
-    const { entity, height, width, search, webQuery, columns, tags, categories,
+    const { entity, search, query, columns, tags, categories,
         view, showViewToggleButton, onClickGridCard } = props;
+    const width = isNumber(props.width) ? props.width : 500;
+    const height = isNumber(props.height) ? props.height : 500;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
     const allowUpload = props.allowUpload == true && entity.allowUpload == true && allowCreate;
@@ -70,8 +72,8 @@ const BaseList = observer((props: {
                 recordForMembership={recordForMembership}
                 allowUpload={allowUpload}
                 allowCreate={allowCreate}
-                queryId={webQuery && webQuery.query}
-                statusId={webQuery && webQuery.status}
+                queryId={query && query.query}
+                statusId={query && query.status}
                 search={search}
                 tags={tags}
                 categories={categories}
@@ -80,7 +82,7 @@ const BaseList = observer((props: {
                 onRemoveCategory={onRemoveCategory}
                 onClickRecord={onClickRecord}
                 selectionType={selectionType}
-                width={isNumber(width) ? width : 500}
+                width={width}
                 Header={Header}
                 height={height}
                 entity={entity}

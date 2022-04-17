@@ -1,7 +1,7 @@
 import React from 'react';
 import { isFunction, without } from 'lodash';
 import DefaultForm from '../form/default';
-import { BaseList, DEFAULT_EDIT_COLUMN, DEFAULT_ACTION_COLUMN, ListCategoriesTags } from '../../index';
+import { BaseList, DEFAULT_EDIT_COLUMN, DEFAULT_ACTION_COLUMN } from '../../index';
 
 import { _window } from 'douhub-ui-web-basic';
 import { hasRole, isNonEmptyString } from 'douhub-helper-util';
@@ -9,15 +9,12 @@ import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 
 const DefaultList = observer((props: Record<string, any>) => {
-    const { entity, height, search, webQuery, tags, categories } = props;
+    const { entity, height } = props;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
 
     const allowCreate = isFunction(props.allowCreate)?props.allowCreate():isNonEmptyString(hasRole(context, 'ORG-ADMIN'));
 
-    const onClickRecord = (record: Record<string, any>, action: string) => {
-        isFunction(props.onClickRecord) && props.onClickRecord(record, action);
-    }
 
     const columns = (
         onClick: (record: Record<string, any>, action: string) => {},
@@ -45,19 +42,10 @@ const DefaultList = observer((props: Record<string, any>) => {
 
     return (
         <BaseList
-            ListCategoriesTags={ListCategoriesTags}
+            {...props}
             allowUpload={false}
             allowCreate={allowCreate}
-            webQuery={webQuery}
-            search={search}
-            tags={tags}
-            categories={categories}
-            onRemoveSearch={props.onRemoveSearch}
-            onRemoveTag={props.onRemoveTag}
-            onRemoveCategory={props.onRemoveCategory}
-            onClickRecord={onClickRecord}
             selectionType="checkbox"
-            width={500}
             height={height}
             entity={entity}
             columns={columns}

@@ -5,13 +5,13 @@ import ListTags from './list-tags';
 
 export const ListCard = (props: Record<string, any>) => {
 
-    const { key, media, item, display, content, tags } = props;
+    const { media, item, display, content, tags } = props;
 
     const onClickGridCard = () => {
         if (isFunction(props.onClickGridCard)) props.onClickGridCard(item);
     }
 
-    return <div key={key} className="flex flex-col rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg">
+    return <div className="flex flex-col rounded-lg border border-gray-100 overflow-hidden hover:shadow-lg">
         {isNonEmptyString(media) && <div className="flex-shrink-0 cursor-pointer" onClick={onClickGridCard}>
             <img className="w-full" src={media} alt="" />
         </div>}
