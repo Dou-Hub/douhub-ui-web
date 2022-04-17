@@ -210,7 +210,6 @@ const ListBase = observer((props: Record<string, any>) => {
         setWidth(width ? width : 0);
     }
 
-    const reloadFeed = `${search}-${tags}-${queryId}-${statusId}-${reload}-${entity?.entityName}-${entity?.entityType}`;
 
     useEffect(() => {
 
@@ -261,7 +260,7 @@ const ListBase = observer((props: Record<string, any>) => {
             .finally(() => {
                 setFirstLoading(false);
             })
-    }, [reloadFeed])
+    }, [queryId, statusId, reload, entity?.entityName, entity?.entityType, tags, categories])
 
     const onClickCreateRecord = () => {
         const newRecord: Record<string, any> = { id: newGuid(), entityName: entity.entityName };
@@ -594,6 +593,7 @@ const ListBase = observer((props: Record<string, any>) => {
         >
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
             <Header
+                {...props}
                 queryTitleMaxLength={props.queryTitleMaxLength}
                 // querySelectorMinWidth={props.querySelectorMinWidth}
                 statusSelectorMinWidth={props.statusSelectorMinWidth}
