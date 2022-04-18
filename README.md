@@ -23,3 +23,6 @@ Overload signatures must all be optional or required.
 sudo yarn add typescript@4.5.5 --dev
 
 
+## get to the folder from root
+sudo -i
+cd /users/perkhero/projects/douhub
