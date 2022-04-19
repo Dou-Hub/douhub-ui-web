@@ -125,6 +125,7 @@ const ListBase = observer((props: Record<string, any>) => {
         delete newEnvData.search;
         delete newEnvData.tags;
         delete newEnvData.categories;
+        newEnvData.openRightDrawer = false;
         envStore.setData(newEnvData);
         setCurrentRecord(null);
         setOriCurrentRecord(null)
