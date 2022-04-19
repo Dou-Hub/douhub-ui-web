@@ -32,7 +32,8 @@ const BaseList = observer((props: {
     ListBase?: any,
     children?: any
     sidePaneKey?: string,
-    view?: 'table' | 'grid'
+    view?: 'table' | 'grid',
+    lgScreen?:boolean
 }) => {
     const { entity, search, query, columns, tags, categories,
         view, showViewToggleButton, onClickGridCard } = props;

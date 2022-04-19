@@ -60,12 +60,12 @@ const DefaultNoData = (props: Record<string, any>) => {
     </div>
 }
 
-const FORM_RESIZER_MIN_WIDTH = 500;
+const FORM_RESIZER_MIN_WIDTH = 400;
 
 const ListBase = observer((props: Record<string, any>) => {
 
     const { height, entity, search, tags, categories, hideListCategoriesTags, selectionType,
-        allowCreate, allowUpload, recordForMembership } = props;
+        allowCreate, allowUpload, recordForMembership, lgScreen } = props;
 
     const router = useRouter();
     const solution = _window.solution;
@@ -73,6 +73,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const [view, setView] = useState(props.view);
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [firtsLoading, setFirstLoading] = useState(true);
+    const [currentFormWidth, setCurrentFormWidth] = useState(0)
     const NoData = props.NoData ? props.NoData : DefaultNoData;
     const Card = props.CardView ? props.CardView : ListCard;
     const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
@@ -80,7 +81,7 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
-
+    const openRightDrawer = envData.openRightDrawer;
 
     const [firstLoadError, setFirstLoadError] = useState('');
     const [reload, setReload] = useState('');
@@ -115,9 +116,12 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const predefinedQueries = isArray(props.queries) && props.queries.length > 0 ? props.queries : entity.queries;
     const formWidth = predefinedFormWidth < maxFormWidth ? predefinedFormWidth : maxFormWidth;
+    const giveRoomToRightArea = !lgScreen && openRightDrawer ? (areaWidth - 370 - currentFormWidth > 0 ? 370 : areaWidth - currentFormWidth) : 0;
 
     const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags && !currentRecord;
     const currentRecordChanged = isObject(oriCurrentRecord) && isObject(currentRecord) && JSON.stringify(oriCurrentRecord) != JSON.stringify(currentRecord);
+
+    console.log({ giveRoomToRightArea, lgScreen, openRightDrawer, currentFormWidth, areaWidth })
 
     useEffect(() => {
         const newEnvData = cloneDeep(envData);
@@ -211,6 +215,9 @@ const ListBase = observer((props: Record<string, any>) => {
         setWidth(width ? width : 0);
     }
 
+    const onResizeForm = (width?: number) => {
+        setCurrentFormWidth(width ? width : 0);
+    }
 
     useEffect(() => {
 
@@ -663,7 +670,8 @@ const ListBase = observer((props: Record<string, any>) => {
                     className="absolute top-0 right-0"
                     style={{
                         height, maxWidth: maxFormWidth, minWidth: FORM_RESIZER_MIN_WIDTH,
-                        borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%'
+                        borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%',
+                        right: giveRoomToRightArea
                     }}>
                     <div className={`list-form w-full h-full overflow-x-hidden overflow-y-auto border border-0 border-l drop-shadow-lg bg-white`}>
                         <ListFormHeader
@@ -686,6 +694,7 @@ const ListBase = observer((props: Record<string, any>) => {
                                 onChange={onChangeCurrentRecord}
                                 recordForMembership={recordForMembership} />
                         </div>}
+                        <ReactResizeDetector onResize={throttle(onResizeForm, 300)} />
                     </div>
                 </ListFormResizer>
             </div>
