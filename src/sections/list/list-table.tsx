@@ -9,6 +9,7 @@ const ListTable = (props: {
     columns: any,
     selectionType?: 'checkbox' | 'radio',
     onRowSelected?: (selectedIds: React.Key[], selectedRecords: Record<string, any>[]) => void,
+    footer?:any,
     data: Record<string, any>[]
 }) => {
 
@@ -30,6 +31,7 @@ const ListTable = (props: {
         sticky={{ offsetHeader: 0 }}
         pagination={false}
         columns={columns}
+        footer={props.footer}
         dataSource={[...data]} />
 }
 

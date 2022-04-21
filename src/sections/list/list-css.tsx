@@ -5,6 +5,11 @@ export const LIST_CSS = `
         background-color: #FFFFFF !important;
     }
 
+    .douhub-list  .ant-table-body
+    {
+        max-height: none !important;
+    }
+
     .douhub-list .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan]):before
     {
         height: 100%;

@@ -10,7 +10,7 @@ import { observer } from 'mobx-react-lite';
 import { useEnvStore } from 'douhub-ui-store';
 import React, { useEffect, useState } from 'react';
 import { getRecordDisplay, isObject, isNonEmptyString, newGuid, setWebQueryValue, getRecordAbstract, getRecordMedia } from 'douhub-helper-util';
-import { without, throttle, isNumber, map, isFunction, isArray, find, isNil, each, cloneDeep } from 'lodash';
+import { without, throttle, debounce, isNumber, map, isFunction, isArray, find, isNil, each, cloneDeep } from 'lodash';
 import { useRouter } from 'next/router';
 import ReactResizeDetector from 'react-resize-detector';
 // import { ListHeader } from 'douhub-ui-web';
@@ -72,19 +72,18 @@ const ListBase = observer((props: Record<string, any>) => {
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
     const [view, setView] = useState(props.view);
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
-    const [firtsLoading, setFirstLoading] = useState(true);
     const [currentFormWidth, setCurrentFormWidth] = useState(0)
     const NoData = props.NoData ? props.NoData : DefaultNoData;
     const Card = props.CardView ? props.CardView : ListCard;
     const formWidthCacheKey = `list-form-width-${entity?.entityName}-${entity?.entityType}`;
+    const viewCacheKey = `list-view-${entity?.entityName}-${entity?.entityType}`;
     const sidePaneKey = props.sidePaneKey ? props.sidePaneKey : `sidePane-${entity?.entityName}-${entity?.entityType}`;
-
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
     const openRightDrawer = envData.openRightDrawer;
-
+    const [loading, setLoading] = useState('');
+    const [loadingType, setLoadingType] = useState({ name: 'first', pageNumber: 1 });
     const [firstLoadError, setFirstLoadError] = useState('');
-    const [reload, setReload] = useState('');
     const [recordSaving, setRecordSaving] = useState('');
     const [areaWidth, setAreaWidth] = useState<number>(0);
     const [width, setWidth] = useState(0);
@@ -121,8 +120,6 @@ const ListBase = observer((props: Record<string, any>) => {
     const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags && !currentRecord;
     const currentRecordChanged = isObject(oriCurrentRecord) && isObject(currentRecord) && JSON.stringify(oriCurrentRecord) != JSON.stringify(currentRecord);
 
-    console.log({ giveRoomToRightArea, lgScreen, openRightDrawer, currentFormWidth, areaWidth })
-
     useEffect(() => {
         const newEnvData = cloneDeep(envData);
         delete newEnvData.currentRecord;
@@ -135,10 +132,19 @@ const ListBase = observer((props: Record<string, any>) => {
         setOriCurrentRecord(null)
     }, [entity.entityName, entity.entityType]);
 
-
-
+     
     useEffect(() => {
-        setView(props.view == 'grid' ? 'grid' : 'table');
+
+        const cacheValue = getLocalStorage(viewCacheKey);
+        
+        if (isNil(cacheValue)) 
+        {
+            setView(props.view == 'grid' ? 'grid' : 'table');
+        }
+        else
+        {
+            setView(cacheValue);
+        }
     }, [props.view])
 
 
@@ -220,55 +226,77 @@ const ListBase = observer((props: Record<string, any>) => {
     }
 
     useEffect(() => {
+        if (loadingType) {
+            setLoading(loadingType.name);
+            setFirstLoadError('');
+            if (loadingType.name != 'more') setResult(null);
 
-        setFirstLoadError('');
-        setFirstLoading(true);
-        setResult(null);
+            const query: Record<string, any> = {
+                entityName: entity.entityName,
+                orderBy: [{ "type": "desc", "attribute": "_ts" }],
+                conditions: [],
+                pageSize: 25,
+                pageNumber: loadingType.pageNumber
+            };
 
-        const query: Record<string, any> = {
-            entityName: entity.entityName,
-            orderBy: [{ "type": "desc", "attribute": "_ts" }],
-            conditions: []
-        };
+            // if (_track) console.log({ recordForMembership, scope });
 
-        // if (_track) console.log({ recordForMembership, scope });
+            if (isObject(recordForMembership) && isNonEmptyString(recordForMembership.id) && scope == 'membership') {
+                query.scope = 'membership';
+                query.recordIdForMembership = recordForMembership.id;
+            }
 
-        if (isObject(recordForMembership) && isNonEmptyString(recordForMembership.id) && scope == 'membership') {
-            query.scope = 'membership';
-            query.recordIdForMembership = recordForMembership.id;
+            const curQuery = isNonEmptyString(queryId) && find(queries, (q) => q.id == queryId);
+            if (isArray(props.conditions)) query.conditions = [...query.conditions, ...props.conditions];
+            if (curQuery && isArray(curQuery.conditions)) query.conditions = [...query.conditions, ...curQuery.conditions];
+            if (curStatusCode && isArray(curStatusCode.conditions)) query.conditions = [...query.conditions, ...curStatusCode.conditions];
+
+            let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}query`;
+            if (isNonEmptyString(search)) {
+                apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}search`;
+                query.keywords = search;
+            }
+
+            if (isArray(tags) && tags.length > 0) {
+                query.tags = tags;
+            }
+
+            if (isArray(categories) && categories.length > 0) {
+                query.categoryIds = map(categories, (category: any) => { return category.id });
+            }
+
+            callAPI(solution, apiEndpoint, { query }, 'post')
+                .then((r: any) => {
+                    switch (loadingType.name) {
+                        case 'more':
+                            {
+                                const newResult = {
+                                    count: result?.count + r.count,
+                                    continuation: r.continuation,
+                                    data: [...result?.data, ...r.data]
+                                }
+                                setResult(cloneDeep(newResult));
+                                break;
+
+                            }
+                        default:
+                            {
+                                setResult(cloneDeep(r));
+                                break;
+
+                            }
+                    }
+
+                })
+                .catch((error: any) => {
+                    console.error(error);
+                    if (loadingType.name == 'first') setFirstLoadError('Sorry, the data was failed to load.');
+                })
+                .finally(() => {
+                    setLoading('');
+                })
         }
-
-        const curQuery = isNonEmptyString(queryId) && find(queries, (q) => q.id == queryId);
-        if (isArray(props.conditions)) query.conditions = [...query.conditions, ...props.conditions];
-        if (curQuery && isArray(curQuery.conditions)) query.conditions = [...query.conditions, ...curQuery.conditions];
-        if (curStatusCode && isArray(curStatusCode.conditions)) query.conditions = [...query.conditions, ...curStatusCode.conditions];
-
-        let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}query`;
-        if (isNonEmptyString(search)) {
-            apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}search`;
-            query.keywords = search;
-        }
-
-        if (isArray(tags) && tags.length > 0) {
-            query.tags = tags;
-        }
-
-        if (isArray(categories) && categories.length > 0) {
-            query.categoryIds = map(categories, (category: any) => { return category.id });
-        }
-
-        callAPI(solution, apiEndpoint, { query }, 'post')
-            .then((newResult: any) => {
-                setResult({ ...newResult });
-            })
-            .catch((error: any) => {
-                console.error(error);
-                setFirstLoadError('Sorry, the data was failed to load.');
-            })
-            .finally(() => {
-                setFirstLoading(false);
-            })
-    }, [queryId, statusId, reload, entity?.entityName, entity?.entityType, tags, categories])
+    }, [queryId, statusId, loadingType, entity?.entityName, entity?.entityType, tags, categories])
 
     const onClickCreateRecord = () => {
         const newRecord: Record<string, any> = { id: newGuid(), entityName: entity.entityName };
@@ -384,7 +412,7 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const renderNoData = () => {
         if (isNonEmptyString(firstLoadError)) return null;
-        if (firtsLoading) return null;
+        if (isNonEmptyString(loading)) return null;
         if (result?.data?.length > 0) return null;
         return <div className="w-full flex p-4">
             <NoData
@@ -404,8 +432,29 @@ const ListBase = observer((props: Record<string, any>) => {
         </div>
     }
 
+    const onLoadMore = debounce(() => {
+        setLoadingType({ name: `more`, pageNumber: isNumber(loadingType.pageNumber) ? loadingType.pageNumber + 1 : 1 });
+    }, 200);
+
+    const onScrollList = (e: any) => {
+        if (Math.abs(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight) < 5 && !isNil(result?.continuation) && !isNonEmptyString(loading)) {
+            setLoading('more');
+            onLoadMore();
+        }
+    }
+
+    const renderLoadingMore = () => {
+        return <div className="w-full flex justify-center py-5">
+            {result?.continuation && <div className="flex flex-col items-center justify-center">
+                {loading == 'more' ?
+                    <SVG src="/icons/loading.svg" className="spinner" style={{ width: 30, height: 30 }} /> :
+                    <SVG src="/icons/expand-arrow.svg" className="cursor-pointer" style={{ width: 30, height: 30 }} onClick={onLoadMore} />}
+            </div>}
+        </div>
+    }
+
     const renderFirstLoading = () => {
-        if (!firtsLoading) return null;
+        if (loading != 'first') return null;
         return <div className="w-full flex p-4">
             <SVG src="/icons/loading.svg" className="spinner" style={{ width: 22, height: 22 }} />
             <span className="pl-2">{loadingMessage}</span>
@@ -419,16 +468,21 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const renderTable = () => {
         if (view == 'grid' && !currentRecord) return null;
-        if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
+        if (loading == 'first' || isNonEmptyString(firstLoadError)) return null;
         if (isNil(result) || result?.data?.length == 0) return null;
 
-        return <ListTable
-            width={width}
-            selectionType={selectionType} //undefined|checkbox|radio
-            onRowSelected={onRowSelected}
-            height={tableHeight - tableHeaderHeight}
-            columns={columns(onClickRecord, entity)}
-            data={result ? result.data : []} />
+
+        return <div className="w-full">
+            <ListTable
+                width={width}
+                selectionType={selectionType} //undefined|checkbox|radio
+                onRowSelected={onRowSelected}
+                height={tableHeight - tableHeaderHeight}
+                columns={columns(onClickRecord, entity)}
+                data={result ? result.data : []}
+            />
+            {renderLoadingMore()}
+        </div>
     }
 
     const onClickGridCard = (record: Record<string, any>) => {
@@ -441,44 +495,49 @@ const ListBase = observer((props: Record<string, any>) => {
 
     }
 
+   
+
     const renderGrid = () => {
         if (view == 'table' || currentRecord) return null;
-        if (firtsLoading || isNonEmptyString(firstLoadError)) return null;
+        if (loading == 'first' || isNonEmptyString(firstLoadError)) return null;
         if (isNil(result) || result?.data?.length == 0) return null;
 
-        return <StackGrid
-            itemComponent="div"
-            gutterWidth={guterWidth}
-            gutterHeight={guterWidth}
-            columnWidth={getGridColumnWidth()}
-            style={{ marginTop: guterWidth, marginBottom: guterWidth, marginLeft: guterWidth / 2, marginRight: guterWidth / 2 }}
-            className="w-full">
-            {map(result ? result.data : [], (item, i) => {
-                const media = getRecordMedia(item);
-                const display = getRecordDisplay(item);
-                let content = '';
+        return <div className="w-full">
+            <StackGrid
+                itemComponent="div"
+                gutterWidth={guterWidth}
+                gutterHeight={guterWidth}
+                columnWidth={getGridColumnWidth()}
+                style={{ marginTop: guterWidth, marginBottom: guterWidth, paddingLeft: guterWidth / 2, paddingRight: guterWidth / 2 }}
+                className="w-full">
+                {map(result ? result.data : [], (item, i) => {
+                    const media = getRecordMedia(item);
+                    const display = getRecordDisplay(item);
+                    let content = '';
 
-                if (isArray(item?.highlight?.searchContent) && item?.highlight?.searchContent?.length > 0) {
-                    content = item.highlight.searchContent[0];
-                }
-                else {
-                    content = getRecordAbstract(item, 128, true);
-                }
+                    if (isArray(item?.highlight?.searchContent) && item?.highlight?.searchContent?.length > 0) {
+                        content = item.highlight.searchContent[0];
+                    }
+                    else {
+                        content = getRecordAbstract(item, 128, true);
+                    }
 
-                return <Card key={i}
-                    media={media}
-                    item={item}
-                    tags={tags}
-                    categories={categories}
-                    display={display}
-                    content={content}
-                    onClickGridCard={onClickGridCard} />
-            })}
-        </StackGrid>
+                    return <Card key={i}
+                        media={media}
+                        item={item}
+                        tags={tags}
+                        categories={categories}
+                        display={display}
+                        content={content}
+                        onClickGridCard={onClickGridCard} />
+                })}
+            </StackGrid>
+            {renderLoadingMore()}
+        </div>
     }
 
     const onClickRefresh = () => {
-        setReload(newGuid());
+        setLoadingType({ name: 'first', pageNumber: 1 });
     }
 
     const onClickSaveRecord = (closeForm: any) => {
@@ -594,7 +653,12 @@ const ListBase = observer((props: Record<string, any>) => {
         </div>
     }
 
+    const onChangeView = (newView: string)=>{
+        setLocalStorage(viewCacheKey, newView);
+        setView(newView);
+    }
 
+   
     const renderListSection = () => {
         return <div
             className={`w-full h-full flex-1 overflow-hidden  ${showSidePane ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
@@ -619,7 +683,7 @@ const ListBase = observer((props: Record<string, any>) => {
                 onChangeQuery={onChangeQuery}
                 onChangeStatus={onChangeStatus}
                 selectedRecords={selectedRecords}
-                onChangeView={(newView: string) => setView(newView)}
+                onChangeView={onChangeView}
                 view={view}
                 showViewToggleButton={props.showViewToggleButton}
             />
@@ -630,7 +694,9 @@ const ListBase = observer((props: Record<string, any>) => {
                 onResizeHeight={(height: number) => setFilterSectionHeight(height)}
             />}
             <div className={`list-main w-full h-full flex bg-gray-30 overflow-hidden overflow-y-auto`}
-                style={{ maxWidth: maxListWidth, height: tableHeight }}>
+                style={{ maxWidth: maxListWidth, height: tableHeight }}
+                onScroll={throttle(onScrollList, 500)}
+            >
                 {renderTable()}
                 {renderGrid()}
                 {renderFirstLoading()}
