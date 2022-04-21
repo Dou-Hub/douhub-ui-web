@@ -1,29 +1,31 @@
 import React, { useEffect, useRef } from 'react';
-import { isEmpty, isFunction, isNumber } from 'lodash';
+import { isFunction, isNumber } from 'lodash';
 import { _window } from 'douhub-ui-web-basic';
+
 
 const ListFormResizer = (props: Record<string, any>) => {
 
     const { className, style, id, defaultWidth } = props;
-    const inputEl = useRef(null);
+    const wrapper = useRef(null);
+    const body = useRef(null);
+    const currentWrapper: any = wrapper?.current;
+    const currentBody: any = body?.current;
     const BORDER_SIZE = 4;
 
     useEffect(()=>{
         if (isNumber(defaultWidth)) 
         {
-            const current: Record<string, any> = inputEl && inputEl.current? inputEl.current : {};
-            current.style.width = defaultWidth + 'px';
+            if (currentWrapper?.style) currentWrapper.style.width = defaultWidth + 'px';
         }
     },[id]);
 
-    function resize(e: any) {
+    const resize = (e: any)=> {
         const dx = _window.m_pos - e.x;
         _window.m_pos = e.x;
-        const current: Record<string, any> = inputEl && inputEl.current? inputEl.current : {};
-        if (current.offsetWidth) 
+        if (currentWrapper.offsetWidth) 
         {
-            const newWidth = current.offsetWidth + dx;
-            current.style.width = newWidth + "px";
+            const newWidth = currentWrapper.offsetWidth + dx;
+            currentWrapper.style.width = newWidth + "px";
             if (isFunction(props.onChangeSize)) props.onChangeSize(newWidth);
         }
     }
@@ -31,66 +33,71 @@ const ListFormResizer = (props: Record<string, any>) => {
     const onMouseDown = (e: any) => {
         if (e.offsetX < BORDER_SIZE) {
             _window.m_pos = e.x;
-            if (_window.removeEventListener) {
-                _window.document.addEventListener("mousemove", resize);
+            if (_window.addEventListener) {
+                _window.addEventListener("mousemove", resize);
             }
             else
             {
-                _window.document.attachEvent("mousemove", resize);
+                _window.attachEvent("mousemove", resize);
             }
         }
     }
 
     const onMouseUp = () => {
         if (_window.removeEventListener) {
-            _window.document.removeEventListener("mousemove", resize);
+            _window.removeEventListener("mousemove", resize);
         }
         else
         {
-            _window.document.detachEvent("mousemove", resize);
+            _window.detachEvent("mousemove", resize);
         }
     }
 
     useEffect(() => {
-        const current: Record<string, any> = inputEl && inputEl.current? inputEl.current : {};
-        if (_window.removeEventListener) {
-            if (current && !isEmpty(current)) current.addEventListener("mousedown", onMouseDown);
-            if (current && !isEmpty(current))  current.addEventListener("mouseup", onMouseUp);
-            _window.document.addEventListener("mouseup", onMouseUp);
+       
+        if (_window.addEventListener) {
+            if (currentBody) currentBody.addEventListener("mousedown", onMouseUp);
+            if (currentWrapper) currentWrapper.addEventListener("mousedown", onMouseDown);
+            if (currentWrapper)  currentWrapper.addEventListener("mouseup", onMouseUp);
+            _window.addEventListener("mouseup", onMouseUp);
         }
         else
         {
-            if (current && !isEmpty(current)) current.attachEvent("mousedown", onMouseDown);
-            if (current && !isEmpty(current))  current.attachEvent("mouseup", onMouseUp);
-            _window.document.attachEvent("mouseup", onMouseUp);
+            if (currentBody) currentBody.attachEvent("mousedown", onMouseUp);
+            if (currentWrapper) currentWrapper.attachEvent("mousedown", onMouseDown);
+            if (currentWrapper)  currentWrapper.attachEvent("mouseup", onMouseUp);
+            _window.attachEvent("mouseup", onMouseUp);
         }
 
         return () => {
             if (_window.removeEventListener) {
-                if (current && !isEmpty(current)) current.removeEventListener("mousedown", onMouseDown);
-                if (current && !isEmpty(current)) current.removeEventListener("mouseup", onMouseUp);
-                _window.document.removeEventListener("mousemove", resize);
-                _window.document.removeEventListener("mouseup", onMouseUp);
+                if (currentBody) currentBody.removeEventListener("mousedown", onMouseUp);
+                if (currentWrapper) currentWrapper.removeEventListener("mousedown", onMouseDown);
+                if (currentWrapper) currentWrapper.removeEventListener("mouseup", onMouseUp);
+                _window.removeEventListener("mousemove", resize);
+                _window.removeEventListener("mouseup", onMouseUp);
             } else {
-                if (current && !isEmpty(current)) current.detachEvent("mousedown", onMouseDown);
-                if (current && !isEmpty(current)) current.detachEvent("mouseup", onMouseUp);
-                _window.document.detachEvent("mousemove", resize);
-                _window.document.detachEvent("mouseup", onMouseUp);
+                if (currentBody) currentBody.detachEvent("mousedown", onMouseUp);
+                if (currentWrapper) currentWrapper.detachEvent("mousedown", onMouseDown);
+                if (currentWrapper) currentWrapper.detachEvent("mouseup", onMouseUp);
+                _window.detachEvent("mousemove", resize);
+                _window.detachEvent("mouseup", onMouseUp);
             }
-
-
         }
     }, [])
 
 
     return <div
-        ref={inputEl}
-        className={className}
+        ref={wrapper}
+        className={`list-resizer-wrapper ${className}`}
         style={{ ...style, display: 'flex' }}
 
     >
-        <div className="cursor-col-resize h-full" style={{ width: 4, backgroundColor: '#ffffff' }}></div>
-        {props.children}
+        <div className="cursor-col-resize bg-gray-50 h-full" style={{ width: 5 }}></div>
+        <div ref={body} className="list-resizer-body" style={{width: 'calc(100% - 4px)'}}>
+            {props.children}
+        </div>
+        
     </div>
 };
 

@@ -62,6 +62,7 @@ const DefaultNoData = (props: Record<string, any>) => {
 
 const FORM_RESIZER_MIN_WIDTH = 400;
 
+
 const ListBase = observer((props: Record<string, any>) => {
 
     const { height, entity, search, tags, categories, hideListCategoriesTags, selectionType,
@@ -132,17 +133,15 @@ const ListBase = observer((props: Record<string, any>) => {
         setOriCurrentRecord(null)
     }, [entity.entityName, entity.entityType]);
 
-     
+
     useEffect(() => {
 
         const cacheValue = getLocalStorage(viewCacheKey);
-        
-        if (isNil(cacheValue)) 
-        {
+
+        if (isNil(cacheValue)) {
             setView(props.view == 'grid' ? 'grid' : 'table');
         }
-        else
-        {
+        else {
             setView(cacheValue);
         }
     }, [props.view])
@@ -398,7 +397,7 @@ const ListBase = observer((props: Record<string, any>) => {
                         });
                     }
                     else {
-                        updateCurrentRecord(record, true);
+                        updateCurrentRecord(record, action);
                     }
                     break;
                 }
@@ -495,7 +494,7 @@ const ListBase = observer((props: Record<string, any>) => {
 
     }
 
-   
+
 
     const renderGrid = () => {
         if (view == 'table' || currentRecord) return null;
@@ -577,7 +576,7 @@ const ListBase = observer((props: Record<string, any>) => {
                     });
                 }
                 setResult(newResult);
-                updateCurrentRecord(newRecord);
+                updateCurrentRecord(newRecord, 'save');
                 if (closeForm) onClickCloseForm();
             })
             .catch((error: any) => {
@@ -594,14 +593,29 @@ const ListBase = observer((props: Record<string, any>) => {
             })
     }
 
-    const updateCurrentRecord = (newRecord: Record<string, any> | null, init?: boolean) => {
+    const updateCurrentRecord = (newRecord: Record<string, any> | null, type?: 'edit' | 'create' | 'save') => {
         if (!isNil(newRecord)) {
             const newCurrentRecord = cloneDeep(newRecord);
             newCurrentRecord.display = getRecordDisplay(newCurrentRecord);
             envStore.setValue('currentRecord', newCurrentRecord);
             setCurrentRecord(newCurrentRecord);
-            if (init) {
-                setOriCurrentRecord(isNonEmptyString(newCurrentRecord?._rid) ? cloneDeep(newCurrentRecord) : {});
+            console.log({type})
+            switch (type) {
+                case 'create':
+                    {
+                        setOriCurrentRecord({});
+                        break;
+                    }
+                case 'edit':
+                    {
+                        setOriCurrentRecord(newCurrentRecord);
+                        break;
+                    }
+                case 'save':
+                    {
+                        setOriCurrentRecord(newCurrentRecord);
+                        break;
+                    }
             }
         }
         else {
@@ -653,12 +667,12 @@ const ListBase = observer((props: Record<string, any>) => {
         </div>
     }
 
-    const onChangeView = (newView: string)=>{
+    const onChangeView = (newView: string) => {
         setLocalStorage(viewCacheKey, newView);
         setView(newView);
     }
 
-   
+
     const renderListSection = () => {
         return <div
             className={`w-full h-full flex-1 overflow-hidden  ${showSidePane ? 'border-l' : ''} ${maxListWidth != areaWidth ? 'pr-2 border-r' : ''}`}
