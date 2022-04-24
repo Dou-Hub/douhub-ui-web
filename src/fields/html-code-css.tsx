@@ -21,7 +21,8 @@ export const HTML_FIELD_CODE_CSS = `
 
 .field-html .ProseMirror pre .hljs-comment,
 .field-html .ProseMirror pre .hljs-quote {
-  color: #616161;
+  color: #777777;
+  font-size: 0.7rem;
 }
 
 .field-html .ProseMirror pre .hljs-variable,
@@ -55,12 +56,12 @@ export const HTML_FIELD_CODE_CSS = `
 
 .field-html .ProseMirror pre .hljs-title,
 .field-html .ProseMirror pre .hljs-section {
-  color: #faf594;
+  color: #f97316;
 }
 
 .field-html .ProseMirror pre .hljs-keyword,
 .field-html .ProseMirror pre .hljs-selector-tag {
-  color: #70cff8;
+  color: #0ea5e9;
 }
 
 .field-html .ProseMirror pre .hljs-emphasis {
