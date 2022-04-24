@@ -33,6 +33,7 @@ const BaseList = observer((props: {
     children?: any
     sidePaneKey?: string,
     view?: 'table' | 'grid',
+    FormFields?:Record<string,any>,
     lgScreen?:boolean
 }) => {
     const { entity, search, query, columns, tags, categories,

@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, map, without, cloneDeep, isNil, each, isNumber, isEmpty, isArray } from 'lodash';
 import {
-    CheckboxGroupField, SectionField, DateTimeField, UploadPhotoField, 
-    CheckboxField, AlertField, PicklistField, TextField, FormFieldEditModal, TreeMultiSelectField,
-    PlaceholderField, HtmlField, LookupField, TagsField, LabelField, TreeSingleSelectField
+    CheckboxGroupField as ICheckboxGroupField,
+    SectionField as ISectionField,
+    DateTimeField as IDateTimeField,
+    UploadPhotoField as IUploadPhotoField,
+    CheckboxField as ICheckboxField,
+    AlertField as IAlertField,
+    PicklistField as IPicklistField,
+    TextField as ITextField,
+    FormFieldEditModal as IFormFieldEditModal,
+    TreeMultiSelectField as ITreeMultiSelectField,
+    PlaceholderField as IPlaceholderField,
+    HtmlField as IHtmlField,
+    LookupField as ILookupField,
+    TagsField as ITagsField,
+    LabelField as ILabelField,
+    TreeSingleSelectField as ITreeSingleSelectField
 } from '../../index';
 import { CSS, SVG, _window, Div, callAPI } from 'douhub-ui-web-basic';
 import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 import { ReactSortable } from "react-sortablejs";
+
+
+
 
 
 export const prepareFormToSave = (form: Record<string, any>) => {
@@ -55,14 +71,14 @@ export const FormPreviewButton = (props: Record<string, any>) => {
     const solution = _window.solution;
     const [doing, setDoing] = useState('');
     const baseUrl = isNonEmptyString(props.baseUrl) ? props.baseUrl : '/read/';
-
+    const { slug, id, entityName, entityType } = props;
     const onClick = () => {
-        if (data.isGlobal) return _window.open(`${baseUrl}${data.slug}`);
+        if (data.isGlobal) return _window.open(`${baseUrl}${entityName.toLowerCase()}${isNonEmptyString(entityType) ? "-" + entityType.toLowerCase() : ''}${slug}`);
 
         setDoing('Creating link ...');
-        callAPI(solution, `${solution.apis.data}token`, { id: data.id }, 'POST')
+        callAPI(solution, `${solution.apis.data}token`, { id: id }, 'POST')
             .then((r: any) => {
-                _window.open(`${baseUrl}${data.slug}?token=${r.result}`)
+                _window.open(`${baseUrl}${slug}?token=${r.result}`)
             })
             .catch((error) => {
                 console.error({ error });
@@ -81,6 +97,7 @@ export const FormPreviewButton = (props: Record<string, any>) => {
 const DISPLAY_NAME = 'FormBase';
 const FormBase = observer((props: Record<string, any>) => {
 
+    const Fields = isObject(props.Fields) ? props.Fields : {};
     const wrapperClassName = isNonEmptyString(props.wrapperClassName) ? props.wrapperClassName : '';
     const wrapperStyle = isObject(props.wrapperStyle) ? props.wrapperStyle : {};
     const [editRowIndex, setEditRowIndex] = useState<number | null>(null);
@@ -88,11 +105,27 @@ const FormBase = observer((props: Record<string, any>) => {
     const [data, setData] = useState<Record<string, any> | null>({});
     const [form, setForm] = useState<Record<string, any>>({ rows: [] });
     const [error, setError] = useState<string>('');
-
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
     const customMode = form.custom == true;
-    const Row = customMode ? ReactSortable : Div;
+    const Row = customMode ? ReactSortable : (Fields.Row ? Fields.Row : Div);
+
+    const CheckboxGroupField = Fields.CheckboxGroupField ? Fields.CheckboxGroupField : ICheckboxGroupField;
+    const SectionField = Fields.SectionField ? Fields.SectionField : ISectionField;
+    const DateTimeField = Fields.DateTimeField ? Fields.DateTimeField : IDateTimeField;
+    const UploadPhotoField = Fields.UploadPhotoField ? Fields.UploadPhotoField : IUploadPhotoField;
+    const CheckboxField = Fields.CheckboxField ? Fields.CheckboxField : ICheckboxField;
+    const AlertField = Fields.AlertField ? Fields.AlertField : IAlertField;
+    const PicklistField = Fields.PicklistField ? Fields.PicklistField : IPicklistField;
+    const TextField = Fields.TextField ? Fields.TextField : ITextField;
+    const FormFieldEditModal = Fields.FormFieldEditModal ? Fields.FormFieldEditModal : IFormFieldEditModal;
+    const TreeMultiSelectField = Fields.TreeMultiSelectField ? Fields.TreeMultiSelectField : ITreeMultiSelectField;
+    const PlaceholderField = Fields.PlaceholderField ? Fields.PlaceholderField : IPlaceholderField;
+    const HtmlField = Fields.HtmlField ? Fields.HtmlField : IHtmlField;
+    const LookupField = Fields.LookupField ? Fields.LookupField : ILookupField;
+    const TagsField = Fields.TagsField ? Fields.TagsField : ITagsField;
+    const LabelField = Fields.LabelField ? Fields.LabelField : ILabelField;
+    const TreeSingleSelectField = Fields.TreeSingleSelectField ? Fields.TreeSingleSelectField : ITreeSingleSelectField;
 
     useEffect(() => {
         const newForm = cloneDeep(props.form);
