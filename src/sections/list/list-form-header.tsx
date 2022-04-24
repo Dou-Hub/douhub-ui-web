@@ -2,7 +2,8 @@ import React from 'react';
 import { Popconfirm, Tooltip } from '../../index';
 import { getRecordDisplay, isNonEmptyString } from 'douhub-helper-util';
 import { isFunction } from 'lodash';
-import { SVG } from 'douhub-ui-web-basic';
+import { SVG, _window } from 'douhub-ui-web-basic';
+
 
 const ListFormHeader = (props: Record<string, any>) => {
 
@@ -10,11 +11,18 @@ const ListFormHeader = (props: Record<string, any>) => {
     const deleteConfirmationMessage = props.deleteConfirmationMessage ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const deleteButtonLabel = props.deleteButtonLabel ? props.deleteButtonLabel : `Delete`;
     const display = getRecordDisplay(currentRecord ? currentRecord : {});
-    console.log({currentRecordChanged});
+  
     // const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
+    const onCopyId = () =>{
+        if (isFunction(_window?.navigator?.clipboard?.writeText))
+        {
+            _window?.navigator?.clipboard?.writeText(currentRecord.id);
+        }
+    }
+
     return <div style={{ height: 68 }}
-        className="list-form-header absolute bg-gray-50 w-full flex flex-row px-8 py-3 border border-0 border-b">
+        className="list-form-header relative bg-gray-50 w-full flex flex-row px-8 py-3 border border-0 border-b">
         <div className="flex-1 truncate mr-4">
             <p className="pb-0 mb-0 text-xs uppercase">{entity.uiName}</p>
             <h1 className="text-lg text-black mb-0 whitespace-nowrap" title={display}>{display}</h1>
@@ -54,13 +62,26 @@ const ListFormHeader = (props: Record<string, any>) => {
                 </div>
             </Tooltip>
             }
-            {recordSaving == '' && <Tooltip color="#aaaaaa" placement='top' title="Close">
-                <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30, top: 0, right: 0 }}
-                    className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
-                    <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
-                </div>
-            </Tooltip>}
         </div>
+        {recordSaving == '' && <Tooltip color="#aaaaaa" placement='top' title="Close">
+            <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30, top: 0, right: 0 }}
+                className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
+                <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
+            </div>
+        </Tooltip>}
+        {recordSaving == '' && <Popconfirm
+            placement="left"
+            title={currentRecord.id}
+            onConfirm={onCopyId}
+            okText="Copy"
+            cancelText="Canel">
+            <Tooltip color="#aaaaaa" placement='bottom' title="ID">
+                <div style={{ height: 40, bottom: 0, right: 0 }}
+                    className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-l text-xs text-gray-700">
+                    ID
+                </div>
+            </Tooltip>
+        </Popconfirm>}
     </div>
 }
 
