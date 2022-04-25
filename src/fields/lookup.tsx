@@ -141,7 +141,7 @@ function DebounceSelect<
 const LookupField = (props: Record<string, any>) => {
 
     const { label, disabled, note, style, labelStyle, inputStyle,
-        entityName, entityType, searchOnly, fullRecord,
+        entityName, entityType, searchOnly, fullRecord, recordForMembership,
         alwaysShowLabel, wrapperStyle } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const searchMethod = `${props.searchMethod}`.toLowerCase() == 'elastic' ? 'elastic' : 'contain';
@@ -214,6 +214,11 @@ const LookupField = (props: Record<string, any>) => {
             scope: isNonEmptyString(props.scope) ? props.scope : 'organization',
             "orderBy": [{ "type": "desc", "attribute": "_ts" }]
         };
+
+        if (isObject(recordForMembership) && isNonEmptyString(recordForMembership.id)) {
+            query.scope = 'membership';
+            query.recordIdForMembership = recordForMembership.id;
+        }
 
         let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}${searchMethod == 'elastic' ? 'search' : 'query'}`;
         if (isNonEmptyString(search)) query.keywords = search;

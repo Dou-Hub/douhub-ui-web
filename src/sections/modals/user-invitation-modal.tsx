@@ -6,7 +6,7 @@ import {_window,SVG, callAPI, Avatar} from 'douhub-ui-web-basic'
 
 const SendInvitationModal = (props: Record<string, any>) => {
 
-    const { show, emailTemplate } = props;
+    const { show, emailTemplate, recordForMembership } = props;
     const title = props.title ? props.title : 'Invite User(s)';
     const solution = _window.solution;
     const [data, setData] = useState<Record<string, any>>({ subject: emailTemplate.subject, content: emailTemplate.htmlMessage });
@@ -106,6 +106,7 @@ const SendInvitationModal = (props: Record<string, any>) => {
                         placeholder="Search user ..."
                         entityName="User"
                         searchOnly={true}
+                        recordForMembership={recordForMembership}
                         onChange={onChangeLookupUser}
                     />
                     <div>

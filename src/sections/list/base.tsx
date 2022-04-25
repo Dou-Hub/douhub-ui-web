@@ -1,5 +1,5 @@
 import React from 'react';
-import { DefaultForm, ListHeader, ListBase as ListBaseInternal } from '../../index';
+import { DefaultForm, ListHeader as IListHeader, ListBase as ListBaseInternal } from '../../index';
 import { _window } from 'douhub-ui-web-basic';
 import { isNumber, isFunction, isNil } from 'lodash';
 import { observer } from 'mobx-react-lite';
@@ -13,7 +13,7 @@ const BaseList = observer((props: {
     height?: number,
     width?: number,
     Form?: any,
-    Header?: any,
+    ListHeader?: any,
     selectionType?: 'checkbox' | 'radio',
     search?: string,
     tags?: string[],
@@ -33,8 +33,10 @@ const BaseList = observer((props: {
     children?: any
     sidePaneKey?: string,
     view?: 'table' | 'grid',
-    FormFields?:Record<string,any>,
-    lgScreen?:boolean
+    FormFields?: Record<string, any>,
+    lgScreen?: boolean,
+    recordForMembership?: Record<string, any>,
+    formHeightAdjust?:number
 }) => {
     const { entity, search, query, columns, tags, categories,
         view, showViewToggleButton, onClickGridCard } = props;
@@ -44,10 +46,10 @@ const BaseList = observer((props: {
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
     const allowUpload = props.allowUpload == true && entity.allowUpload == true && allowCreate;
     const Form = props.Form ? props.Form : DefaultForm;
-    const Header = props.Header ? props.Header : ListHeader;
+    const ListHeader = props.ListHeader ? props.ListHeader : IListHeader;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
-    const recordForMembership = context.recordByMembership;
+    const recordForMembership = props.recordForMembership ? props.recordForMembership : context.recordByMembership;
     const ListBase = !isNil(props.ListBase) ? props.ListBase : ListBaseInternal;
     // const solution = _window.solution;
 
@@ -85,7 +87,7 @@ const BaseList = observer((props: {
                 onClickRecord={onClickRecord}
                 selectionType={selectionType}
                 width={width}
-                Header={Header}
+                ListHeader={ListHeader}
                 height={height}
                 entity={entity}
                 columns={columns}

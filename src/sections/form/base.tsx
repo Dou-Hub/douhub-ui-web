@@ -150,6 +150,7 @@ const FormBase = observer((props: Record<string, any>) => {
 
     const onChangeData = (field: Record<string, any>, value: any) => {
 
+        const oldData: any = cloneDeep(data);
         let newData: any = cloneDeep(data);
 
         if (isNil(value)) {
@@ -159,9 +160,8 @@ const FormBase = observer((props: Record<string, any>) => {
             newData[field.name] = value;
         }
 
-
         if (isFunction(field.onChange)) {
-            newData = field.onChange(field, value, newData);
+            newData = field.onChange(field, value, newData, oldData);
         }
 
         updateData(newData);
@@ -283,7 +283,7 @@ const FormBase = observer((props: Record<string, any>) => {
     const renderField = (field: Record<string, any>) => {
 
         const dataValue = data && data[field.name];
-        const value = !isNil(field.value) && isNil(dataValue) ? field.value : dataValue;
+        const value = field.useFieldValue==true ? field.value : dataValue;
 
         switch (field.type) {
             case 'tree-single-select':

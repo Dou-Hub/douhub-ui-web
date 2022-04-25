@@ -1,7 +1,7 @@
 {
   "name": "douhub-ui-web",
   "licence": "MIT",
-  "version": "1.5.82",
+  "version": "1.5.91",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/esm/index.d.ts",
@@ -40,7 +40,7 @@
     "douhub-helper-util": "1.0.85",
     "douhub-ui-realtime": "^1.0.28",
     "douhub-ui-store": "1.0.53",
-    "douhub-ui-web-basic": "^1.0.22",
+    "douhub-ui-web-basic": "^1.0.23",
     "lodash": "^4.17.21",
     "marked": "^4.0.7",
     "next": "^12.1.0",

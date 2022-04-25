@@ -1,7 +1,7 @@
 import {
     DEFAULT_COLUMNS, AlertField,
     Notification, DefaultForm,
-    ListCategoriesTags, ListFilters, 
+    ListCategoriesTags, ListFilters,
     ListFormHeader as IListFormHeader,
     Splitter as SplitterInternal, ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
@@ -68,12 +68,12 @@ const FORM_RESIZER_MIN_WIDTH = 400;
 
 const ListBase = observer((props: Record<string, any>) => {
 
-    const { height, entity, search, tags, categories, hideListCategoriesTags, 
+    const { height, entity, search, tags, categories, hideListCategoriesTags,
         selectionType, FormFields,
         allowCreate, allowUpload, recordForMembership, lgScreen } = props;
 
-    const ListFormHeader = props.ListFormHeader?props.ListFormHeader:IListFormHeader;
-    const ListHeader = props.ListHeader?props.ListHeader:IListHeader;
+    const ListFormHeader = props.ListFormHeader ? props.ListFormHeader : IListFormHeader;
+    const ListHeader = props.ListHeader ? props.ListHeader : IListHeader;
 
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
@@ -494,7 +494,7 @@ const ListBase = observer((props: Record<string, any>) => {
                 selectionType={selectionType} //undefined|checkbox|radio
                 onRowSelected={onRowSelected}
                 height={tableHeight - tableHeaderHeight}
-                columns={columns(onClickRecord, entity)}
+                columns={without(without(columns(onClickRecord, entity), undefined), null)}
                 data={result ? result.data : []}
             />
             {renderLoadingMore()}
@@ -775,6 +775,7 @@ const ListBase = observer((props: Record<string, any>) => {
                     <div className={`list-form w-full h-full overflow-hidden border border-0 border-l drop-shadow-lg bg-white`}>
                         <ListFormHeader
                             context={context}
+                            recordForMembership={recordForMembership}
                             entity={entity}
                             deleteButtonLabel={deleteButtonLabel}
                             deleteConfirmationMessage={deleteConfirmationMessage}
@@ -789,7 +790,7 @@ const ListBase = observer((props: Record<string, any>) => {
                             style={{ borderTop: 'solid 1rem #ffffff', borderBottom: 'solid 1rem #ffffff', height: height - formHeightAdjust }}>
                             <ListForm
                                 context={context}
-                                Fields = {FormFields}
+                                Fields={FormFields}
                                 entity={entity}
                                 wrapperClassName="pb-20"
                                 data={currentRecord}
