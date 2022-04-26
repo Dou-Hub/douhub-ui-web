@@ -82,6 +82,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const solution = _window.solution;
     const defaultFormWidth = isNumber(props.defaultFormWidth) ? props.defaultFormWidth : FORM_RESIZER_MIN_WIDTH;
     const [view, setView] = useState(props.view);
+    const [refreshGrid, setRefreshGrid] = useState('');
     const loadingMessage = isNonEmptyString(props.loadingMessage) ? props.loadingMessage : 'Loading ...';
     const [currentFormWidth, setCurrentFormWidth] = useState(0)
     const NoData = props.NoData ? props.NoData : DefaultNoData;
@@ -227,6 +228,7 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const onResizeListDetector = (width?: number) => {
         setWidth(width ? width : 0);
+        setRefreshGrid(newGuid());
     }
 
     const onResizeForm = (width?: number) => {
@@ -511,12 +513,15 @@ const ListBase = observer((props: Record<string, any>) => {
 
     }
 
-
+    const onRefreshGrid = debounce(() => {
+        setRefreshGrid(newGuid());
+    }, 200);
 
     const renderGrid = () => {
         if (view == 'table' || currentRecord) return null;
         if (loading == 'first' || isNonEmptyString(firstLoadError)) return null;
         if (isNil(result) || result?.data?.length == 0) return null;
+
 
         return <div className="w-full">
             <StackGrid
@@ -525,7 +530,7 @@ const ListBase = observer((props: Record<string, any>) => {
                 gutterHeight={guterWidth}
                 columnWidth={getGridColumnWidth()}
                 style={{ marginTop: guterWidth, marginBottom: guterWidth, paddingLeft: guterWidth / 2, paddingRight: guterWidth / 2 }}
-                className="w-full">
+                className={`w-full stack-grid-${refreshGrid}`}>
                 {map(result ? result.data : [], (item, i) => {
                     const media = getRecordMedia(item);
                     const display = getRecordDisplay(item);
@@ -538,7 +543,9 @@ const ListBase = observer((props: Record<string, any>) => {
                         content = getRecordAbstract(item, 128, true);
                     }
 
-                    return <Card key={i}
+                    return <Card
+                        key={i}
+                        onLoadImage={onRefreshGrid}
                         media={media}
                         item={item}
                         tags={tags}

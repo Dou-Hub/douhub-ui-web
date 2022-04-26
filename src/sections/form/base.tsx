@@ -67,7 +67,7 @@ const FORM_CSS = `
     }
 `
 export const FormPreviewButton = (props: Record<string, any>) => {
-    const { data } = props;
+    const { data, className, style } = props;
     const solution = _window.solution;
     const [doing, setDoing] = useState('');
     const baseUrl = isNonEmptyString(props.baseUrl) ? props.baseUrl : '/read/';
@@ -88,8 +88,8 @@ export const FormPreviewButton = (props: Record<string, any>) => {
             })
     }
 
-    return <button onClick={onClick} style={{ height: 28, marginTop: -5 }}
-        className="flex flex-col cursor-pointer whitespace-nowrap justify-center py-2 px-8 rounded-md shadow text-xs font-medium hover:shadow-lg">
+    return <button onClick={onClick} style={{ height: 28, marginTop: -5, ...style }}
+        className={`flex flex-col cursor-pointer whitespace-nowrap justify-center py-2 px-8 rounded-md shadow text-xs font-medium hover:shadow-lg ${isNonEmptyString(className)?className:''}`}>
         {isNonEmptyString(doing) ? doing : 'Preview'}
     </button>
 }

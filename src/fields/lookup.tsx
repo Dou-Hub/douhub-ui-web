@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { map, find, isNil, debounce, isFunction, isInteger, isArray } from 'lodash';
 import { getEntity, isNonEmptyString, isObject } from 'douhub-helper-util';
 import { LabelField, NoteField, Select, SelectProps } from '../index';
-import { callAPI, CSS, SVG, _window, _track } from 'douhub-ui-web-basic';
+import { callAPI, CSS, SVG, _window, _track, getLocalStorage, setLocalStorage } from 'douhub-ui-web-basic';
 
 const DISPLAY_NAME = 'LookupField';
 const DEFAULT_LOOKUP_ATTRIBUTES = 'id,avatar,firstName,lastName,fullName,name,title,display,text,entityName,entityType,modifiedOn';
@@ -140,8 +140,9 @@ function DebounceSelect<
 
 const LookupField = (props: Record<string, any>) => {
 
-    const { label, disabled, note, style, labelStyle, inputStyle,
+    const { label, disabled, note, style, labelStyle, inputStyle, name, 
         entityName, entityType, searchOnly, fullRecord, recordForMembership,
+        preLoad, preLoadCacheDuration, 
         alwaysShowLabel, wrapperStyle } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const searchMethod = `${props.searchMethod}`.toLowerCase() == 'elastic' ? 'elastic' : 'contain';
@@ -199,21 +200,40 @@ const LookupField = (props: Record<string, any>) => {
     }, [props.value]);
 
     useEffect(() => {
-        if (props.preLoad == true) {
+        if (preLoad == true) {
             doSearch('');
         }
-    }, [props.preLoad]);
+    }, [preLoad]);
 
 
     const doSearch = async (search: string): Promise<Array<Record<string, any>>> => {
+
+        let data: Array<Record<string, any>> = [];
+
+        if (isNil(entity))
+        {
+            return data; //empty
+        }
+
+        const cacheKey = preLoad && !isNonEmptyString(search) && isInteger(preLoadCacheDuration)?`lookup-preload-${entityName}-${entityType}-${name}`:'';
+
+        if (isNonEmptyString(cacheKey))
+        {
+            data = getLocalStorage(cacheKey);
+            setSearchResult(data);
+            if (!isNil(data)) return data;
+        }
+
         // setSearching(true);
         const query: Record<string, any> = {
             top: count,
-            "entityName": entity?.entityName,
+            entityName,
             attributes,
             scope: isNonEmptyString(props.scope) ? props.scope : 'organization',
             "orderBy": [{ "type": "desc", "attribute": "_ts" }]
         };
+
+        if (isNonEmptyString(entityType)) query.entityType = entityType;
 
         if (isObject(recordForMembership) && isNonEmptyString(recordForMembership.id)) {
             query.scope = 'membership';
@@ -222,12 +242,16 @@ const LookupField = (props: Record<string, any>) => {
 
         let apiEndpoint = `${entity?.apis?.data ? entity?.apis?.data : solution.apis.data}${searchMethod == 'elastic' ? 'search' : 'query'}`;
         if (isNonEmptyString(search)) query.keywords = search;
-        let data: Array<Record<string, any>> = [];
-
+       
         try {
+           
             const newResult = await callAPI(solution, apiEndpoint, { query }, 'post');
             data = newResult.data;
             setSearchResult(data);
+            if (isNonEmptyString(cacheKey))
+            {
+                setLocalStorage(cacheKey, data, preLoadCacheDuration);
+            }
         }
         catch (error: any) {
             console.error(error);
@@ -242,7 +266,7 @@ const LookupField = (props: Record<string, any>) => {
 
 
     const renderSelect = () => {
-
+        if (isNil(entity)) return <div className="w-full text-red-500">The entity does not exist.</div>
         return <DebounceSelect
             style={{ ...style, ...inputStyle }}
             value={value}
