@@ -1,6 +1,6 @@
 import { Dropdown, Select, SelectOption, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
-import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
+import { isArray, isFunction, map, find, isInteger, isNil, without } from 'lodash';
 import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
 import { SVG, _window } from 'douhub-ui-web-basic';
 
@@ -108,6 +108,14 @@ const ListHeader = (props: Record<string, any>) => {
         if (isFunction(props.onChangeView)) props.onChangeView(newView);
     }
 
+    const checkQuery = (query: Record<string,any>) =>{
+
+        if (recordForMembership && query.scope!='membership') return false;
+        if (!recordForMembership && query.scope=='membership') return false;
+
+        return true;
+    }
+
     return <div className="douhub-list-header bg-gray-50 w-full flex flex-row items-center px-4 py-4 border border-0 border-b"
         style={{ maxWidth, height: 68 }}>
 
@@ -120,7 +128,10 @@ const ListHeader = (props: Record<string, any>) => {
                     value={query}
                     onChange={onChangeQuery}
                 >
-                    {map(queries, (query, index: number) => <SelectOption key={!isNil(query.id) ? query.id : index} value={query.id}>{query.title}</SelectOption>)}
+                    {without(map(queries, (query, index: number) => {
+                        return checkQuery(query)? <SelectOption key={!isNil(query.id) ? query.id : index} value={query.id}>{query.title}</SelectOption>:null;
+                    }),null)
+                }
                 </Select>
                 :
                 <h1>{entity.uiCollectionName}</h1>

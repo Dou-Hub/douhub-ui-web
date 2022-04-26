@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
 import { utcISOString, isNonEmptyString } from 'douhub-helper-util';
 import moment from 'moment';
-import { LabelField, TimePicker, DatePicker  } from '../index';
+import { LabelField, TimePicker, DatePicker, NoteField } from '../index';
 import { CSS } from 'douhub-ui-web-basic';
 
 
@@ -56,13 +56,15 @@ const styles = {
 
 const DateTimeField = (props: Record<string, any>) => {
 
-    const { label, disabled, format, wrapperStyle,
-        labelStyle, alwaysShowLabel, defaultValue} = props;
+    const { label, disabled, format, wrapperStyle, note, 
+        placeholderForDate, placeholderForTime,
+        labelStyle, alwaysShowLabel, defaultValue } = props;
 
     const showDatePicker = format != 'time';
     const showTimePicker = format != 'date';
     const [value, setValue] = useState(props.value);
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
+    const placeholder = isNonEmptyString(props.placeholder)?props.placeholder:'';
 
     useEffect(() => {
         setValue(props.value);
@@ -110,27 +112,31 @@ const DateTimeField = (props: Record<string, any>) => {
     }
 
     return (
-        <div className="field field-datetime flex w-full" style={{...wrapperStyle, flexDirection:'column'}}>
+        <div className={`field field-datetime w-full ${isNonEmptyString(note) ? 'field-note-true' : ''}`}
+            style={{flexDirection: 'column', ... wrapperStyle}}>
             <CSS id='field-datetime-css' content={DATETIME_FIELD_CSS} />
             <LabelField text={label} disabled={disabled} style={labelStyle}
                 hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value)))}
             />
-            <div className="w-full flex">
+            <div className="w-full flex flex-col">
                 <div className="w-full flex">
                     {showDatePicker && <DatePicker
                         style={{ ...styles.date, ... (showTimePicker ? { marginRight: 20 } : {}) }}
                         value={dateValue ? moment(dateValue, dateFormat) : null}
                         onChange={onChangeDate}
                         defaultValue={defaultDateValue}
+                        placeholder={showTimePicker && isNonEmptyString(placeholderForDate)?placeholderForDate:placeholder}
                         disabled={disabled}
                         format={dateFormat}
                     />}
                     {showTimePicker && <TimePicker style={{ ...styles.time, ...(showDatePicker ? { maxWidth: 100, minWidth: 100, width: 100 } : {}) }}
                         value={timeValue ? moment(timeValue, timeFormat) : null} onChange={onChangeTime}
                         defaultValue={defaultTimeValue}
+                        placeholder={showDatePicker && isNonEmptyString(placeholderForTime)?placeholderForTime:placeholder}
                         disabled={disabled}
                         format={timeFormat} />}
                 </div>
+                <NoteField text={note} />
             </div>
         </div>
     )

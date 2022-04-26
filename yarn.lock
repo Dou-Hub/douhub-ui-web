@@ -2873,6 +2873,20 @@ douhub-helper-util@1.0.85, douhub-helper-util@^1.0.81:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
+douhub-helper-util@1.0.86:
+  version "1.0.86"
+  resolved "https://registry.yarnpkg.com/douhub-helper-util/-/douhub-helper-util-1.0.86.tgz#f3e19aed5d7456d021b5db23d70941e6579b0221"
+  integrity sha512-FkqWS4mWfowR7a4V+OSbJXvIP2lW0D654BVyiU6N+w2Ou3HsxjBDISZxoBVZk1KAntrhFxxA6Y4SUBmJyzb/IA==
+  dependencies:
+    axios "^0.24.0"
+    csvtojson "^2.0.10"
+    is-url "^1.2.4"
+    js-base64 "^3.7.2"
+    libphonenumber-js "^1.9.42"
+    lodash "^4.17.21"
+    slugify "^1.6.4"
+    uuid "^8.3.2"
+
 douhub-ui-realtime@^1.0.28:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/douhub-ui-realtime/-/douhub-ui-realtime-1.0.28.tgz#fab0ec1e86850fc93e47beb2ebecd2434ba2e81e"
@@ -2913,15 +2927,15 @@ douhub-ui-store@1.0.53:
     react "^17.0.2"
     react-dom "^17.0.2"
 
-douhub-ui-web-basic@^1.0.23:
-  version "1.0.23"
-  resolved "https://registry.yarnpkg.com/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.23.tgz#ebb197f52a4a9ece3e59c0e93e5fef989dc809b6"
-  integrity sha512-ofidRC89DMZWo+/hOkrFtsC7IsCv2tIEbmPevX8Z1eQqYqEessZxHi1LGTpbvyn2xqtC6a6B4UkXGhVAPUnbLg==
+douhub-ui-web-basic@^1.0.25:
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.25.tgz#f8e1411f6d2f9db1520de193653a5d7286ae9f08"
+  integrity sha512-1QULQfWijZ6E/cVq50LiwupkyXCaKq0FG2LhT2rQLdJ9O2Eo62T8Ke3tM2MiIxurHEVSe2sPnokHHepgRtHj1w==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"
     antd "^4.18.4"
-    douhub-helper-util "1.0.85"
+    douhub-helper-util "1.0.86"
     douhub-ui-store "1.0.53"
     lodash "^4.17.21"
     marked "^4.0.7"
