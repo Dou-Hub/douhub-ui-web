@@ -34,7 +34,7 @@ const CheckboxField = (props: Record<string,any>) => {
 
     return <>
         <CSS id="field-checkbox-css" content={CHECKBOX_FIELD_CSS}/>
-        <div className={`field field-checkbox items-center ${small?'small':''} ${disabled?'field-disabled':''} field-checkbox-selected-${value?'true':'false'} ${isNonEmptyString(note) ? 'field-note-true' : ''} ${isNonEmptyString(className) ? className : ''} `} 
+        <div className={`field field-checkbox ${small?'small':''} ${disabled?'field-disabled':''} field-checkbox-selected-${value?'true':'false'} ${isNonEmptyString(note) ? 'field-note-true' : ''} ${isNonEmptyString(className) ? className : ''} `} 
             style={style}>
             { !(disabled && hideCheckboxWhenDisabled || !disabled && hideCheckboxWhenNotDisabled) && <div className='checkbox' onClick={onClick}>
                 <SVG id={`field-checkbox-${id}-${name}`} className="checkmark" src="/icons/checkmark.svg" />
