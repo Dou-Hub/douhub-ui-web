@@ -8,8 +8,13 @@ export const LIST_CSS = `
     .douhub-list .ant-table-body
     {
         max-height: none !important;
-        overflow-y: hidden !important;
     }
+
+    .douhub-list .ant-table-body::-webkit-scrollbar
+    {
+           width: 0px;
+    }
+
 
     .douhub-list .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan]):before
     {
