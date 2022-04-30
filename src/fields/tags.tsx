@@ -177,7 +177,7 @@ const TagsField = React.forwardRef((props: Record<string, any>) => {
         <CSS id='field-tags-css' content={TAGS_CSS} />
         <LabelField text={label} disabled={disabled} style={labelStyle} hidden={!showLabel} />
         <div className={`field field-tags field-tags-auto-search-${autoSearch} field-tags-${count} ${className} ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(note) ? 'field-note-true' : ''}`} onClick={onClickBase}>
-            <div className="list">
+            <div className="field-tags-list">
                 {renderTags()}
             </div>
             {renderInput()}
