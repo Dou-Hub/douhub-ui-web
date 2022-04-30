@@ -2,9 +2,10 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { isFunction, isArray, map, isNil } from 'lodash';
 import { SVG, _window } from 'douhub-ui-web-basic';
-import { isNonEmptyString } from 'douhub-helper-util';
+import { isNonEmptyString, isObject } from 'douhub-helper-util';
 import Popconfirm from '../antd/popconfirm';
 import { useEnvStore } from 'douhub-ui-store';
+import { isNumber } from 'util';
 
 const ButtonWrapper = (props: Record<string, any>) => {
 
@@ -36,18 +37,18 @@ const BasicModal = (props: Record<string, any>) => {
     const envStore = useEnvStore();
     const winHeight = envStore.height;
     const dialogId = `modal-${id}`;
+    const contentHeightAdjust = isNumber(props.contentHeightAdjust) ? props.contentHeightAdjust : -250;
+    const contentClassName = isNonEmptyString(props.contentClassName) ? props.contentClassName : '';
+    const contentStyle = isObject(props.contentStyle) ? props.contentStyle : {};
 
-    const updateMaxHeight = ()=>{
-        if (show)
-        {
+    const updateMaxHeight = () => {
+        if (show) {
             const dialog = _window.document.getElementById(dialogId);
-            if (dialog) 
-            {
-                dialog.style['max-height'] = `${winHeight-250}px`;
+            if (dialog) {
+                dialog.style['max-height'] = `${winHeight + contentHeightAdjust}px`;
             }
-            else
-            {
-                console.log(`retry dialog ${winHeight-250}px`);
+            else {
+                console.log(`retry dialog ${winHeight - 250}px`);
                 setTimeout(updateMaxHeight, 300);
             }
         }
@@ -65,7 +66,7 @@ const BasicModal = (props: Record<string, any>) => {
         setError(props.error);
     }, [props.error]);
 
-    const onClose = (fromOverlay: boolean) => {
+    const onClose = (fromOverlay?: boolean) => {
         if (isFunction(props.onClose)) props.onClose(fromOverlay);
     }
 
@@ -85,7 +86,7 @@ const BasicModal = (props: Record<string, any>) => {
     const renderButtons = () => {
         if (!isNil(processing)) return null;
         const totalButtons = buttons.length;
-        return map(buttons, (button:any, index: number) => {
+        return map(buttons, (button: any, index: number) => {
             const text = isNonEmptyString(button.text) ? button.text : '...';
             const disabled = button == button.disabled;
             switch (button.type) {
@@ -175,7 +176,7 @@ const BasicModal = (props: Record<string, any>) => {
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <div
-                            className={`inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6 ${className ? className : ''}`}
+                            className={`inline-block relative align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6 ${className ? className : ''}`}
                             style={style}
                         >
                             <div>
@@ -186,7 +187,7 @@ const BasicModal = (props: Record<string, any>) => {
                                     {isNonEmptyString(title) && <Dialog.Title as="h3" className={`text-lg mx-2 leading-6 font-medium text-gray-900 ${titleClassName ? titleClassName : ''}`}>
                                         {title}
                                     </Dialog.Title>}
-                                    {dialogId && <div id={dialogId} className="my-6 mx-2 text-align" style={{overflow:'hidden', overflowY:'auto'}}>
+                                    {dialogId && <div id={dialogId} className={`my-6 mx-2 text-align ${contentClassName}`} style={{ overflow: 'hidden', overflowY: 'auto', ...contentStyle }}>
                                         {content}
                                         {Content && <Content {...props} />}
                                     </div>}
@@ -198,9 +199,16 @@ const BasicModal = (props: Record<string, any>) => {
                                 {renderButtons()}
                                 {renderProcessing()}
                             </div>}
+                            {!isNil(props.showCloseIcon) && <div 
+                                className={`absolute top-0 cursor-pointer right-0 p-2 hover:shadow ${props.closeIconWrapperClassName?props.closeIconWrapperClassName:''}`} 
+                                style={props.closeIconWrapperStyle?props.closeIconWrapperStyle:{}}
+                                onClick={() => onClose()}>
+                                <SVG src="/icons/x.svg" style={{ width: 20, ...(props.closeIconStyle?props.closeIconStyle:{}) }} color={props.closeIconColor?props.closeIconColor:'#000000'} />
+                            </div>}
                         </div>
                     </Transition.Child>
                 </div>
+
             </Dialog>
         </Transition.Root>
     </>

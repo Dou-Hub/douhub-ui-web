@@ -19,7 +19,7 @@ import {
     TreeSingleSelectField as ITreeSingleSelectField
 } from '../../index';
 import { CSS, SVG, _window, Div, callAPI } from 'douhub-ui-web-basic';
-import { isNonEmptyString, isObject, getRecordDisplay } from 'douhub-helper-util';
+import { isNonEmptyString, isObject, getRecordDisplay, getEntity } from 'douhub-helper-util';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
 import { ReactSortable } from "react-sortablejs";
@@ -66,19 +66,27 @@ const FORM_CSS = `
         box-shadow: none !important;
     }
 `
-export const FormPreviewButton = (props: Record<string, any>) => {
+export const FormPreviewButton = (props: { 
+    data: Record<string,any>, 
+    className?: string, 
+    style?: Record<string,any>,
+    baseUrl?:string
+    }) => {
     const { data, className, style } = props;
     const solution = _window.solution;
     const [doing, setDoing] = useState('');
     const baseUrl = isNonEmptyString(props.baseUrl) ? props.baseUrl : '/read/';
-    const { slug, id, entityName, entityType } = props;
+    const entity = getEntity(solution, data.entityName, data.entityType);
+    const themeColor = solution?.theme?.color;
+    const backgroundColor = themeColor && isNonEmptyString(themeColor["100"]) ? themeColor["100"] : '#ffffff';
+
     const onClick = () => {
-        if (data.isGlobal) return _window.open(`${baseUrl}${entityName.toLowerCase()}${isNonEmptyString(entityType) ? "-" + entityType.toLowerCase() : ''}${slug}`);
+        if (data.isGlobal) return _window.open(`${baseUrl}${entity?.slug}/${data.slug}`);
 
         setDoing('Creating link ...');
-        callAPI(solution, `${solution.apis.data}token`, { id: id }, 'POST')
+        callAPI(solution, `${solution.apis.data}token`, { id: data.id }, 'POST')
             .then((r: any) => {
-                _window.open(`${baseUrl}${slug}?token=${r.result}`)
+                _window.open(`${baseUrl}${entity?.slug}/${data.slug}?token=${r.result}`)
             })
             .catch((error) => {
                 console.error({ error });
@@ -88,7 +96,7 @@ export const FormPreviewButton = (props: Record<string, any>) => {
             })
     }
 
-    return <button onClick={onClick} style={{ height: 28, marginTop: -5, ...style }}
+    return <button onClick={onClick} style={{ height: 28, marginTop: -5, backgroundColor, ...style }}
         className={`flex flex-col cursor-pointer whitespace-nowrap justify-center py-2 px-8 rounded-md shadow text-xs font-medium hover:shadow-lg ${isNonEmptyString(className)?className:''}`}>
         {isNonEmptyString(doing) ? doing : 'Preview'}
     </button>
@@ -378,7 +386,7 @@ const FormBase = observer((props: Record<string, any>) => {
             case 'custom':
                 {
                     const Content = field.content;
-                    return Content && <Content data={data} name={field.name} onChange={onChangeCustom} />
+                    return Content && <Content {...field} data={data} name={field.name} onChange={onChangeCustom} />
                 }
             default:
                 {
