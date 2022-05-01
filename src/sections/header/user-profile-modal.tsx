@@ -169,7 +169,6 @@ const UserProfileModal = observer((props: Record<string, any>) => {
 
     return <BasicModal
         id="user-profile"
-        titleClassName="text-left"
         show={show}
         onClose={onClose}
         onSubmit={onSubmit}
@@ -177,6 +176,8 @@ const UserProfileModal = observer((props: Record<string, any>) => {
         processing={processing}
         content={renderContent()}
         error={error}
+        maxWidth={420}
+        maxHeight={750}
         buttons={
             [
                 {

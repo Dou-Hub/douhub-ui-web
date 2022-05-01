@@ -30,15 +30,17 @@ const BaseList = observer((props: {
     deleteConfirmationMessage?: string
     maxFormWidth?: number,
     ListBase?: any,
+    Card?: any,
     children?: any
     sidePaneKey?: string,
     view?: 'table' | 'grid',
     FormFields?: Record<string, any>,
     lgScreen?: boolean,
+    cardLayout?: string,
     recordForMembership?: Record<string, any>,
-    formHeightAdjust?:number
+    formHeightAdjust?: number
 }) => {
-    const { entity, search, query, columns, tags, categories,
+    const { entity, search, query, columns, tags, categories, cardLayout,
         view, showViewToggleButton, onClickGridCard } = props;
     const width = isNumber(props.width) ? props.width : 500;
     const height = isNumber(props.height) ? props.height : 500;
@@ -91,6 +93,7 @@ const BaseList = observer((props: {
                 height={height}
                 entity={entity}
                 columns={columns}
+                cardLayout={cardLayout}
                 Form={Form}
                 view={view}
                 onClickGridCard={onClickGridCard}
