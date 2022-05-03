@@ -1,7 +1,7 @@
 import React from 'react';
-import { isFunction, without } from 'lodash';
+import { isFunction } from 'lodash';
 import DefaultForm from '../form/default';
-import { BaseList, DEFAULT_EDIT_COLUMN, DEFAULT_ACTION_COLUMN } from '../../index';
+import { BaseList, DEFAULT_EDIT_COLUMN, DEFAULT_ACTION_COLUMN, DEFAULT_COLUMNS } from '../../index';
 
 import { _window } from 'douhub-ui-web-basic';
 import { hasRole, isNonEmptyString } from 'douhub-helper-util';
@@ -20,24 +20,11 @@ const DefaultList = observer((props: Record<string, any>) => {
         onClick: (record: Record<string, any>, action: string) => {},
         entity: Record<string, any>
     ) => {
-        return without([
-            {
-                title: 'Title',
-                dataIndex: 'display',
-                id: 'display',
-                render: (v: string, data: Record<string, any>) => {
-                    const text = data.highlight?.searchDisplay ? data.highlight?.searchDisplay : v;
-                    const searchDetail = data.highlight?.searchContent ? data.highlight?.searchContent : [];
-
-                    return <div className="flex flex-col items-start">
-                        <div className="text-sm font-normal text-gray-900" dangerouslySetInnerHTML={{ __html: text }}></div>
-                        {searchDetail.length > 0 && <div className="mt-1 text-xs font-light text-gray-900" dangerouslySetInnerHTML={{ __html: searchDetail[0] }}></div>}
-                    </div>
-                },
-            },
+        return [
+            ...DEFAULT_COLUMNS(onClick, entity),
             DEFAULT_EDIT_COLUMN(onClick, entity),
             DEFAULT_ACTION_COLUMN(onClick, entity)
-        ], undefined);
+        ]
     };
 
     return (

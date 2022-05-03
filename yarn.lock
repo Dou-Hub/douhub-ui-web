@@ -2927,10 +2927,10 @@ douhub-ui-store@1.0.53:
     react "^17.0.2"
     react-dom "^17.0.2"
 
-douhub-ui-web-basic@^1.0.39:
-  version "1.0.39"
-  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.39.tgz#78e85473bd2d4da68a6f6050d75cb45ec87da3ec"
-  integrity sha512-6bOIYqwSXTb3l95R8oDWFF/gMHA4phKT3HWQ1IIxAWcaHEBMs9JYwAvNOuE2nh6Y3ELHiVh7mWYopRfYfoh7Gw==
+douhub-ui-web-basic@^1.0.41:
+  version "1.0.41"
+  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.41.tgz#ce93186c79d45dabc21f56aaf98a334097cf9edc"
+  integrity sha512-HKOQehpL4kK09LBeprEi171Ct4uJ1Hqb9zUi+GvX0cU4/nGRqsqp/3HC7RXHC1XgEqZJ9fFYPjFsuv6nehEj6A==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"

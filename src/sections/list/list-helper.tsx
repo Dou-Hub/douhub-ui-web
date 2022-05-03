@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Menu, Popconfirm, Dropdown } from '../../index';
-import { isFunction, without, map, isArray } from 'lodash';
+import { isFunction, map, isArray } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { SVG } from 'douhub-ui-web-basic';
 import { Tooltip } from '../../index';
@@ -190,7 +190,7 @@ export const DEFAULT_COLUMNS = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity: Record<string, any>
 ) => {
-    return without([
+    return [
         {
             title: '',
             dataIndex: 'display',
@@ -201,12 +201,12 @@ export const DEFAULT_COLUMNS = (
                 const searchDetail = data.highlight?.searchContent ? data.highlight?.searchContent : [];
 
                 return <div className="flex flex-col items-start">
-                    <div className="text-sm font-normal text-gray-900" dangerouslySetInnerHTML={{ __html: text }}></div>
-                    {searchDetail.length > 0 && <div className="mt-1 text-xs font-light text-gray-900" dangerouslySetInnerHTML={{ __html: searchDetail[0] }}></div>}
+                    <div className="text-base font-semibold text-gray-900" dangerouslySetInnerHTML={{ __html: text }}></div>
+                    {searchDetail.length > 0 && <div className="mt-1 text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: searchDetail[0] }}></div>}
                 </div>
             },
         },
         DEFAULT_EDIT_COLUMN(onClick, entity)
-    ], undefined);
+    ];
 };
 
