@@ -32,11 +32,31 @@ const TREE_CSS = `
     max-width: 18px;
     width: 18px;
 }
+
+.field-tree-wrapper-large .ant-tree-treenode
+{
+    padding: 0 0 12px 0 !important;
+    font-size: 1.1rem !important;
+}
+
+.field-tree-wrapper-large .ant-tree-draggable-icon, 
+.field-tree-wrapper-large .ant-tree-switcher
+{
+    display: flex;
+    margin-top: 4px;
+    flex-direction: column;
+    cursour: move;
+}
+
+.field-tree-wrapper-large .ant-tree-node-selected
+{
+    padding: 2px 8px;
+}
 `
 
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, doing, selectedId, checkedIds, value } = props;
+    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, size, doing, selectedId, checkedIds, value } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const TREE_ITEM_CSS = `
@@ -127,7 +147,7 @@ const TreeField = (props: Record<string, any>) => {
         {isNonEmptyString(label) && <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />}
-        <div className="field-tree-wrapper h-full overflow-hidden">
+        <div className={`field-tree-wrapper field-tree-wrapper-${size=='large'?'large':'base'} h-full overflow-hidden`}>
             <div className="field-tree overflow-hidden overflow-y-auto" style={{ height: 'calc(100% - 33px)' }}>
                 <Tree
                     disabled={isNonEmptyString(doing)}

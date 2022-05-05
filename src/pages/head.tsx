@@ -19,7 +19,8 @@ const PageHead = (props: {
     image?: string,
     title?: string,
     description?: string,
-    url: string
+    url: string,
+    canonical?: string
 }) => {
 
     const { noIndex, solution, titleAppendSiteName, url, host } = props;
@@ -29,7 +30,7 @@ const PageHead = (props: {
     const type = props.type == 'website' ? 'website' : 'article';
     const author = isNonEmptyString(props.author) ? props.author : site.author;
     const siteName = site.name;
-    const canonical = `${protocal}://${domain}${url}`;
+    const canonical = isNonEmptyString(props.canonical) ? props.canonical : `${protocal}://${domain}${url}`;
     const headManifestUrl = `${protocal}://${domain}`;
 
     let image = isNonEmptyString(props.image) ? props.image : site.image;
@@ -105,7 +106,7 @@ const PageHead = (props: {
         <meta name="msapplication-TileColor" content={site.tileColor ? site.tileColor : site.themeColor} />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="white" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black" />
-        
+
         <link rel="manifest" href={`${headManifestUrl}/site.webmanifest`} />
 
         {/* 

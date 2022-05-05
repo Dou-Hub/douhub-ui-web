@@ -373,6 +373,7 @@ const ListCategoriesTags = (props: {
                     onCheck={onCheckCategory}
                     onDrop={onDropCategory}
                     uiCollectionName="categories"
+                    size="large"
                     onSelect={onSelectCategory}
                 />}
                 {!isNonEmptyString(error) && curTab.value == 'tags' && <TagsField value={tags.data}
