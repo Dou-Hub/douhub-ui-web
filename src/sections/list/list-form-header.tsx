@@ -10,13 +10,12 @@ const ListFormHeader = (props: Record<string, any>) => {
     const { entity, recordSaving, currentRecord, currentRecordChanged } = props;
     const deleteConfirmationMessage = props.deleteConfirmationMessage ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
     const deleteButtonLabel = props.deleteButtonLabel ? props.deleteButtonLabel : `Delete`;
-    const display = getRecordDisplay(currentRecord ? currentRecord : {});
-  
+    const display = getRecordDisplay({ ...(currentRecord ? currentRecord : {}), highlight: {} }); //makes ure highlight is not shown as title
+
     // const title = getRecordDisplay(currentRecord ? currentRecord : {}, 30);
 
-    const onCopyId = () =>{
-        if (isFunction(_window?.navigator?.clipboard?.writeText))
-        {
+    const onCopyId = () => {
+        if (isFunction(_window?.navigator?.clipboard?.writeText)) {
             _window?.navigator?.clipboard?.writeText(currentRecord.id);
         }
     }

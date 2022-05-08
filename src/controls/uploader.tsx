@@ -65,7 +65,7 @@ const Uploader = (props: {
     const [files, setFiles] = useState<Array<any>>([]);
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [previewValue, setPreviewValue] = useState<string | undefined>(undefined);
+    const [previewValue, setPreviewValue] = useState('');
     const [previewSizeRatio, setPreviewSizeRatio] = useState<number>(0);
     const signedUrlSize = props.signedUrlSize ? props.signedUrlSize : 'raw';
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
@@ -76,16 +76,32 @@ const Uploader = (props: {
     const uiFormat = props.uiFormat == 'photo' ? 'photo' : 'icon';
 
     useEffect(() => {
-        setPreviewValue(props.value);
+        if (previewValue.indexOf('base64,') < 0) {
+            setPreviewValue(props.value && isNonEmptyString(props.value) ? props.value : '');
+        }
     }, [props.value])
 
     useEffect(() => {
+        setPreviewValue(props.value && isNonEmptyString(props.value) ? props.value : '');
+    }, [props.recordId, attributeName, entityName])
 
-        if (isNonEmptyString(previewValue) && autoPreviewResize == true) {
+    useEffect(() => {
+
+        if (previewValue && isNonEmptyString(previewValue) && autoPreviewResize == true) {
             const img: any = new Image()
             img.onload = () => {
+                console.log("Preview image success");
                 setPreviewSizeRatio(1.0 * img.height / img.width);
             }
+
+            // img.onerror = () => {
+            //    //keep trying the url
+            //    console.log("Preview image failed.");
+            //    setTimeout(()=>{
+            //        setPreviewValue(setWebQueryValue(previewValue,"retry",newGuid()));
+            //    },1000);
+            // }
+
             img.src = previewValue;
         }
         else {
@@ -118,10 +134,10 @@ const Uploader = (props: {
     }
 
     const onUpload = async (result: Record<string, any>, includeContent: boolean) => {
-        let base64Data: any = await getBase64(result.file);
+        const rawBase64Data: any = await getBase64(result.file);
 
         //NOTE: Need to replace the data:xxx;base64 for other type of documents
-        base64Data = base64Data.replace(/^data:image\/\w+;base64,/, "");
+        let base64Data = rawBase64Data.replace(/^data:image\/\w+;base64,/, "");
         base64Data = base64Data.replace(/^data:text\/\w+;base64,/, "");
 
         base64Data = Buffer.from(base64Data, 'base64');
@@ -155,7 +171,9 @@ const Uploader = (props: {
                 cfSignedRawResult = await callAPI(solution, `${solution.apis.file}cf-signed-url`,
                     { url: rawUrl },
                     'GET');
-                setPreviewValue(cfSignedRawResult.signedUrl);
+                //setPreviewValue(cfSignedRawResult.signedUrl);
+                console.log(rawBase64Data);
+                setPreviewValue(rawBase64Data);
             }
 
         }
@@ -259,7 +277,7 @@ const Uploader = (props: {
                 accept={getAccept()}
                 listType="text"
                 onChange={onAfterUpload}
-                disabled={files.length > 0 || disabled==true}
+                disabled={files.length > 0 || disabled == true}
                 beforeUpload={onBeforeUpload}
                 fileList={[]}
                 maxCount={1}

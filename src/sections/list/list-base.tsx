@@ -240,6 +240,8 @@ const ListBase = observer((props: Record<string, any>) => {
         setCurrentFormWidth(width ? width : 0);
     }
 
+    const apiCallTrigger = JSON.stringify({queryId, statusId, loadingType, entityName:entity?.entityName, entityType:entity?.entityType, tags, categories, search});
+
     useEffect(() => {
         if (loadingType) {
             setLoading(loadingType.name);
@@ -288,7 +290,7 @@ const ListBase = observer((props: Record<string, any>) => {
                                 const newResult = {
                                     count: result?.count + r.count,
                                     continuation: r.continuation,
-                                    data: [...result?.data, ...r.data]
+                                    data: [...(result?result.data:{}), ...r.data]
                                 }
                                 setResult(cloneDeep(newResult));
                                 break;
@@ -311,7 +313,7 @@ const ListBase = observer((props: Record<string, any>) => {
                     setLoading('');
                 })
         }
-    }, [queryId, statusId, loadingType, entity?.entityName, entity?.entityType, tags, categories])
+    }, [apiCallTrigger])
 
     const onClickCreateRecord = () => {
         if (currentRecordChanged) {
@@ -397,9 +399,6 @@ const ListBase = observer((props: Record<string, any>) => {
                     })
                 });
                 setNotification({ id: newGuid(), message: 'Error', description: `Sorry, it was failed to delete the ${entity.uiName}.`, type: 'error' });
-            })
-            .finally(() => {
-
             })
     }
 
