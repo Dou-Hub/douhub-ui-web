@@ -44,6 +44,7 @@ import LogosSection from './sections/logos';
 import SignInSection from './sections/auth/sign-in';
 import SignUpSection from './sections/auth/sign-up';
 import SocialIconsSection from './sections/social-icons';
+import SubmitEmailSection from './sections/submit-email';
 import FooterColumnSection from './sections/footer/column';
 
 //Modals
@@ -178,6 +179,7 @@ export {
     SignInSection,
     SignUpSection,
     SocialIconsSection,
+    SubmitEmailSection,
     FooterColumnSection
 }
 
