@@ -2927,26 +2927,6 @@ douhub-ui-store@1.0.53:
     react "^17.0.2"
     react-dom "^17.0.2"
 
-douhub-ui-web-basic@^1.0.49:
-  version "1.0.49"
-  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.49.tgz#df2699eb83c7a3a959d7fa4a660ad3b365c1b097"
-  integrity sha512-aveHTec1Cszrlj2BsAyFNz5a034hgeh1dLmgpPC0dOo9NMFUROtj5rF6jiBC1kilKEJSMvA/VIaVzTmmniUYhw==
-  dependencies:
-    "@aws-amplify/auth" "^4.3.19"
-    "@headlessui/react" "^1.4.3"
-    antd "^4.18.4"
-    douhub-helper-util "1.0.89"
-    douhub-ui-store "1.0.53"
-    lodash "^4.17.21"
-    marked "^4.0.7"
-    next "12.1.0"
-    nookies "^2.5.2"
-    react "^17.0.2"
-    react-dom "^17.0.2"
-    react-imask "^6.4.2"
-    react-svg "^14.1.9"
-    uuid "^8.3.2"
-
 douhub-ui-web-basic@^1.0.5:
   version "1.0.19"
   resolved "https://registry.yarnpkg.com/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.19.tgz#9a928af7e14d10a9b62b1a928abc0673506688b9"
@@ -2957,6 +2937,26 @@ douhub-ui-web-basic@^1.0.5:
     antd "^4.18.4"
     douhub-helper-util "1.0.85"
     douhub-ui-store "1.0.52"
+    lodash "^4.17.21"
+    marked "^4.0.7"
+    next "12.1.0"
+    nookies "^2.5.2"
+    react "^17.0.2"
+    react-dom "^17.0.2"
+    react-imask "^6.4.2"
+    react-svg "^14.1.9"
+    uuid "^8.3.2"
+
+douhub-ui-web-basic@^1.0.50:
+  version "1.0.50"
+  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.50.tgz#d9053f29b1285a8ca0f08ac1d25dd69870d1b568"
+  integrity sha512-BE8qa6cce5Qh2npj+Y9WFbFIT7wabTW4q+XhT411z0VifBW6sVFWWnuIQVJxCNNwVWbMn+HSVjl+KGNfoqTGLQ==
+  dependencies:
+    "@aws-amplify/auth" "^4.3.19"
+    "@headlessui/react" "^1.4.3"
+    antd "^4.18.4"
+    douhub-helper-util "1.0.89"
+    douhub-ui-store "1.0.53"
     lodash "^4.17.21"
     marked "^4.0.7"
     next "12.1.0"

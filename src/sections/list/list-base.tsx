@@ -689,7 +689,8 @@ const ListBase = observer((props: Record<string, any>) => {
     }
 
     const renderListCategoriesTags = () => {
-        return <div className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePane ? '' : 'hidden'}`}
+        //className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePane ? '' : 'hidden'}`}
+        return <div className={`w-full h-full overflow-hidden ${showSidePane ? '' : 'hidden'}`}
             style={supportSlitter ? {} : { width: 320 }}>
             <CurrentListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} onClickClose={onClickCloseListCategoriesTags} />
         </div>

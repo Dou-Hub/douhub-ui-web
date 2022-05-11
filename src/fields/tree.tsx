@@ -148,7 +148,7 @@ const TreeField = (props: Record<string, any>) => {
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />}
         <div className={`field-tree-wrapper field-tree-wrapper-${size=='large'?'large':'base'} h-full overflow-hidden`}>
-            <div className="field-tree overflow-hidden overflow-y-auto" style={{ height: 'calc(100% - 33px)' }}>
+            <div className="field-tree overflow-hidden overflow-y-auto" style={{ height: 'calc(100% - 28px)' }}>
                 <Tree
                     disabled={isNonEmptyString(doing)}
                     checkable
