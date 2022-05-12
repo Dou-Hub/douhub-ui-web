@@ -1,15 +1,16 @@
-import { cloneDeep, each, find, isFunction, isArray, map } from 'lodash';
+import { cloneDeep, each, find,  isArray, map } from 'lodash';
 import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
 } from 'douhub-helper-util';
 import {
-    Select, SelectOption, Popconfirm, Tooltip,
-    Dropdown, Menu, TextField, TagsField, TreeField
-} from '../../index';
+    Select, SelectOption, Popconfirm, Tooltip, TreeField,
+    Dropdown, Menu, TextField, TagsField
+} from  '../../index';
 import { _window, CSS, SVG, callAPI } from 'douhub-ui-web-basic';
 import React, { useEffect, useState } from 'react';
 import { useEnvStore } from 'douhub-ui-store';
+
 
 const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select
@@ -38,6 +39,8 @@ const ListCategoriesTags = (props: {
    
     const { entityName, entityType, height } = props;
     const solution = _window.solution;
+
+    const themeColor = solution?.theme?.color;
     const [categoriesExpendedIds, setCategoriesExpendedIds] = useState<Array<string>>([]);
     const [categoriesCheckedIds, setCategoriesCheckedIds] = useState<Array<string>>([]);
     const [categoriesCheckedNodes, setCategoriesCheckedNodes] = useState<Array<string>>([]);
@@ -80,9 +83,9 @@ const ListCategoriesTags = (props: {
         }
     }, [entityName, entityType, refresh])
 
-    const onClickClose = () => {
-        if (isFunction(props.onClickClose)) props.onClickClose();
-    }
+    // const onClickClose = () => {
+    //     if (isFunction(props.onClickClose)) props.onClickClose();
+    // }
 
     const onChangeCategories = (newData: Array<Record<string, any>>) => {
 
@@ -125,16 +128,28 @@ const ListCategoriesTags = (props: {
         {
             if (isObject(selectedNode)) return [selectedNode];
         }
-        return null;
+        return [];
     }
 
     const onClickFilterByCategory = () => {
         const filterNodes = getFilterNodes();
-       
-        console.log({filterNodes});
         envStore.setValue('categories', map(filterNodes,(node:any)=>{
-            return {id: node.id, text: node.text}
+            return {id: node.key, text: node.value}
         }));
+    }
+
+    const onClickFilterButton = (newSelectedNode:Record<string,any>) => {
+
+        setCategoriesCheckedNodes([]);
+        if (selectedNode && selectedNode.id==newSelectedNode.id)
+        {
+            envStore.setValue('categories',  []);
+        }
+        else
+        {
+            envStore.setValue('categories',  [newSelectedNode]);
+        }
+
     }
 
     const onClickRefreshCategory = () => {
@@ -226,7 +241,7 @@ const ListCategoriesTags = (props: {
             style={{ height }}>
 
             <div
-                className="w-full flex flex-row border-b py-4 px-4 pr-8 flex flex-row items-center bg-gray-50"
+                className="w-full flex flex-row border-b py-4 px-4 flex flex-row items-center bg-gray-50"
                 style={{ height: 68 }}
             >
                 {/* <SVG src={`/icons/hide-sidepanel.svg`}
@@ -315,13 +330,13 @@ const ListCategoriesTags = (props: {
 
                 </div>
                 }
-
+                {/* 
                 <Tooltip color="#aaaaaa" placement='top' title="Close">
                     <div onClick={onClickClose} style={{ height: 30, top: 0, right: 0 }}
                         className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
                         <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
                     </div>
-                </Tooltip>
+                </Tooltip> */}
 
             </div>
             {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-dashed border-b bg-white" style={{ height: 55 }}>
@@ -363,6 +378,7 @@ const ListCategoriesTags = (props: {
 
             {!isNonEmptyString(doing) && <div className="h-full flex flex-col w-full overflow-hidden bg-white p-4" style={{ height: 'calc(100% - 42px)' }}>
                 {!isNonEmptyString(error) && curTab.value == 'categories' && <TreeField
+                    themeColor={themeColor}
                     disabled={isNonEmptyString(doing)}
                     value={categories.data}
                     expendedIds={categoriesExpendedIds}
@@ -375,6 +391,7 @@ const ListCategoriesTags = (props: {
                     uiCollectionName="categories"
                     size="large"
                     onSelect={onSelectCategory}
+                    onClickFilterButton={onClickFilterButton}
                 />}
                 {!isNonEmptyString(error) && curTab.value == 'tags' && <TagsField value={tags.data}
                     uiName="tag"

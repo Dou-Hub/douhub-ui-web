@@ -1,6 +1,5 @@
 import React from 'react';
 import { DefaultForm, ListHeader as IListHeader, ListBase as ListBaseInternal } from '../../index';
-import { _window } from 'douhub-ui-web-basic';
 import { isNumber, isFunction, isNil } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';

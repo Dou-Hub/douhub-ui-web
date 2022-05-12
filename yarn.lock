@@ -2947,10 +2947,10 @@ douhub-ui-web-basic@^1.0.5:
     react-svg "^14.1.9"
     uuid "^8.3.2"
 
-douhub-ui-web-basic@^1.0.50:
-  version "1.0.50"
-  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.50.tgz#d9053f29b1285a8ca0f08ac1d25dd69870d1b568"
-  integrity sha512-BE8qa6cce5Qh2npj+Y9WFbFIT7wabTW4q+XhT411z0VifBW6sVFWWnuIQVJxCNNwVWbMn+HSVjl+KGNfoqTGLQ==
+douhub-ui-web-basic@^1.0.56:
+  version "1.0.56"
+  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.56.tgz#4c7475d9896775ba429850d5f27676ca7cfa092b"
+  integrity sha512-cenr9mIM6CYvrn1LLKsKOUY0mwZfu0uL2j5vW2hgPSAxrmKQ6SU/nhEoEBwkscnKud4KBj7EoltnDqWhwtMBGw==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"

@@ -1,8 +1,9 @@
 import React from 'react';
-import { isFunction, map, cloneDeep } from 'lodash';
-import { LabelField, Tree } from '../index';
+import { isFunction, map, cloneDeep, isArray } from 'lodash';
+import { LabelField, Tree, TreeNode } from '../index';
 import { isNonEmptyString } from 'douhub-helper-util';
-import { CSS, _window } from 'douhub-ui-web-basic';
+import { CSS, SVG } from 'douhub-ui-web-basic';
+
 
 const TREE_CSS = `
 .field-tree {
@@ -43,32 +44,66 @@ const TREE_CSS = `
 .field-tree-wrapper-large .ant-tree-switcher
 {
     display: flex;
-    margin-top: 4px;
+    margin-top: 6px;
     flex-direction: column;
-    cursour: move;
+    cursor: move;
+}
+
+.field-tree-wrapper-large .ant-tree-checkbox
+{
+    margin: 6px 8px 0 0;
+}
+
+.field-tree-wrapper-large .ant-tree-switcher
+{
+    display: flex;
+    margin-top: 6px;
+    flex-direction: column;
+    cursor: move;
 }
 
 .field-tree-wrapper-large .ant-tree-node-selected
 {
-    padding: 2px 8px;
+    padding: 2px 6px;
 }
 `
 
+const TreeFieldNode = (props: Record<string, any>) => {
+    const { item, selected, themeColor } = props;
+    const { text } = item;
+
+    const onClickFilterButton = () => {
+        if (isFunction(props.onClickFilterButton)) props.onClickFilterButton(item);
+    }
+
+    const color = themeColor && isNonEmptyString(themeColor["500"]) ? themeColor["500"] : '#333333'
+
+    return <div className="flex">
+        <div className="flex-1 flex flex-col justify-center">{text}</div>
+        {isFunction(props.onClickFilterButton) && <div className="flex flex-col justify-center shadow hover:shadow-lg hover:bg-white p-1 rounded-lg" style={selected?{margin:3, marginRight:0}:{margin:3, marginRight:2 }}  onClick={onClickFilterButton}>
+            {selected?<SVG src="/icons/filter.svg" style={{ width: 12 }} color={color} />:<SVG src="/icons/filter.svg" style={{ width: 12 }} color="#BBBBBB" />}
+        </div>}
+    </div>
+}
+
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, size, doing, selectedId, checkedIds, value } = props;
+    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, size, doing, selectedId, checkedIds, value, themeColor } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const TREE_ITEM_CSS = `
         .field-tree-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected
         {
-            background-color: #f1f5f9;
-            border-radius: 10px !important;
+            background-color: ${themeColor && isNonEmptyString(themeColor["50"]) ? themeColor["50"] : '#EFEFEF'} ;
+            border-radius: 8px !important;
         }
     `;
     const onDragEnter = (info: Record<string, any>) => {
         console.log(info);
     };
+
+
+
 
     const onDrop = (info: Record<string, any>) => {
         const dropKey = info.node.id;
@@ -111,7 +146,7 @@ const TreeField = (props: Record<string, any>) => {
             });
         } else {
             let ar: Array<Record<string, any>> = [];
-            let i: number = 0;
+            let i = 0;
 
             loop(data, dropKey, (item: Record<string, any>, index: number, arr: Array<Record<string, any>>) => {
                 item == null;
@@ -134,26 +169,41 @@ const TreeField = (props: Record<string, any>) => {
     };
 
     const onCheck = (checkedKeys: any, e: any) => {
-        if (isFunction(props.onCheck)) props.onCheck(map(checkedKeys, (key: any) => `${key}`), e);
+         if (isFunction(props.onCheck)) props.onCheck(map(checkedKeys, (key: any) => `${key}`), e);
     };
 
-    const onExpand = (expendedKeys: React.Key[], e:any) => {
+    const onExpand = (expendedKeys: React.Key[], e: any) => {
         if (isFunction(props.onExpand)) props.onExpand(map(expendedKeys, (key: any) => `${key}`), e);
     };
 
+
+    const renderTreeNodes = (items: Record<string, any>) => {
+        return map(items, (item) => {
+            if (isArray(item.items) && item.items.length>0) {
+                return (
+                    <TreeNode title={<TreeFieldNode themeColor={themeColor} item={item} />} key={item.id}>
+                        {renderTreeNodes(item.items)}
+                    </TreeNode>
+                )
+            }
+
+            return <TreeNode title={<TreeFieldNode themeColor={themeColor} item={item} selected={item.id == selectedId} onClickFilterButton={props.onClickFilterButton} />} key={item.id} />
+        });
+    }
+
     return <>
         <CSS id='tree-field-css' content={TREE_CSS} />
-        {isNonEmptyString(TREE_ITEM_CSS) && <CSS id='tree-field-item-css' content={TREE_ITEM_CSS} />}
+        {isNonEmptyString(TREE_ITEM_CSS) && <CSS id={`tree-field-item-css-${themeColor}`} content={TREE_ITEM_CSS} />}
         {isNonEmptyString(label) && <LabelField text={label} disabled={disabled} style={labelStyle}
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />}
-        <div className={`field-tree-wrapper field-tree-wrapper-${size=='large'?'large':'base'} h-full overflow-hidden`}>
+        <div className={`field-tree-wrapper field-tree-wrapper-${size == 'large' ? 'large' : 'base'} h-full overflow-hidden`}>
             <div className="field-tree overflow-hidden overflow-y-auto" style={{ height: 'calc(100% - 28px)' }}>
                 <Tree
                     disabled={isNonEmptyString(doing)}
                     checkable
                     multiple={false}
-                    fieldNames={{ title: 'text', key: 'id', children: 'items' }}
+                    // fieldNames={{title:'text', key: 'id', children: 'items' }}
                     defaultExpandedKeys={[]}
                     defaultSelectedKeys={[]}
                     defaultCheckedKeys={[]}
@@ -167,8 +217,10 @@ const TreeField = (props: Record<string, any>) => {
                     onDrop={onDrop}
                     onSelect={onSelect}
                     onCheck={onCheck}
-                    treeData={value}
-                />
+                // treeData={value}
+                >
+                    {renderTreeNodes(value)}
+                </Tree>
             </div>
 
         </div>

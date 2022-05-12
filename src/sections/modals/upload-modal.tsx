@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction, cloneDeep, map, each, without, isNil } from 'lodash';
-import {  callAPI, _window } from 'douhub-ui-web-basic';
-import {  BasicModal } from '../../index';
+import { callAPI, _window } from 'douhub-ui-web-basic';
+import { BasicModal } from '../../index';
 import { getDateTimeString, isNonEmptyString, getPropName } from 'douhub-helper-util';
 import Step1 from './upload-modal-step-1';
 import Step2 from './upload-modal-step-2';
@@ -100,7 +100,7 @@ const UploadModal = observer((props: Record<string, any>) => {
                     text: "Submit",
                     type: "info"
                 }
-            ], 
+            ],
             title: 'Step 3: Review the data in the table',
             titleClassName: 'text-left'
         },
@@ -111,7 +111,7 @@ const UploadModal = observer((props: Record<string, any>) => {
                     type: "info",
                     onClick: onClose
                 }
-            ], 
+            ],
             title: `Step 4: ${entity.uiCollectionName} has been submitted`,
             titleClassName: 'text-left'
         }
@@ -140,7 +140,7 @@ const UploadModal = observer((props: Record<string, any>) => {
             case 1: return <Step2 entity={entity} modalStyle={modalStyle}
                 onChange={onChangeContent} />
             case 2: return <Step3 entity={entity} onError={onErrorStep3} error={error} recordForMembership={recordForMembership} modalStyle={modalStyle} />
-            case 3: return <Step4 entity={entity} modalStyle={modalStyle}/>
+            case 3: return <Step4 entity={entity} modalStyle={modalStyle} />
         }
         return <></>
     }

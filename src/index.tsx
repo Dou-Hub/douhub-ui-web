@@ -37,6 +37,7 @@ import Tree from './controls/antd/tree';
 import TimePicker from './controls/antd/timepicker';
 import DatePicker from './controls/antd/datepicker';
 import TreeSelect from './controls/antd/tree-select';
+import TreeSelectNode from './controls/antd/tree-select-node';
 import TreeNode from './controls/antd/tree-node';
 
 //Sections
@@ -115,7 +116,7 @@ export {
     Logo, Input, InputTextArea, Checkbox, Tags, Popover,
     Table, Tooltip, Slider, Switch, Select, SelectOption, SelectProps,
     InputPassword, InputNumber, InputText, Notification, Splitter,
-    Popconfirm, Dropdown, Menu, Alert, Button, TreeSelect, TreeNode,
+    Popconfirm, Dropdown, Menu, Alert, Button, TreeSelect, TreeNode, TreeSelectNode,
     Affix, Drawer, Uploader, Tree, TimePicker, DatePicker
 };
 
