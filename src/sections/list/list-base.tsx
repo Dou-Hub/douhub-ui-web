@@ -511,7 +511,7 @@ const ListBase = observer((props: Record<string, any>) => {
             props.onClickGridCard(record);
         }
         else {
-            onClickRecord(record, 'edit');
+            onClickRecord(record, 'read');
         }
 
     }
