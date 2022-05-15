@@ -137,6 +137,7 @@ import ListTable from './sections/list/list-table';
 import ListHeader from './sections/list/list-header';
 import ListFormResizer from './sections/list/list-resizer';
 import ListFormHeader from './sections/list/list-form-header';
+import ListReadHeader from './sections/list/list-read-header';
 import ListFilters from './sections/list/list-filters';
 import ListCategoriesTags from './sections/list/list-categories-tags';
 import ListBase from './sections/list/list-base';
@@ -145,7 +146,7 @@ import BaseList from './sections/list/base';
 
 export {
     ListTable, ListFormResizer, ListHeader, ListBase, DefaultList,
-    ListFilters, ListFormHeader, ListCategoriesTags, BaseList
+    ListFilters, ListFormHeader, ListCategoriesTags, BaseList, ListReadHeader
 }
 
 

@@ -1,12 +1,12 @@
 import { Dropdown, Select, SelectOption, UploadModal } from '../../index';
 import React, { useEffect, useState } from 'react';
 import { isArray, isFunction, map, find, isInteger, isNil } from 'lodash';
-import { isNonEmptyString, shortenString, newGuid } from 'douhub-helper-util';
+import { isNonEmptyString, shortenString, newGuid, doNothing } from 'douhub-helper-util';
 import { SVG, _window } from 'douhub-ui-web-basic';
 
 const ListHeader = (props: Record<string, any>) => {
 
-    const { queries, statusCodes, entity, maxWidth, queryId, showViewToggleButton, currentRecord,
+    const { queries, statusCodes, entity, maxWidth, queryId, showViewToggleButton, currentEditRecord,
         statusId, menuForCreateButton, allowCreate, allowUpload, recordForMembership } = props;
 
     // const querySelectorMinWidth = isInteger(props.querySelectorMinWidth) ? props.querySelectorMinWidth : 150
@@ -138,8 +138,8 @@ const ListHeader = (props: Record<string, any>) => {
             {map(statusCodes, (statusCode, index: number) => <SelectOption key={!isNil(statusCode.id) ? statusCode.id : index} value={statusCode.id}>{statusCode.title}</SelectOption>)}
         </Select>}
 
-        <div className={`flex flex-1 flex-cols ${currentRecord?'justify-start':'justify-end'}`}>
-            {allowUpload && allowCreate && !currentRecord && <div
+        <div className={`flex flex-1 flex-cols ${currentEditRecord?'justify-start':'justify-end'}`}>
+            {allowUpload && allowCreate && !currentEditRecord && <div
                 onClick={onClickUpload}
                 className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-green-50">
                 <SVG id="upload-icon" src="/icons/upload-to-cloud.svg" style={{ width: 18, height: 18 }} color="#333333" />
@@ -153,7 +153,7 @@ const ListHeader = (props: Record<string, any>) => {
                 </div>
             </Dropdown>}
 
-            {showViewToggleButton && !currentRecord &&  <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white"
+            {showViewToggleButton && !currentEditRecord &&  <div className="flex cursor-pointer whitespace-nowrap inline-flex ml-2 items-center justify-center p-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white"
                 onClick={onClickToggleView}
             >
                 <SVG id="view-table-icon" src="/icons/table-view.svg" style={{ width: 18, height: 18, marginRight: 8 }} color={view == 'table' ? '#38bdf8' : '#333333'} />
@@ -170,14 +170,14 @@ const ListHeader = (props: Record<string, any>) => {
 
             {props.children}
 
-            {!currentRecord && <div onClick={onClickRefresh}
+            {!currentEditRecord && <div onClick={onClickRefresh}
                 className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center px-1 py-1 ml-2 rounded-md shadow hover:shadow-lg text-xs font-medium bg-white">
                 <SVG id="list-refresh-icon" src="/icons/refresh.svg" style={{ width: 22 }} color="#333333" />
             </div>}
         </div>
         {isNonEmptyString(showUploadModal) && <UploadModal
             recordForMembership={recordForMembership}
-            onSubmitSucceed={() => { }}
+            onSubmitSucceed={() => {doNothing({}) }}
             entity={entity}
             show={showUploadModal}
             onClose={() => { setShowUploadModal(null) }} />}

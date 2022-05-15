@@ -1,5 +1,5 @@
 import React from 'react';
-import { DefaultForm, ListHeader as IListHeader, ListBase as ListBaseInternal } from '../../index';
+import { ListHeader as IListHeader, ListBase as ListBaseInternal } from '../../index';
 import { isNumber, isFunction, isNil } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { useContextStore } from 'douhub-ui-store';
@@ -12,6 +12,11 @@ const BaseList = observer((props: {
     height?: number,
     width?: number,
     Form?: any,
+    FormHeader?: any,
+    renderForm?: any,
+    Read?: any,
+    ReadHeader?: any,
+    renderRead?: any,
     ListHeader?: any,
     selectionType?: 'checkbox' | 'radio',
     search?: string,
@@ -40,13 +45,14 @@ const BaseList = observer((props: {
     formHeightAdjust?: number
 }) => {
     const { entity, search, query, columns, tags, categories, cardLayout,
-        view, showViewToggleButton, onClickGridCard } = props;
+        view, showViewToggleButton, onClickGridCard, Form, Read,
+        renderForm, renderRead
+    } = props;
     const width = isNumber(props.width) ? props.width : 500;
     const height = isNumber(props.height) ? props.height : 500;
     const selectionType = props.selectionType ? props.selectionType : 'checkbox';
     const allowCreate = props.allowCreate == true && entity.allowCreate != false;
     const allowUpload = props.allowUpload == true && entity.allowUpload == true && allowCreate;
-    const Form = props.Form ? props.Form : DefaultForm;
     const ListHeader = props.ListHeader ? props.ListHeader : IListHeader;
     const contextStore = useContextStore();
     const context = JSON.parse(contextStore.data);
@@ -94,6 +100,9 @@ const BaseList = observer((props: {
                 columns={columns}
                 cardLayout={cardLayout}
                 Form={Form}
+                Read={Read}
+                renderForm={renderForm}
+                renderRead={renderRead}
                 view={view}
                 onClickGridCard={onClickGridCard}
                 showViewToggleButton={showViewToggleButton}

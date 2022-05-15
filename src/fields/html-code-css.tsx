@@ -11,18 +11,18 @@ export const HTML_FIELD_CODE_CSS = `
       color: inherit;
       padding: 0;
       background: none;
-      font-size: 0.8rem;
+      font-size: smaller;
 }
 
 .field-html .ProseMirror code,
 .field-html .ProseMirror span {
-  font-size: 0.8rem;
+  font-size: smaller;
 }
 
 .field-html .ProseMirror pre .hljs-comment,
 .field-html .ProseMirror pre .hljs-quote {
   color: #777777;
-  font-size: 0.7rem;
+  font-size: smaller;
 }
 
 .field-html .ProseMirror pre .hljs-variable,
@@ -76,6 +76,12 @@ export const HTML_FIELD_CODE_CSS = `
   position: relative;
 }
 
+
+.field-html .ProseMirror .ant-select-selection-item
+{
+    text-align: center;
+}
+
 .field-html .ProseMirror .code-block-lang {
   position: absolute;
   top: -15px;
@@ -83,10 +89,17 @@ export const HTML_FIELD_CODE_CSS = `
   min-width: 120px;
 }
 
+.field-html .ProseMirror .code-block-lang.readonly {
+    background-color: rgb(249 250 251);
+    font-size: smaller;
+    text-align: center;
+}
+  
+
 .field-html .ProseMirror .code-block-lang .ant-select-selector{
   background-color: rgb(249 250 251);
   border-color: rgb(249 250 251);
-  font-size: 0.8rem;
+  font-size: smaller;
   cursor: pointer;
 }
 

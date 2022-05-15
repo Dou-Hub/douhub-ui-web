@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { isFunction, each } from 'lodash';
 import LabelField from './label';
 import Uploader from '../controls/uploader';
-import {SVG, CSS, _window, ARTICLE_CSS} from 'douhub-ui-web-basic';
+import { SVG, CSS, ARTICLE_CSS } from 'douhub-ui-web-basic';
 import { isNonEmptyString, newGuid } from 'douhub-helper-util';
 import { useEditor, EditorContent, BubbleMenu, ReactNodeViewRenderer, FloatingMenu } from '@tiptap/react';
 import Typography from '@tiptap/extension-typography';
@@ -34,17 +34,15 @@ const FLOAT_MENU_STYLE = {
     display: 'flex'
 }
 
-const DISPLAY_NAME = 'HtmlField';
-
 const HtmlField = (props: Record<string, any>) => {
 
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
         name, wrapperStyle, supportSourceCode,
-         hideH1, hideH2, hideH3,
+        hideH1, hideH2, hideH3,
         readonly,
         hideH4, record } = props;
-     const hideLabel = props.hideLabel || !isNonEmptyString(label);
+    const hideLabel = props.hideLabel || !isNonEmptyString(label);
 
     const defaultValue = isNonEmptyString(props.defaultValue) ? props.defaultValue : '';
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
@@ -55,7 +53,7 @@ const HtmlField = (props: Record<string, any>) => {
     useEffect(() => {
         const newValue = isNonEmptyString(props.value) ? props.value : defaultValue;
         setValue(newValue);
-    }, [props.value]);
+    }, [props.value, defaultValue]);
 
     const onEvent = (editor: any, action?: string) => {
 
@@ -63,7 +61,16 @@ const HtmlField = (props: Record<string, any>) => {
         let fieldEditor: any = document.getElementsByClassName(`field-html-${id}`);
         fieldEditor = fieldEditor.length > 0 && fieldEditor[0];
 
-        console.log({ html, action })
+        if (action == 'init' && readonly) {
+            setTimeout(() => {
+                if (readonly) {
+                    const editorDiv = fieldEditor?.children[0]?.children;
+                    if (editorDiv && editorDiv.length > 0) {
+                        editorDiv[0].setAttribute('contenteditable', 'false');
+                    }
+                }
+            }, 200);
+        }
 
         if ((action == 'init' || action == 'blur') && (html == '<p></p>' || html == '<p></p><p></p>')) {
             if (fieldEditor) fieldEditor.className = `${fieldEditor.className} is-placeholder field-html-${id}-is-placeholder`;
@@ -301,13 +308,11 @@ const HtmlField = (props: Record<string, any>) => {
                         className={`menu-icon ${editor.isActive('link') ? 'active' : ''}`} />
                 </div>
             </BubbleMenu>}
-            <EditorContent editor={editor} className={`field-html-editor ${readonly==true?'readonly':''}`} />
+            <EditorContent editor={editor} className={`field-html-editor ${readonly == true ? 'readonly' : ''}`} />
             <div id={`field-html-for-init-${id}`} onClick={onInitValue} />
             <div id={`field-html-for-sync-${id}`} onClick={onSyncValue} />
         </div>
     </div>
 };
 
-HtmlField.displayName = DISPLAY_NAME;
 export default HtmlField;
-
