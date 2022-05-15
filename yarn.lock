@@ -2902,6 +2902,20 @@ douhub-helper-util@1.0.89:
     slugify "^1.6.4"
     uuid "^8.3.2"
 
+douhub-helper-util@1.0.90:
+  version "1.0.90"
+  resolved "https://registry.npmjs.org/douhub-helper-util/-/douhub-helper-util-1.0.90.tgz#70325eca4321f4764f74083d3c53aacbdd485ee9"
+  integrity sha512-t7NiiQ8whyThjzshWSQr8bs2WPlSh48F1O8NuSXT31+ro+KOmSmjFNwM0v20oaMA3a+rMFxoXbEthhGkHV2atg==
+  dependencies:
+    axios "^0.24.0"
+    csvtojson "^2.0.10"
+    is-url "^1.2.4"
+    js-base64 "^3.7.2"
+    libphonenumber-js "^1.9.42"
+    lodash "^4.17.21"
+    slugify "^1.6.4"
+    uuid "^8.3.2"
+
 douhub-ui-realtime@1.0.32:
   version "1.0.32"
   resolved "https://registry.npmjs.org/douhub-ui-realtime/-/douhub-ui-realtime-1.0.32.tgz#68a82a490c17c66fbdc88220bd44a40ed3cd76f0"
@@ -2947,6 +2961,26 @@ douhub-ui-web-basic@1.0.59:
   version "1.0.59"
   resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.59.tgz#a666c4b1f5532bb71900b620ae090e24c1965e66"
   integrity sha512-wAI/G+H6+rCc6Jw4P53iGpxjKEW4khRQueD/o9gmRPXIfHn+0egmHSGmouGk34i371S7FhbIGiS5wQHJc1w8rQ==
+  dependencies:
+    "@aws-amplify/auth" "^4.3.19"
+    "@headlessui/react" "^1.4.3"
+    antd "^4.18.4"
+    douhub-helper-util "1.0.89"
+    douhub-ui-store "1.0.53"
+    lodash "^4.17.21"
+    marked "^4.0.7"
+    next "12.1.6"
+    nookies "^2.5.2"
+    react "^17.0.2"
+    react-dom "^17.0.2"
+    react-imask "^6.4.2"
+    react-svg "^14.1.9"
+    uuid "^8.3.2"
+
+douhub-ui-web-basic@1.0.60:
+  version "1.0.60"
+  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.60.tgz#e3b15c99e3f87cd63eaf0ea2173cf05636388663"
+  integrity sha512-RUc/wjYbO0mCkzivhycVOMCKq8xxPmsaK2D8NovTkWM+MR6VIDXBJJ2px7qOfNFjJ0PnobwQ3E/tVCFLCUw24A==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"
