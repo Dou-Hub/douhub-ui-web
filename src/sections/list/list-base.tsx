@@ -5,7 +5,6 @@ import {
     Splitter as SplitterInternal,
     ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
-import { notification as antNotification } from 'antd';
 import { SVG, hasErrorType, getLocalStorage, _window, CSS, callAPI, setLocalStorage, Card as ICard } from 'douhub-ui-web-basic';
 import { observer } from 'mobx-react-lite';
 import { useEnvStore, useContextStore } from 'douhub-ui-store';
@@ -19,9 +18,8 @@ import StackGrid from "react-stack-grid";
 import IListFormHeader from './list-form-header';
 import IListReadHeader from './list-read-header';
 
-
 const MESSAGE_TITLE_RECORD_CHANGED = 'Record has been changed';
-const MESSAGE_CONTENT_RECORD_CHANGED = 'Please save or cancel the changes to the current record in the edit form.';
+const MESSAGE_CONTENT_RECORD_CHANGED = 'To avoid losing your changes, we do not allow open another edit form when there is a record being changed.';
 
 const NonSplitter = (props: Record<string, any>) => {
     return <div className="flex flex-row w-full">
@@ -322,7 +320,9 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const onClickCreateRecord = () => {
         if (currentEditRecordChanged) {
-            antNotification.warning({
+            setNotification({
+                id: newGuid(),
+                type: 'warning',
                 message: MESSAGE_TITLE_RECORD_CHANGED,
                 description: MESSAGE_CONTENT_RECORD_CHANGED,
                 placement: 'top'
@@ -407,8 +407,6 @@ const ListBase = observer((props: Record<string, any>) => {
             })
     }
 
-    console.log({ currentReadRecord })
-
     const onClickRecord = (record: Record<string, any>, action: string) => {
         switch (action) {
             case 'read':
@@ -417,8 +415,8 @@ const ListBase = observer((props: Record<string, any>) => {
                         setNotification({
                             id: newGuid(),
                             type: 'warning',
-                            message: "Another card in the edit form",
-                            description: "To avoid losing your changes, we do not allow open edit form when there is another record in the edit form.",
+                            message: MESSAGE_TITLE_RECORD_CHANGED,
+                            description: MESSAGE_CONTENT_RECORD_CHANGED,
                             placement: 'top'
                         });
                     }
@@ -437,13 +435,16 @@ const ListBase = observer((props: Record<string, any>) => {
             case 'edit':
                 {
                     if (currentEditRecordChanged) {
-                        antNotification.warning({
+                        setNotification({
+                            id: newGuid(),
+                            type: 'warning',
                             message: MESSAGE_TITLE_RECORD_CHANGED,
                             description: MESSAGE_CONTENT_RECORD_CHANGED,
                             placement: 'top'
                         });
                     }
                     else {
+                        envStore.setValue('currentReadRecord', null);
                         updateCurrentRecord(record, action);
                     }
                     break;
@@ -839,7 +840,6 @@ const ListBase = observer((props: Record<string, any>) => {
     const renderReader = () => {
         if (!currentReadRecord) return null;
         if (isFunction(props.renderRead)) return props.renderRead(currentReadRecord);
-        console.log({ prop: currentReadRecord })
         return ListRead && <div className="relative h-full z-10" style={{ backgroundColor: '#fafafa', minHeight: height }}>
             <ListFormResizer
                 id={currentReadRecord.id}

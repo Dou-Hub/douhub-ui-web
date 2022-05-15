@@ -54,7 +54,8 @@ export const HTML_FIELD_CSS = `
 .field-html .ProseMirror mark
 {
     border-radius: 0.3rem;
-    padding: 0.1rem .2em 0.2rem 0.2rem;
+    padding: 0rem 0.3em 0.2rem 0.3rem;
+    line-height: 1.7;
 }
 
 .field-html.is-placeholder .ProseMirror p

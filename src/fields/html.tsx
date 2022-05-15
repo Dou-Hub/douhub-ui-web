@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction, each } from 'lodash';
+import { isFunction } from 'lodash';
 import LabelField from './label';
-import Uploader from '../controls/uploader';
-import { SVG, CSS, ARTICLE_CSS } from 'douhub-ui-web-basic';
+import { CSS, ARTICLE_CSS } from 'douhub-ui-web-basic';
 import { isNonEmptyString, newGuid } from 'douhub-helper-util';
-import { useEditor, EditorContent, BubbleMenu, ReactNodeViewRenderer, FloatingMenu } from '@tiptap/react';
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
 import Typography from '@tiptap/extension-typography';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -12,12 +11,17 @@ import Dropcursor from '@tiptap/extension-dropcursor';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import HtmlFieldCode from './html-code';
+import Highlight from '@tiptap/extension-highlight';
+import Color from '@tiptap/extension-color';
 
 import { HTML_FIELD_CSS } from './html-css';
 import { HTML_FIELD_CODE_CSS } from './html-code-css';
-// import './html-code-langs.scss';
-// load all highlight.js languages
 import lowlight from 'lowlight';
+
+import HtmlFieldFloatEditToolbar from './html-float-edit-toolbar';
+import HtmlFieldFloatInsertToolbar from './html-float-insert-toolbar';
+import HtmlFieldFloatHighlightToolbar from './html-float-highlight-toolbar';
+
 
 // load specific languages only
 // import lowlight from 'lowlight/lib/core'
@@ -25,22 +29,14 @@ import lowlight from 'lowlight';
 // lowlight.registerLanguage('javascript', javascript)
 
 
-const FLOAT_MENU_STYLE = {
-    border: 'solid 1px #333333',
-    backgroundColor: '#ffffff',
-    padding: 2,
-    marginLeft: 10,
-    fontSize: 14,
-    display: 'flex'
-}
-
 const HtmlField = (props: Record<string, any>) => {
 
     const { label, disabled, style,
         labelStyle, alwaysShowLabel,
         name, wrapperStyle, supportSourceCode,
-        hideH1, hideH2, hideH3,
-        readonly, 
+        highlightColors, onClickCreateNote,
+        hideH1, hideH2, hideH3, supportHighlight,
+        readonly,
         hideH4, record } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
 
@@ -67,6 +63,15 @@ const HtmlField = (props: Record<string, any>) => {
                     const editorDiv = fieldEditor?.children[0]?.children;
                     if (editorDiv && editorDiv.length > 0) {
                         editorDiv[0].setAttribute('contenteditable', 'false');
+
+                        //remove empty br
+                        const fieldEmptyBr: any = fieldEditor.getElementsByClassName(`ProseMirror-trailingBreak`);
+                        for (let i = 0; i < fieldEmptyBr.length; i++) {
+                            if (fieldEmptyBr[i].tagName == 'BR' && fieldEmptyBr[i].parentElement.children.length == 1) {
+                                fieldEmptyBr[i].parentElement.remove();
+                            }
+                        }
+
                         if (isFunction(props.onReady)) props.onReady();
                     }
                 }
@@ -103,6 +108,8 @@ const HtmlField = (props: Record<string, any>) => {
         content: value,
         extensions: [
             StarterKit,
+            Highlight.configure({ multicolor: true }),
+            Color,
             Link.configure({
                 openOnClick: false,
             }),
@@ -154,28 +161,6 @@ const HtmlField = (props: Record<string, any>) => {
         }
     }, [record?.id]);
 
-    const onClickLink = () => {
-
-        const hasLink: any = editor.isActive('link');
-        if (hasLink) {
-            editor.chain().focus().toggleLink().run();
-        }
-        else {
-            const url = window.prompt('URL', editor.getAttributes('link').href);
-            if (!isNonEmptyString(url)) return;
-
-            editor
-                .chain()
-                .focus()
-                .extendMarkRange('link')
-                .setLink({ href: url })
-                .run();
-        }
-    }
-
-    const onChangeHeader = (level: number) => {
-        editor.chain().focus().toggleHeading({ level }).run();
-    }
 
     const onInitValue = () => {
         const curValue = editor?.getHTML();
@@ -191,22 +176,6 @@ const HtmlField = (props: Record<string, any>) => {
         if (isFunction(props.onChange)) props.onChange(isNonEmptyString(newValue) ? newValue : null);
     }
 
-    const onUploadPhoto = (photoInfo: Record<string, any>) => {
-
-        const src = photoInfo.cfSignedResult.signedUrl;
-        const rawSrc = photoInfo.cfSignedRawResult.signedUrl;
-        editor.commands.setImage({ src });
-        each(document.getElementsByTagName('img'), (img: any) => {
-            if (img.src == src) {
-                img.onerror = function () {
-                    console.log("USING RAW FILE");
-                    this.rawSrc = rawSrc;
-                    this.src = rawSrc;
-                };
-            }
-        });
-    }
-
     return <div className="flex flex-col w-full relative" style={wrapperStyle}>
         <CSS id="html-field-css" content={HTML_FIELD_CSS} />
         <CSS id="html-field-code-css" content={HTML_FIELD_CODE_CSS} />
@@ -215,102 +184,28 @@ const HtmlField = (props: Record<string, any>) => {
             hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value) || !isNonEmptyString(placeholder)))}
         />
         <div className={`w-full field-html article field-html-${id} ${layoutClassName}`} style={style}>
-            {editor && <FloatingMenu editor={editor}>
-                <button style={FLOAT_MENU_STYLE}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                >
-                    H2
-                </button>
-                <button style={FLOAT_MENU_STYLE}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                >
-                    H3
-                </button>
-                <button style={FLOAT_MENU_STYLE}
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+            {editor && !readonly && <HtmlFieldFloatInsertToolbar
+                recordId={record.id ? record.id : newGuid()}
+                entityName={record.entityName}
+                attributeName={name}
+                editor={editor}
+            />}
 
-                >
-                    <SVG src="/icons/material-bullet-list.svg" style={{ width: 20 }} />
-                </button>
-                <button style={FLOAT_MENU_STYLE}
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            {editor && !readonly && <HtmlFieldFloatEditToolbar
+                editor={editor}
+                hideH1={hideH1}
+                hideH2={hideH2}
+                hideH3={hideH3}
+                hideH4={hideH4}
+                supportSourceCode={supportSourceCode}
+            />}
 
-                >
-                    <SVG src="/icons/material-numbered-list.svg" style={{ width: 20 }} />
-                </button>
-                <button style={FLOAT_MENU_STYLE}>
-                    <Uploader
-                        iconStyle={{ width: 20, height: 20 }}
-                        hideLabel={true}
-                        entityName={record.entityName}
-                        attributeName={name}
-                        fileType="Photo"
-                        signedUrlSize={960}
-                        onSuccess={onUploadPhoto}
-                        recordId={record.id ? record.id : newGuid()}
-                        fileNamePrefix={newGuid()}
-                        uiFormat="icon" iconUrl="/icons/image.svg"
-                        wrapperStyle={{ width: 20, height: 20, border: 'none' }} />
-                </button>
-            </FloatingMenu>}
-            {editor && <BubbleMenu editor={editor} className="menu-wrapper">
-                <div className="menu">
-                    {!hideH1 && <div
-                        onClick={() => onChangeHeader(1)}
-                        className={`menu-text ${editor.isActive('heading', { level: 1 }) ? 'active' : ''}`}>
-                        H1
-                    </div>}
-                    {!hideH2 && <div
-                        onClick={() => onChangeHeader(2)}
-                        className={`menu-text ${editor.isActive('heading', { level: 2 }) ? 'active' : ''}`}>
-                        H2
-                    </div>}
-                    {!hideH3 && <div
-                        onClick={() => onChangeHeader(3)}
-                        className={`menu-text ${editor.isActive('heading', { level: 3 }) ? 'active' : ''}`}>
-                        H3
-                    </div>}
-                    {!hideH4 && <div
-                        onClick={() => onChangeHeader(4)}
-                        className={`menu-text ${editor.isActive('heading', { level: 4 }) ? 'active' : ''}`}>
-                        H4
-                    </div>}
-                    <div className="menu-sp" />
-                    <div
-                        onClick={() => editor.chain().focus().toggleBold().run()}
-                        className={`menu-text menu-text-bold ${editor.isActive('bold') ? 'active' : ''}`} >
-                        B
-                    </div>
-                    <div
-                        onClick={() => editor.chain().focus().toggleItalic().run()}
-                        className={`menu-text menu-text-italic ${editor.isActive('italic') ? 'active' : ''}`} >
-                        I
-                    </div>
-                    <div
-                        onClick={() => editor.chain().focus().toggleStrike().run()}
-                        className={`menu-text menu-text-strikethrough ${editor.isActive('strike') ? 'active' : ''}`} >
-                        T
-                    </div>
-                    <div className="menu-sp" />
-                    <SVG src="/icons/material-bullet-list.svg"
-                        onClick={() => editor.chain().focus().toggleBulletList().run()}
-                        className={`menu-icon ${editor.isActive('bulletList') ? 'active' : ''}`} />
-                    <SVG src="/icons/material-numbered-list.svg"
-                        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                        className={`menu-icon ${editor.isActive('orderedList') ? 'active' : ''}`} />
-                    <div className="menu-sp" />
-                    {supportSourceCode && <SVG src="/icons/source-code.svg"
-                        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                        className={`menu-icon ${editor.isActive('codeBlock') ? 'active' : ''}`} />}
-                    <SVG src="/icons/material-get-quote.svg"
-                        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                        className={`menu-icon ${editor.isActive('blockquote') ? 'active' : ''}`} />
+            {editor && readonly && supportHighlight && <HtmlFieldFloatHighlightToolbar
+                editor={editor}
+                colors={highlightColors}
+                onClickCreateNote={onClickCreateNote}
+            />}
 
-                    <SVG src="/icons/material-link.svg"
-                        onClick={onClickLink}
-                        className={`menu-icon ${editor.isActive('link') ? 'active' : ''}`} />
-                </div>
-            </BubbleMenu>}
             <EditorContent editor={editor} className={`field-html-editor ${readonly == true ? 'readonly' : ''}`} />
             <div id={`field-html-for-init-${id}`} onClick={onInitValue} />
             <div id={`field-html-for-sync-${id}`} onClick={onSyncValue} />

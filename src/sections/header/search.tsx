@@ -26,7 +26,6 @@ const AppHeaderSearch = observer((props:{placeholder?:string}) => {
             <div className="flex-1 relative text-gray-400 focus-within:text-gray-500">
                 <Input
                     id="header-search"
-                    type="search"
                     placeholder= {placeholder}
                     style={{ outline: 'none' }}
                     value={search}
