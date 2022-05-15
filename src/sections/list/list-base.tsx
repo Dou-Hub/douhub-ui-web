@@ -129,7 +129,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const giveRoomToRightArea = !lgScreen && openRightDrawer ? (areaWidth - 370 - currentFormWidth > 0 ? 370 : areaWidth - currentFormWidth) : 0;
 
 
-    const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags && !currentEditRecord;
+    const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags;
     const currentEditRecordChanged = envData['currentEditRecordChanged'] == true;
 
     useEffect(() => {
