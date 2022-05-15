@@ -29,9 +29,9 @@ const HtmlFieldCode = (props: Record<string, any>) => {
         }
     }
 
-    const getCurrentLang=()=>{
+    const getCurrentLang = () => {
         const cur = find(langs, (l: string) => l == value);
-        return cur?cur:'undefined';
+        return cur ? cur : 'undefined';
     }
 
     return <NodeViewWrapper className="code-block">

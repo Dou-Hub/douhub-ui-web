@@ -40,7 +40,7 @@ const HtmlField = (props: Record<string, any>) => {
         labelStyle, alwaysShowLabel,
         name, wrapperStyle, supportSourceCode,
         hideH1, hideH2, hideH3,
-        readonly,
+        readonly, 
         hideH4, record } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
 
@@ -67,6 +67,7 @@ const HtmlField = (props: Record<string, any>) => {
                     const editorDiv = fieldEditor?.children[0]?.children;
                     if (editorDiv && editorDiv.length > 0) {
                         editorDiv[0].setAttribute('contenteditable', 'false');
+                        if (isFunction(props.onReady)) props.onReady();
                     }
                 }
             }, 200);
@@ -111,7 +112,9 @@ const HtmlField = (props: Record<string, any>) => {
             CodeBlockLowlight
                 .extend({
                     addNodeView() {
-                        return ReactNodeViewRenderer(HtmlFieldCode)
+                        return ReactNodeViewRenderer((props: any) => {
+                            return <HtmlFieldCode {...props} readonly={readonly} />
+                        })
                     },
                 })
                 .configure({ lowlight }),
