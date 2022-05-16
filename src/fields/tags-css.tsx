@@ -44,7 +44,6 @@ export const TAGS_CSS = `
         float: left;
         margin: 4px 4px 4px 0;
         cursor: pointer;
-        font-size: 0.8rem;
     }
 
     .field-tags .tag:hover
@@ -87,6 +86,5 @@ export const TAGS_CSS = `
     {
         padding: 5px 0 !important;
         border: none !important;
-        font-size: 0.9rem !important;
     }
 `

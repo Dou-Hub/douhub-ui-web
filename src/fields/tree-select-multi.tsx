@@ -26,7 +26,7 @@ const TREE_SELECT_FIELD_CSS = `
         border-radius: 0;
         padding: 0 !important;
         border: none !important;
-        font-size: 0.8rem;
+        font-size: 1rem;
         text-align: left;
         width: 100%;
     }
@@ -34,12 +34,12 @@ const TREE_SELECT_FIELD_CSS = `
     .field-tree-select-multi .loading,
     .field-tree-select-multi input
     {
-        font-size: 0.9rem !important;
+        font-size: 1rem !important;
     }
    
     .field-tree-select-multi .ant-select-selection-placeholder
     {
-        font-size: 0.9rem !important;
+        font-size: 1rem !important;
         right: 0 !important;
         left: 0 !important;
     }

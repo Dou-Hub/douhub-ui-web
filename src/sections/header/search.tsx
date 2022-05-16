@@ -1,14 +1,14 @@
-import React, { useState,  useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { observer } from 'mobx-react-lite';
 import { useEnvStore } from 'douhub-ui-store';
-import {_window,SVG} from 'douhub-ui-web-basic';
-import  Input from '../../controls/input';
-import  {isNonEmptyString} from 'douhub-helper-util';
+import { SVG } from 'douhub-ui-web-basic';
+import Input from '../../controls/input';
+import { isNonEmptyString } from 'douhub-helper-util';
 
-const AppHeaderSearch = observer((props:{placeholder?:string}) => {
+const AppHeaderSearch = observer((props: { placeholder?: string }) => {
 
-    const placeholder = isNonEmptyString(props.placeholder)?props.placeholder:'Search ...';
+    const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : 'Search ...';
     const [search, setSearch] = useState('');
     const envStore = useEnvStore();
     const envData = JSON.parse(envStore.data);
@@ -26,7 +26,7 @@ const AppHeaderSearch = observer((props:{placeholder?:string}) => {
             <div className="flex-1 relative text-gray-400 focus-within:text-gray-500">
                 <Input
                     id="header-search"
-                    placeholder= {placeholder}
+                    placeholder={placeholder}
                     style={{ outline: 'none' }}
                     value={search}
                     onChange={(v: string) => setSearch(v)}

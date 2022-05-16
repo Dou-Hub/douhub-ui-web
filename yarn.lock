@@ -2943,17 +2943,18 @@ douhub-ui-store@1.0.53:
     react "^17.0.2"
     react-dom "^17.0.2"
 
-douhub-ui-store@1.0.54:
-  version "1.0.54"
-  resolved "https://registry.npmjs.org/douhub-ui-store/-/douhub-ui-store-1.0.54.tgz#c8ae3b43c22174f35ceb0fe9abd566e85e6b1d79"
-  integrity sha512-tsN6a3igkQ9JdIkzLR+547IjVVZaDRujJrZk+cxpg0OkZ5rJhjGy5qJCMt9C9Sw/Ld4aoeYidPgAz6QzG/ZGrw==
+douhub-ui-store@1.0.58:
+  version "1.0.58"
+  resolved "https://registry.npmjs.org/douhub-ui-store/-/douhub-ui-store-1.0.58.tgz#ce9a8ac4925743d25d2f74b21613970d097df123"
+  integrity sha512-7qBYQi+hOrlJrnA5iGjs0GJABgitzBgoNG4UMhrLyWAifdE7rP98BCKq+oHTFH2ht4cy4tW+9vG2d412TrqxTg==
   dependencies:
-    douhub-helper-util "1.0.89"
+    douhub-helper-util "1.0.91"
     lodash "^4.17.21"
     mobx "^6.3.5"
     mobx-react "^7.2.1"
     mobx-react-lite "^3.2.1"
     mobx-state-tree "^5.0.5"
+    next "12.1.6"
     react "^17.0.2"
     react-dom "^17.0.2"
 
@@ -2977,16 +2978,16 @@ douhub-ui-web-basic@1.0.59:
     react-svg "^14.1.9"
     uuid "^8.3.2"
 
-douhub-ui-web-basic@1.0.60:
-  version "1.0.60"
-  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.60.tgz#e3b15c99e3f87cd63eaf0ea2173cf05636388663"
-  integrity sha512-RUc/wjYbO0mCkzivhycVOMCKq8xxPmsaK2D8NovTkWM+MR6VIDXBJJ2px7qOfNFjJ0PnobwQ3E/tVCFLCUw24A==
+douhub-ui-web-basic@1.0.61:
+  version "1.0.61"
+  resolved "https://registry.npmjs.org/douhub-ui-web-basic/-/douhub-ui-web-basic-1.0.61.tgz#cfbed93366cc6858979814d72f6d19af4d352342"
+  integrity sha512-gS/nA0TcnTUAIbvXGA6qZ6UNw7HwdYXFkKilLWgkmUMMY7poGv3pHDFUQ8wtlj6V8gM87ghwzpRXH1+/EUvlDA==
   dependencies:
     "@aws-amplify/auth" "^4.3.19"
     "@headlessui/react" "^1.4.3"
     antd "^4.18.4"
-    douhub-helper-util "1.0.89"
-    douhub-ui-store "1.0.53"
+    douhub-helper-util "1.0.91"
+    douhub-ui-store "1.0.58"
     lodash "^4.17.21"
     marked "^4.0.7"
     next "12.1.6"
