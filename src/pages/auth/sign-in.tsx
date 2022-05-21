@@ -129,9 +129,6 @@ const SignInPageBody = (props: Record<string, any>) => {
                 setDoing('');
                 setErrorMessage(errorMessage);
             }
-            finally {
-                setDoing('');
-            }
         })();
     }
 
@@ -156,10 +153,8 @@ const SignInPageBody = (props: Record<string, any>) => {
             }
             catch (error) {
                 if (_track) console.error({ error });
-                setErrorMessage('Failed to activate user.');
-            }
-            finally {
                 setDoing('');
+                setErrorMessage('Failed to activate user.');
             }
         })();
     }
@@ -189,8 +184,6 @@ const SignInPageBody = (props: Record<string, any>) => {
             catch (error) {
                 if (_track) console.error({ error });
                 setErrorMessage('Failed to activate user.');
-            }
-            finally {
                 setDoing('');
             }
         })();
@@ -204,8 +197,6 @@ const SignInPageBody = (props: Record<string, any>) => {
                 setDoing('Processing ...');
                 //try sign in by the user
                 const result = await signIn(solution, form, { type });
-
-                setDoing('');
 
                 if (result.error) {
 
@@ -259,7 +250,6 @@ const SignInPageBody = (props: Record<string, any>) => {
             catch (error) {
                 if (_track) console.error({ error });
                 onSignInError('Failed to sign in.');
-                setDoing('');
             }
         })();
 

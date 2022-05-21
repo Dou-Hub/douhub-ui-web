@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getRecordFullName, isNonEmptyString } from 'douhub-helper-util';
 import { isFunction, isArray, map, uniqBy, without } from 'lodash';
-import { FormBase, BasicModal,  LookupField} from '../../index';
-import {_window,SVG, callAPI, Avatar} from 'douhub-ui-web-basic'
+import { FormBase, BasicModal, LookupField } from '../../index';
+import { _window, SVG, callAPI, Avatar } from 'douhub-ui-web-basic'
 
 const SendInvitationModal = (props: Record<string, any>) => {
 
@@ -20,7 +20,7 @@ const SendInvitationModal = (props: Record<string, any>) => {
     useEffect(() => {
         setDone(null);
     }, [show])
-    
+
     useEffect(() => {
         setUsers(isArray(props.users) ? props.users : []);
         setDone(null);
@@ -125,8 +125,7 @@ const SendInvitationModal = (props: Record<string, any>) => {
             action: 'activate-with-password'
         }, 'POST')
             .then(() => {
-                if (isFunction(props.onSubmitSucceed)) 
-                {
+                if (isFunction(props.onSubmitSucceed)) {
                     props.onSubmitSucceed(users);
                 }
                 setDone(successMessage);
@@ -148,15 +147,15 @@ const SendInvitationModal = (props: Record<string, any>) => {
         title={title}
         processing={processing}
         content={renderContent()}
-        style={{ maxWidth: done?350:650, minWidth: done?350:400 }}
+        style={{ maxWidth: done ? 350 : 650, minWidth: done ? 350 : 400, maxHeight: done ? 350 : '100%' }}
         error={error}
         buttons={
-            done?[
+            done ? [
                 {
                     text: "Close",
                     type: "close",
                     onClick: onClose
-                }]:[
+                }] : [
                 {
                     text: "Cancel",
                     type: "cancel",
