@@ -34,7 +34,7 @@ const ListReaderHeader = (props: Record<string, any>) => {
             </Tooltip>
         </div>
         <Tooltip color="#aaaaaa" placement='top' title="Close">
-            <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30, top: 0, right: 0 }}
+            <div onClick={() => { isFunction(props.onClickClose) && props.onClickClose() }} style={{ height: 30, top: 0, right: 0, width: 20 }}
                 className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-b border-l text-xs font-medium text-gray-700">
                 <SVG src="/icons/close.svg" color="#333333" style={{ width: 12 }} />
             </div>
@@ -46,7 +46,7 @@ const ListReaderHeader = (props: Record<string, any>) => {
             okText="Copy"
             cancelText="Canel">
             <Tooltip color="#aaaaaa" placement='bottom' title="ID">
-                <div style={{ height: 40, bottom: 0, right: 0 }}
+                <div style={{ height: 40, bottom: 0, right: 0, width: 20 }}
                     className="absolute flex self-center cursor-pointer inline-flex items-center justify-center px-1 py-1 border-0 border-l text-xs text-gray-700">
                     ID
                 </div>
