@@ -34,7 +34,7 @@ export const FIELD_CSS = `
 
     .field-error
     {
-        font-size: 0.6rem !important;
+        font-size: 0.8rem !important;
         color: red !important;
         line-height: 1.1 !important;
         margin-bottom: 0 !important;
@@ -47,8 +47,8 @@ export const FIELD_CSS = `
 
     .field-note
     {
-        font-size: 0.7rem !important;
-        color: rgba(0,0,0,0.5) !important;
+        font-size: 0.8rem !important;
+        color: #999999 !important;
         line-height: 1.1 !important;
         border-bottom: dashed 1px #cccccc !important;
         padding-bottom: 5px;

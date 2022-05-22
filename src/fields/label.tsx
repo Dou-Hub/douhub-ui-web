@@ -8,7 +8,7 @@ import {CSS} from 'douhub-ui-web-basic'
 const LABEL_FIELD_CSS = `
     .field-label
     {
-        font-size: 0.8rem !important;
+        font-size: 0.9rem !important;
         color: #333333;
         line-height: 1.1 !important;
         margin-bottom: 0 !important;

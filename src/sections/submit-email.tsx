@@ -100,7 +100,7 @@ const SubmitEmailSection = (props: {
                     disabled={isNonEmptyString(doing)}
                     onClick={onSubmit}
                     type="submit"
-                    className={`block w-full rounded-md ${isNonEmptyString(doing) ? 'cursor-not-allowed' : 'cursor-pointer'} border border-transparent px-5 py-3 bg-${colorName}-700 text-base font-medium text-white shadow hover:bg-${colorName}-500 focus:outline-none focus:ring-2 focus:ring-${colorName}-500 focus:ring-offset-2 sm:px-10`}
+                    className={`block w-full rounded-md ${isNonEmptyString(doing) ? 'cursor-not-allowed' : 'cursor-pointer'} border border-transparent px-5 py-3 bg-${colorName}-600 text-base font-medium text-white shadow hover:bg-${colorName}-700 focus:outline-none focus:ring-2 focus:ring-${colorName}-700 focus:ring-offset-2 sm:px-10`}
                 >
                     {isNonEmptyString(doing) ? doing : buttonText}
                 </button>

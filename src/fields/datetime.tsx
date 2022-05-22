@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
 import { utcISOString, isNonEmptyString } from 'douhub-helper-util';
 import moment from 'moment';
-import { LabelField, TimePicker, DatePicker  } from '../index';
+import { LabelField, TimePicker, DatePicker } from '../index';
 import { CSS } from 'douhub-ui-web-basic';
 
 
@@ -57,7 +57,7 @@ const styles = {
 const DateTimeField = (props: Record<string, any>) => {
 
     const { label, disabled, format, wrapperStyle,
-        labelStyle, alwaysShowLabel, defaultValue} = props;
+        labelStyle, alwaysShowLabel, defaultValue } = props;
 
     const showDatePicker = format != 'time';
     const showTimePicker = format != 'date';
@@ -71,11 +71,14 @@ const DateTimeField = (props: Record<string, any>) => {
     const dateValue = value ? moment(new Date(value)).format('YYYY-MM-DD') : null;
     const timeValue = value ? moment(new Date(value)).format('HH:mm:ss') : null;
 
-    let timeFormat = props.timeFormat ? props.timeFormat : 'HH:mm';
-    let dateFormat = props.dateFormat ? props.dateFormat : 'YYYY-MM-DD';
+    const timeFormat = props.timeFormat ? props.timeFormat : 'HH:mm';
+    const dateFormat = props.dateFormat ? props.dateFormat : 'YYYY-MM-DD';
 
     let defaultTimeValue: any = null;
     let defaultDateValue: any = null;
+
+    const datePickerValue: any = dateValue ? moment(dateValue, dateFormat) : null;
+    const timePickerValue: any = timeValue ? moment(timeValue, timeFormat) : null;
 
     switch (defaultValue) {
         case 'now': {
@@ -110,7 +113,7 @@ const DateTimeField = (props: Record<string, any>) => {
     }
 
     return (
-        <div className="field field-datetime flex w-full" style={{...wrapperStyle, flexDirection:'column'}}>
+        <div className="field field-datetime flex w-full" style={{ ...wrapperStyle, flexDirection: 'column' }}>
             <CSS id='field-datetime-css' content={DATETIME_FIELD_CSS} />
             <LabelField text={label} disabled={disabled} style={labelStyle}
                 hidden={!(!hideLabel && (alwaysShowLabel || isNonEmptyString(value)))}
@@ -119,14 +122,15 @@ const DateTimeField = (props: Record<string, any>) => {
                 <div className="w-full flex">
                     {showDatePicker && <DatePicker
                         style={{ ...styles.date, ... (showTimePicker ? { marginRight: 20 } : {}) }}
-                        value={dateValue ? moment(dateValue, dateFormat) : null}
+                        value={datePickerValue}
                         onChange={onChangeDate}
                         defaultValue={defaultDateValue}
                         disabled={disabled}
                         format={dateFormat}
                     />}
                     {showTimePicker && <TimePicker style={{ ...styles.time, ...(showDatePicker ? { maxWidth: 100, minWidth: 100, width: 100 } : {}) }}
-                        value={timeValue ? moment(timeValue, timeFormat) : null} onChange={onChangeTime}
+                        value={timePickerValue} 
+                        onChange={onChangeTime}
                         defaultValue={defaultTimeValue}
                         disabled={disabled}
                         format={timeFormat} />}

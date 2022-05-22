@@ -63,19 +63,19 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox .text .label
     {
-        font-size: 0.9rem;
+        font-size: 1rem;
         text-align: left;
     }
 
     .field-checkbox.small .text .label
     {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         text-align: left;
     }
 
     .field-checkbox .text .sub-label
     {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: #666666;
         line-height: 1.1;
         text-align: left;
@@ -83,7 +83,7 @@ export const CHECKBOX_FIELD_CSS = `
 
     .field-checkbox.small .text .sub-label
     {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
     }
 
     .field-checkbox .checkmark svg 

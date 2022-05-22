@@ -46,7 +46,7 @@ const DefaultNoData = (props: Record<string, any>) => {
         {hasNoFilter && allowCreate && <p>You can click the button below to create a new {entity.uiName?.toLowerCase()}.</p>}
         {hasNoFilter && allowCreate && <div
             onClick={onClickCreateRecord}
-            className="flex cursor-pointer whitespace-nowrap inline-flex items-center justify-center py-2 px-4 rounded-md shadow-md text-xs font-medium text-white bg-green-600 hover:bg-green-700">
+            className="flex cursor-pointer leading-none whitespace-nowrap inline-flex items-center justify-center p-4 mt-2 rounded-md shadow-md text-base text-white bg-green-600 hover:bg-green-700">
             <span className="hidden sm:block">Create your first {entity.uiName?.toLowerCase()}</span>
         </div>}
 
