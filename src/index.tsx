@@ -108,14 +108,10 @@ export { SignInFields, SignUpFields } from './sections/auth/helper';
 export { HTML_FIELD_CSS } from './fields/html-css';
 export { HTML_FIELD_CODE_CSS } from './fields/html-code-css';
 
-export { SPLITTER_CSS } from './controls/splitter-css';
-import Splitter from './controls/splitter';
-
-
 export {
     Logo, Input, InputTextArea, Checkbox, Tags, Popover,
     Table, Tooltip, Slider, Switch, Select, SelectOption, SelectProps,
-    InputPassword, InputNumber, InputText, Notification, Splitter,
+    InputPassword, InputNumber, InputText, Notification, 
     Popconfirm, Dropdown, Menu, Alert, Button, TreeSelect, TreeNode, TreeSelectNode,
     Affix, Drawer, Uploader, Tree, TimePicker, DatePicker
 };
@@ -129,8 +125,9 @@ export {
     LIST_COLUMN_TOOLTIP_TYPE,
     DEFAULT_ACTION_COLUMN,
     DEFAULT_EMAIL_COLUMN,
+    DEFAULT_SELECT_COLUMN,
     LIST_COLUMN_SETTINGS_TYPE,
-    rendeActionButtonColumn
+    renderActionButtonColumn
 } from './sections/list/list-helper';
 export { LIST_CSS } from './sections/list/list-css';
 import ListTable from './sections/list/list-table';

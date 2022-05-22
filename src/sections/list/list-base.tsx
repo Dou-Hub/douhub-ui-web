@@ -2,10 +2,9 @@ import {
     DEFAULT_COLUMNS, AlertField,
     Notification, DefaultForm,
     ListCategoriesTags, ListFilters,
-    Splitter as SplitterInternal,
     ListTable, LIST_CSS, ListFormResizer
 } from '../../index';
-import { SVG, hasErrorType, getLocalStorage, _window, CSS, callAPI, setLocalStorage, Card as ICard } from 'douhub-ui-web-basic';
+import { SVG, hasErrorType, getLocalStorage, _window, CSS, callAPI, setLocalStorage, Card as ICard, Splitter } from 'douhub-ui-web-basic';
 import { observer } from 'mobx-react-lite';
 import { useEnvStore, useContextStore } from 'douhub-ui-store';
 import React, { useEffect, useState } from 'react';
@@ -21,10 +20,18 @@ import IListReadHeader from './list-read-header';
 const MESSAGE_TITLE_RECORD_CHANGED = 'Record has been changed';
 const MESSAGE_CONTENT_RECORD_CHANGED = 'To avoid losing your changes, we do not allow open another edit form when there is a record being changed.';
 
-const NonSplitter = (props: Record<string, any>) => {
-    return <div className="flex flex-row w-full">
+const FormResizer = (props: Record<string, any>) => {
+    const { id, defaultWidth, height, maxWidth, minWidth, right } = props;
+    return <ListFormResizer
+        id={id}
+        defaultWidth={defaultWidth}
+        className="absolute top-0 right-0 z-50"
+        style={{
+            height, maxWidth, minWidth, right,
+            borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%'
+        }}>
         {props.children}
-    </div>
+    </ListFormResizer>
 }
 
 const DefaultNoData = (props: Record<string, any>) => {
@@ -63,7 +70,8 @@ const DefaultNoData = (props: Record<string, any>) => {
     </div>
 }
 
-const FORM_RESIZER_MIN_WIDTH = 400;
+const FORM_RESIZER_MIN_WIDTH = 350;
+const FORM_RESIZER_MAX_WIDTH = 650;
 
 const ListBase = observer((props: Record<string, any>) => {
 
@@ -108,19 +116,16 @@ const ListBase = observer((props: Record<string, any>) => {
     const ListForm = props.Form ? props.Form : DefaultForm;
     const ListRead = props.Read ? props.Read : null;
     const formHeightAdjust = isNumber(props.formHeightAdjust) ? props.formHeightAdjust : 70;
-    const supportSlitter = props.supportSlitter == true
-    const Splitter = supportSlitter ? SplitterInternal : NonSplitter;
     const CurrentListCategoriesTags = props.ListCategoriesTags ? props.ListCategoriesTags : ListCategoriesTags;
     const columns = props.columns ? props.columns : DEFAULT_COLUMNS;
     const maxListWidth = isNumber(props.maxListWidth) ? props.maxListWidth : areaWidth;
 
-    let maxFormWidth = isNumber(props.maxFormWidth) ? props.maxFormWidth : (isNumber(entity.maxFormWidth) ? entity.maxFormWidth : 900) + 106;
+    let maxFormWidth = Math.min(isNumber(props.maxFormWidth) ? props.maxFormWidth : (isNumber(entity.maxFormWidth) ? entity.maxFormWidth : 900), FORM_RESIZER_MAX_WIDTH) + 106;
     maxFormWidth = maxFormWidth > areaWidth - 20 ? areaWidth - 20 : maxFormWidth;
 
     const [filterSectionHeight, setFilterSectionHeight] = useState(0);
     const scope = isNonEmptyString(props.scope) ? props.scope : 'organization';
 
-    const secondaryInitialSize = areaWidth - maxListWidth >= 350 ? areaWidth - 350 : areaWidth - 250;
     const deleteButtonLabel = isNonEmptyString(props.deleteButtonLabel) ? props.deleteButtonLabel : 'Delete';
     const deleteConfirmationMessage = isNonEmptyString(props.deleteConfirmationMessage) ? props.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`;
 
@@ -131,6 +136,11 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const showSidePane = sidePaneKey && envData[sidePaneKey] && !hideListCategoriesTags;
     const currentEditRecordChanged = envData['currentEditRecordChanged'] == true;
+    let secondaryInitialSize = formWidth > areaWidth ? areaWidth : formWidth;
+    if (secondaryInitialSize > 600) secondaryInitialSize = 600;
+
+    const splitterWidth = areaWidth - (showSidePane ? 320 : 0);
+    const supportSlitter = splitterWidth > 700;
 
     useEffect(() => {
         const newEnvData = cloneDeep(envData);
@@ -720,7 +730,7 @@ const ListBase = observer((props: Record<string, any>) => {
     const renderListCategoriesTags = () => {
         //className={`w-full h-full absolute xl:relative z-10 border-r xl:border-0 drop-shadow-md xl:drop-shadow-none  overflow-hidden ${showSidePane ? '' : 'hidden'}`}
         return <div className={`w-full h-full overflow-hidden ${showSidePane ? '' : 'hidden'}`}
-            style={supportSlitter ? {} : { width: 320 }}>
+            style={{ width: 320 }}>
             <CurrentListCategoriesTags height={height} entityName={entity.entityName} entityType={entity.entityType} onClickClose={onClickCloseListCategoriesTags} />
         </div>
     }
@@ -781,49 +791,55 @@ const ListBase = observer((props: Record<string, any>) => {
         </div>
     }
 
-    const renderForm = () => {
+    const renderEditForm = (fromDrawer: boolean) => {
+
         if (!currentEditRecord) return null;
         if (isFunction(props.renderForm)) return props.renderForm(currentEditRecord);
 
+        return <div className={`list-form w-full h-full overflow-hidden ${fromDrawer ? 'border-l drop-shadow-lg' : ''} bg-white`}>
+            <ListFormHeader
+                context={context}
+                recordForMembership={recordForMembership}
+                entity={entity}
+                deleteButtonLabel={deleteButtonLabel}
+                deleteConfirmationMessage={deleteConfirmationMessage}
+                currentRecord={currentEditRecord}
+                currentRecordChanged={currentEditRecordChanged}
+                recordSaving={recordSaving}
+                onClickClose={onClickCloseForm}
+                onClickSaveRecord={onClickSaveRecord}
+                onClickDeleteRecord={onClickDeleteRecordFromForm}
+            />
+            {isObject(currentEditRecord) && <div className="list-form-body w-full flex flex-row px-8 py-4 overflow-hidden overflow-y-auto"
+                style={{ borderTop: 'solid 1rem #ffffff', borderBottom: 'solid 1rem #ffffff', height: height - formHeightAdjust }}>
+                <ListForm
+                    context={context}
+                    Fields={FormFields}
+                    entity={entity}
+                    wrapperClassName="pb-20"
+                    data={currentEditRecord}
+                    onChange={onChangeCurrentRecord}
+                    recordForMembership={recordForMembership} />
+            </div>}
+            <ReactResizeDetector onResize={throttle(onResizeForm, 300)} />
+        </div>
+    }
+
+    const renderEditFormDrawer = () => {
+        if (!currentEditRecord) return null;
         return <div className="relative h-full z-10" style={{ backgroundColor: '#fafafa', minHeight: height }}>
-            <ListFormResizer
+            <FormResizer
                 id={currentEditRecord.id}
                 onChangeSize={onUpdateFormWidth}
                 defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
                 className="absolute top-0 right-0"
-                style={{
-                    height, maxWidth: maxFormWidth, minWidth: FORM_RESIZER_MIN_WIDTH + 100,
-                    borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%',
-                    right: giveRoomToRightArea
-                }}>
-                <div className={`list-form w-full h-full overflow-hidden border border-0 border-l drop-shadow-lg bg-white`}>
-                    <ListFormHeader
-                        context={context}
-                        recordForMembership={recordForMembership}
-                        entity={entity}
-                        deleteButtonLabel={deleteButtonLabel}
-                        deleteConfirmationMessage={deleteConfirmationMessage}
-                        currentRecord={currentEditRecord}
-                        currentRecordChanged={currentEditRecordChanged}
-                        recordSaving={recordSaving}
-                        onClickClose={onClickCloseForm}
-                        onClickSaveRecord={onClickSaveRecord}
-                        onClickDeleteRecord={onClickDeleteRecordFromForm}
-                    />
-                    {isObject(currentEditRecord) && <div className="list-form-body w-full flex flex-row px-8 py-4 overflow-hidden overflow-y-auto"
-                        style={{ borderTop: 'solid 1rem #ffffff', borderBottom: 'solid 1rem #ffffff', height: height - formHeightAdjust }}>
-                        <ListForm
-                            context={context}
-                            Fields={FormFields}
-                            entity={entity}
-                            wrapperClassName="pb-20"
-                            data={currentEditRecord}
-                            onChange={onChangeCurrentRecord}
-                            recordForMembership={recordForMembership} />
-                    </div>}
-                    <ReactResizeDetector onResize={throttle(onResizeForm, 300)} />
-                </div>
-            </ListFormResizer>
+                minWidth={FORM_RESIZER_MIN_WIDTH + 100}
+                maxWidth={maxFormWidth}
+                height={height}
+                right={giveRoomToRightArea}
+            >
+                {renderEditForm(true)}
+            </FormResizer>
         </div>
 
     }
@@ -837,64 +853,82 @@ const ListBase = observer((props: Record<string, any>) => {
         envStore.setValue('currentReadRecord', null);
     }
 
-    const renderReader = () => {
-        if (!currentReadRecord) return null;
-        if (isFunction(props.renderRead)) return props.renderRead(currentReadRecord);
-        return ListRead && <div className="relative h-full z-10" style={{ backgroundColor: '#fafafa', minHeight: height }}>
-            <ListFormResizer
-                id={currentReadRecord.id}
-                onChangeSize={onUpdateFormWidth}
-                defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
-                className="absolute top-0 right-0"
-                style={{
-                    height, maxWidth: maxFormWidth, minWidth: FORM_RESIZER_MIN_WIDTH + 100,
-                    borderLeft: '100px solid rgba(255, 255, 255, 0.6)', borderImage: 'linear-gradient(to left,#ffffff,transparent) 10 100%',
-                    right: giveRoomToRightArea
-                }}>
-                <div className={`list-read w-full h-full overflow-hidden border border-0 border-l drop-shadow-lg bg-white`}>
-                    <ListReadHeader
-                        context={context}
-                        entity={entity}
-                        currentRecord={currentReadRecord}
-                        onClickClose={onClickCloseRead}
-                        onClickEdit={onClickEditRecord}
-                    />
-                    {isObject(currentReadRecord) && <div className="list-read-body w-full flex flex-row px-8 py-4 overflow-hidden overflow-y-auto"
-                        style={{ borderTop: 'solid 1rem #ffffff', borderBottom: 'solid 1rem #ffffff', height: height - formHeightAdjust }}>
-                        <ListRead
-                            context={context}
-                            entity={entity}
-                            data={currentReadRecord}
-                            recordForMembership={recordForMembership} />
-                    </div>}
-                    <ReactResizeDetector onResize={throttle(onResizeForm, 300)} />
-                </div>
-            </ListFormResizer>
+    const renderReadForm = (fromDrawer: boolean) => {
+        if (!currentReadRecord || isNil(ListRead)) return null;
+        if (isFunction(props.renderReadForm)) return props.renderReadForm(currentReadRecord);
+        return <div className={`list-read w-full h-full overflow-hidden ${fromDrawer ? 'border-l  drop-shadow-lg' : ''} bg-white`}>
+            <ListReadHeader
+                context={context}
+                entity={entity}
+                currentRecord={currentReadRecord}
+                onClickClose={onClickCloseRead}
+                onClickEdit={onClickEditRecord}
+            />
+            {isObject(currentReadRecord) && <div className="list-read-body w-full flex flex-row px-8 py-4 overflow-hidden overflow-y-auto"
+                style={{ borderTop: 'solid 1rem #ffffff', borderBottom: 'solid 1rem #ffffff', height: height - formHeightAdjust }}>
+                <ListRead
+                    context={context}
+                    entity={entity}
+                    data={currentReadRecord}
+                    recordForMembership={recordForMembership} />
+            </div>}
+            <ReactResizeDetector onResize={throttle(onResizeForm, 300)} />
         </div>
+    }
 
+    const renderReadFormDrawer = () => {
+        if (!currentReadRecord || isNil(ListRead)) return null;
+        if (isFunction(props.renderReadForm)) return props.renderReadForm(currentReadRecord);
+        return <FormResizer
+            id={currentReadRecord.id}
+            onChangeSize={onUpdateFormWidth}
+            defaultWidth={formWidth > areaWidth ? areaWidth : formWidth}
+            className="absolute top-0 right-0"
+            minWidth={FORM_RESIZER_MIN_WIDTH + 100}
+            maxWidth={maxFormWidth}
+            height={height}
+            right={giveRoomToRightArea}
+        >
+            {renderReadForm(true)}
+        </FormResizer>
     }
 
     return <>
         <CSS id={`list-css-${areaWidth == 0 ? 'server' : 'client'}`} content={`
         ${LIST_CSS}
-        .douhub-list .layout-pane:last-child
+        .douhub-list .splitter-layout > .layout-splitter
         {
-            min-width: ${areaWidth - 350}px;
-            ${!showSidePane && 'width: 100% !important;'}
+            background-color: #fafafa !important;
+            border-right: solid 1px #e5e7eb;
+            border-left: solid 1px #e5e7eb;
         }
         `} />
 
-        <div className={`douhub-list relative bg-white flex flex-row overflow-hidden douhub-list-${areaWidth < 650 ? 'full' : ''} douhub-list-sidepanel-${showSidePane ? 'show' : 'hidden'}`}
+
+        <div className={`douhub-list relative bg-white flex flex-row bg-white overflow-hidden douhub-list-${areaWidth < 650 ? 'full' : ''} douhub-list-sidepanel-${showSidePane ? 'show' : 'hidden'}`}
             style={{ backgroundColor: '#fafafa', minHeight: height }}>
-            <Splitter
-                secondaryInitialSize={secondaryInitialSize}
-                primaryMinSize={250}
-                secondaryMinSize={areaWidth - 350}>
-                {renderListCategoriesTags()}
+            {renderListCategoriesTags()}
+            {supportSlitter && <div style={{ width: splitterWidth }}>
+                <Splitter
+                    primaryMinSize={Math.max(splitterWidth - maxFormWidth, 320)}
+                    secondaryMinSize={380}
+                    secondaryInitialSize={secondaryInitialSize}
+                    primaryInitialSize={splitterWidth - secondaryInitialSize}
+                >
+                    <div style={{minWidth:320}}>
+                        {renderListSection()}
+                    </div>
+                    <div>
+                        {renderEditForm(false)}
+                        {renderReadForm(false)}
+                    </div>
+                </Splitter>
+            </div>}
+            {!supportSlitter && <div style={{ width: splitterWidth }}>
                 {renderListSection()}
-            </Splitter>
-            {renderForm()}
-            {renderReader()}
+                {renderEditFormDrawer()}
+                {renderReadFormDrawer()}
+            </div>}
             <ReactResizeDetector onResize={throttle(onResizeAreaDetector, 300)} />
             {notification && <Notification id={notification.id} message={notification.message} description={notification.description} type={notification.type} />}
         </div>

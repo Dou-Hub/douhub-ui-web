@@ -1,10 +1,5 @@
 export const LIST_CSS = `
 
-    .douhub-list .splitter-layout > .layout-splitter
-    {
-        background-color: #FFFFFF !important;
-    }
-
     .douhub-list .ant-table-body
     {
         max-height: none !important;

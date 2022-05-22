@@ -3,10 +3,10 @@ import React from 'react';
 import { Menu, Popconfirm, Dropdown } from '../../index';
 import { isFunction, map, isArray } from 'lodash';
 import { isNonEmptyString } from 'douhub-helper-util';
-import { SVG } from 'douhub-ui-web-basic';
+import { SVG, _window } from 'douhub-ui-web-basic';
 import { Tooltip } from '../../index';
 
-export const rendeActionButtonColumn = (
+export const renderActionButtonColumn = (
     menuItems: Array<{ title: string, action: string, confirmation?: string }>,
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
@@ -65,10 +65,13 @@ export const rendeActionButtonColumn = (
 
 export type LIST_COLUMN_TOOLTIP_TYPE = { placement?: 'top' | 'left' | 'bottom' | 'right', title: string, color?: string };
 export type LIST_COLUMN_SETTINGS_TYPE = {
-    onRenderWrapperClassName?: (record: Record<string, any>) => string,
-    onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-    onRenderIconClassName?: (record: Record<string, any>) => string,
-    onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
+    onRenderWrapperClassName?: (record?: Record<string, any>) => string,
+    onRenderWrapperStyle?: (record?: Record<string, any>) => Record<string, any>,
+    onRenderIconClassName?: (record?: Record<string, any>) => string,
+    onRenderIconColor?: (record?: Record<string, any>) => string,
+    currentReadRecord?: Record<string,any>,
+    currentEditRecord?: Record<string,any>,
+    context?: Record<string, any>,
     tooltip?: LIST_COLUMN_TOOLTIP_TYPE
 }
 
@@ -95,11 +98,11 @@ export const renderIconButtonColumn = (
 
             const iconClassName = isFunction(settings?.onRenderIconClassName) ? settings?.onRenderIconClassName(r) : '';
             const iconColor = isFunction(settings?.onRenderIconColor) ? settings?.onRenderIconColor(r) : '#000000';
-
+         
             const c = <div className={`w-full flex justify-center ${record.uiDisabled ? 'cursor-not-allowed' : 'cursor-pointer'} ${wrapperClassName}`}
                 style={wrapperStyle}
                 onClick={() => !record.uiDisabled && onClick(r, action, entity, rowIndex)} >
-                <SVG id={`list-col-icon-${iconUrl}-${id}`} color={record.uiDisabled ? '#cccccc' : iconColor} src={iconUrl} className={`h-4 w-4 ${iconClassName}`} />
+                <SVG id="list-col-icon" color={iconColor} src={iconUrl} className={`h-4 w-4 ${iconClassName}`} />
             </div>
 
             if (settings?.tooltip) {
@@ -117,15 +120,43 @@ export const renderIconButtonColumn = (
     }
 }
 
+export const DEFAULT_SELECT_COLUMN = (
+    onClick?: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
+    entity?: Record<string, any>,
+    settings?: LIST_COLUMN_SETTINGS_TYPE
+) => {
+
+    const currentReadRecord = settings?.currentReadRecord;
+    const currentEditRecord = settings?.currentEditRecord;
+    const solution = _window.solution;
+    const themeColor = solution?.theme?.color;
+   
+    const color = themeColor && isNonEmptyString(themeColor["500"]) ? themeColor["500"] : 'black';
+    const newSettings: LIST_COLUMN_SETTINGS_TYPE = {
+        ... (settings ? settings : {}), onRenderIconColor: (currentRecord?: Record<string, any>) => {
+            return (currentRecord?.id == currentEditRecord?.id || currentRecord?.id == currentReadRecord?.id) ? color : '#EFEFEF';
+        }
+    };
+    
+
+    return renderIconButtonColumn('/icons/arrow-right-filled.svg', 'read',
+        isFunction(onClick) ? onClick : () => { },
+        entity,
+        newSettings
+    );
+}
+
+
 export const DEFAULT_EDIT_COLUMN = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
     entity?: Record<string, any>,
-    events?: LIST_COLUMN_SETTINGS_TYPE
+    settings?: LIST_COLUMN_SETTINGS_TYPE
 ) => {
-    return renderIconButtonColumn('/icons/edit.svg', 'edit',
+    return renderIconButtonColumn('/icons/edit.svg', 
+        'edit',
         onClick,
         entity,
-        events
+        settings
     );
 }
 
@@ -135,7 +166,8 @@ export const DEFAULT_OPEN_IN_BROWSER_COLUMN = (
     settings?: LIST_COLUMN_SETTINGS_TYPE
 
 ) => {
-    return renderIconButtonColumn('/icons/open-in-browser.svg', 'open-in-browser',
+    return renderIconButtonColumn('/icons/open-in-browser.svg', 
+        'open-in-browser',
         onClick,
         entity,
         settings
@@ -160,17 +192,11 @@ export const DEFAULT_ACTION_COLUMN = (
     menuItems?: Array<{ title: string, action: string, confirmation?: string }>,
     settings?: {
         deleteConfirmationMessage?: string,
-        deleteButtonLabel?: string,
-        onRenderWrapperClassName?: (record: Record<string, any>) => string,
-        onRenderWrapperStyle?: (record: Record<string, any>) => Record<string, any>,
-        onRenderIconClassName?: (record: Record<string, any>) => string,
-        onRenderIconColor?: (record: Record<string, any>) => Record<string, any>,
-        tooltip?: LIST_COLUMN_TOOLTIP_TYPE
-    }
+        deleteButtonLabel?: string} & LIST_COLUMN_SETTINGS_TYPE
 ) => {
 
     const deleteConfirmation = settings?.deleteConfirmationMessage ? settings?.deleteConfirmationMessage : `Are you sure you want to delete the ${entity?.uiName.toLowerCase()}?`
-    return rendeActionButtonColumn([
+    return renderActionButtonColumn([
         { title: settings?.deleteButtonLabel ? settings?.deleteButtonLabel : "Delete", action: "delete", confirmation: deleteConfirmation },
         ...(isArray(menuItems) ? menuItems : [])
     ],
@@ -188,7 +214,7 @@ export const DEFAULT_ACTION_COLUMN = (
 
 export const DEFAULT_COLUMNS = (
     onClick: (record: Record<string, any>, action: string, entity?: Record<string, any>, rowIndex?: number) => void,
-    entity: Record<string, any>
+    entity?: Record<string, any>
 ) => {
     return [
         {
