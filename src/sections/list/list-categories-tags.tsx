@@ -15,7 +15,8 @@ import { useEnvStore } from 'douhub-ui-store';
 const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select
     {
-        height: 32, width: 32px;
+        height: 32px;
+        min-width: 120px;
     }
 
     .douhub-list-categories-header .ant-select-selector
@@ -27,8 +28,14 @@ const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select-selection-item
     {
         font-weight: bold !important;
-        font-size: 1rem;
+        font-size: 1.2rem;
         padding-right: 32px !important;
+    }
+
+
+    .douhub-list-categories-header .ant-select-arrow
+    {
+        height: 1.2rem;
     }
 `
 

@@ -78,7 +78,7 @@ export const LIST_CSS = `
     {
         font-weight: bold !important;
         font-size: 1.2rem;
-        line-height: 1.6 !important;
+        line-height: 2 !important;
         margin-bottom: 0;
         height: 32px;
         margin-right: 20px;
