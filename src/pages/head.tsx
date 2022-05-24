@@ -23,19 +23,20 @@ const PageHead = (props: {
     canonical?: string
 }) => {
 
-    const { noIndex, solution, titleAppendSiteName, url, host } = props;
+    const { noIndex,  titleAppendSiteName, url, host } = props;
+    const solution = props.solution?props.solution:{};
     const site = solution?.site ? solution.site : {};
     const domain = isNonEmptyString(host) ? host : solution.host;
-    const protocal = domain == 'localhost' ? 'http' : 'https';
+    const protocol = domain == 'localhost' ? 'http' : 'https';
     const type = props.type == 'website' ? 'website' : 'article';
     const author = isNonEmptyString(props.author) ? props.author : site.author;
     const siteName = site.name;
-    const canonical = isNonEmptyString(props.canonical) ? props.canonical : `${protocal}://${domain}${url}`;
-    const headManifestUrl = `${protocal}://${domain}`;
+    const canonical = isNonEmptyString(props.canonical) ? props.canonical : `${protocol}://${domain}${url}`;
+    const headManifestUrl = `${protocol}://${domain}`;
 
     let image = isNonEmptyString(props.image) ? props.image : site.image;
     if (!isNonEmptyString(image)) image = '/home.webp';
-    if (image.indexOf('/') == 0) image = `${protocal}://${domain}${image}`;
+    if (image.indexOf('/') == 0) image = `${protocol}://${domain}${image}`;
 
     let title = isNonEmptyString(props.title) ? props.title : (site?.title ? site.title : '');
     if (title.length > 120) title = title.substring(0, 120) + ' ...';
