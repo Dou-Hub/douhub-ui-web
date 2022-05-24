@@ -20,7 +20,7 @@ const TEXT_FIELD_CSS = `
     {
         min-height: 30px;
         border-radius: 0 !important;
-        font-size: 1rem !important;
+        font-size: 1rem;
     }
 
     .field-wrapper-input .ant-input-number-input-wrap
@@ -32,7 +32,7 @@ const TEXT_FIELD_CSS = `
     .field-wrapper-input .ant-input-number-input
     {
         padding: 5px 0 !important;
-        font-size: 1rem !important;
+        font-size: 1rem;
     }
 
     .field-wrapper-input.h1

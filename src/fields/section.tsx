@@ -33,7 +33,9 @@ const FieldSection = (props: Record<string, any>) => {
         <>
             <CSS id="field-css" content={FIELD_CSS} />
             <CSS id="field-section-css" content={SECTION_FIELD_CSS} />
-            <div style={style} onClick={onClick}
+            <div 
+            style={style} 
+            onClick={onClick}
             className={`w-full p-3 bg-gray-50 border border-0 border-l text-left field-section ${disabled ? 'field-disabled' : ''} ${isNonEmptyString(className) ? className : ''}`} 
             >
                 {isNonEmptyString(title) && <div className={`w-full text-base text-gray-800 ${isNonEmptyString(titleClassName) ? titleClassName : ''}`} dangerouslySetInnerHTML={{ __html: marked(title) }} />}

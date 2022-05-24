@@ -4,7 +4,6 @@ import { LabelField, Tree, TreeNode } from '../index';
 import { isNonEmptyString } from 'douhub-helper-util';
 import { CSS, SVG } from 'douhub-ui-web-basic';
 
-
 const TREE_CSS = `
 .field-tree {
     display: flex;
@@ -40,26 +39,24 @@ const TREE_CSS = `
     font-size: 1.1rem !important;
 }
 
-.field-tree-wrapper-large .ant-tree-draggable-icon, 
-.field-tree-wrapper-large .ant-tree-switcher
+.field-tree-wrapper-large .ant-tree-draggable-icon
 {
     display: flex;
     margin-top: 6px;
     flex-direction: column;
     cursor: move;
+}
+
+.field-tree-wrapper-large .ant-tree-switcher
+{
+    display: flex;
+    margin-top: 8px;
+    flex-direction: column;
 }
 
 .field-tree-wrapper-large .ant-tree-checkbox
 {
     margin: 6px 8px 0 0;
-}
-
-.field-tree-wrapper-large .ant-tree-switcher
-{
-    display: flex;
-    margin-top: 6px;
-    flex-direction: column;
-    cursor: move;
 }
 
 .field-tree-wrapper-large .ant-tree-node-selected
@@ -79,7 +76,7 @@ const TreeFieldNode = (props: Record<string, any>) => {
     const color = themeColor && isNonEmptyString(themeColor["500"]) ? themeColor["500"] : '#333333'
 
     return <div className="flex">
-        <div className="flex-1 flex flex-col justify-center">{text}</div>
+        <div className="flex-1 flex flex-col justify-center"><span>{text}</span></div>
         {isFunction(props.onClickFilterButton) && <div className="flex flex-col justify-center shadow hover:shadow-lg hover:bg-white p-1 rounded-lg" style={selected?{margin:3, marginRight:0}:{margin:3, marginRight:2 }}  onClick={onClickFilterButton}>
             {selected?<SVG src="/icons/filter.svg" style={{ width: 12 }} color={color} />:<SVG src="/icons/filter.svg" style={{ width: 12 }} color="#BBBBBB" />}
         </div>}

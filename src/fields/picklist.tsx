@@ -25,7 +25,7 @@ const PICKLIST_FIELD_CSS = `
         padding: 0 !important;
         height: 30px !important;
         border: none !important;
-        font-size: 0.9rem;
+        font-size: 1rem;
         text-align: left;
     }
 

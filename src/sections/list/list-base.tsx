@@ -74,6 +74,8 @@ const DefaultNoData = (props: Record<string, any>) => {
 
 const FORM_RESIZER_MIN_WIDTH = 350;
 const FORM_RESIZER_MAX_WIDTH = 650;
+const LIST_MIN_WIDTH = 320;
+
 
 const ListBase = observer((props: Record<string, any>) => {
 
@@ -253,7 +255,7 @@ const ListBase = observer((props: Record<string, any>) => {
 
     const onResizeForm = (width?: number) => {
 
-        const newWidth = isNumber(width) && width>0 ? width : 320;
+        const newWidth = isNumber(width) && width > 0 ? width : 320;
         setCurrentFormWidth(newWidth);
         setPredefinedFormWidth(newWidth);
         setLocalStorage(formWidthCacheKey, newWidth);
@@ -908,6 +910,11 @@ const ListBase = observer((props: Record<string, any>) => {
             border-right: solid 1px #e5e7eb;
             border-left: solid 1px #e5e7eb;
         }
+
+        .douhub-list .layout-pane-primary
+        {
+            min-width: ${LIST_MIN_WIDTH}px !important;
+        }
         `} />
 
 
@@ -916,12 +923,12 @@ const ListBase = observer((props: Record<string, any>) => {
             {renderListCategoriesTags()}
             {supportSlitter && <div style={{ width: splitterWidth }}>
                 <Splitter
-                    primaryMinSize={Math.max(splitterWidth - maxFormWidth, 320)}
+                    primaryMinSize={Math.max(splitterWidth - maxFormWidth, LIST_MIN_WIDTH)}
                     secondaryMinSize={380}
                     secondaryInitialSize={secondaryInitialSize}
                     primaryInitialSize={splitterWidth - secondaryInitialSize}
                 >
-                    <div style={{ minWidth: 320 }}>
+                    <div>
                         {renderListSection()}
                     </div>
                     <div>
