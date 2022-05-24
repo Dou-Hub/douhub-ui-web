@@ -66,7 +66,7 @@ const TREE_CSS = `
 `
 
 const TreeFieldNode = (props: Record<string, any>) => {
-    const { item, selected, themeColor } = props;
+    const { item, selected, themeColor, nodeTextClassName, nodeTextStyle } = props;
     const { text } = item;
 
     const onClickFilterButton = () => {
@@ -76,7 +76,7 @@ const TreeFieldNode = (props: Record<string, any>) => {
     const color = themeColor && isNonEmptyString(themeColor["500"]) ? themeColor["500"] : '#333333'
 
     return <div className="flex">
-        <div className="flex-1 flex flex-col justify-center"><span>{text}</span></div>
+        <div className={`flex-1 flex flex-col justify-center ${isNonEmptyString(nodeTextClassName)?nodeTextClassName:''}`} style={nodeTextStyle}>{text}</div>
         {isFunction(props.onClickFilterButton) && <div className="flex flex-col justify-center shadow hover:shadow-lg hover:bg-white p-1 rounded-lg" style={selected?{margin:3, marginRight:0}:{margin:3, marginRight:2 }}  onClick={onClickFilterButton}>
             {selected?<SVG src="/icons/filter.svg" style={{ width: 12 }} color={color} />:<SVG src="/icons/filter.svg" style={{ width: 12 }} color="#BBBBBB" />}
         </div>}
@@ -85,7 +85,9 @@ const TreeFieldNode = (props: Record<string, any>) => {
 
 const TreeField = (props: Record<string, any>) => {
 
-    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, size, doing, selectedId, checkedIds, value, themeColor } = props;
+    const { label, disabled, labelStyle, alwaysShowLabel, expendedIds, 
+        nodeTextClassName, nodeTextStyle,
+        size, doing, selectedId, checkedIds, value, themeColor } = props;
     const hideLabel = props.hideLabel || !isNonEmptyString(label);
     const placeholder = isNonEmptyString(props.placeholder) ? props.placeholder : '';
     const TREE_ITEM_CSS = `
@@ -98,9 +100,6 @@ const TreeField = (props: Record<string, any>) => {
     const onDragEnter = (info: Record<string, any>) => {
         console.log(info);
     };
-
-
-
 
     const onDrop = (info: Record<string, any>) => {
         const dropKey = info.node.id;
@@ -178,13 +177,17 @@ const TreeField = (props: Record<string, any>) => {
         return map(items, (item) => {
             if (isArray(item.items) && item.items.length>0) {
                 return (
-                    <TreeNode title={<TreeFieldNode themeColor={themeColor} item={item} />} key={item.id}>
+                    <TreeNode title={<TreeFieldNode themeColor={themeColor} 
+                        item={item} nodeTextClassName={nodeTextClassName} 
+                        nodeTextStyle={nodeTextStyle}/>} key={item.id}>
                         {renderTreeNodes(item.items)}
                     </TreeNode>
                 )
             }
 
-            return <TreeNode title={<TreeFieldNode themeColor={themeColor} item={item} selected={item.id == selectedId} onClickFilterButton={props.onClickFilterButton} />} key={item.id} />
+            return <TreeNode title={<TreeFieldNode themeColor={themeColor} 
+                item={item} selected={item.id == selectedId} 
+                onClickFilterButton={props.onClickFilterButton} nodeTextClassName={nodeTextClassName} nodeTextStyle={nodeTextStyle}/>} key={item.id} />
         });
     }
 

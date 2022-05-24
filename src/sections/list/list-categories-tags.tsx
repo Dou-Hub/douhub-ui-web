@@ -1,4 +1,4 @@
-import { cloneDeep, each, find,  isArray, map } from 'lodash';
+import { cloneDeep, each, find,  isArray } from 'lodash';
 import {
     doNothing, isNonEmptyString, newGuid, insertTreeItem,
     updateTreeItem, getTreeItem, isObject, removeTreeItem
@@ -10,7 +10,6 @@ import {
 import { _window, CSS, SVG, callAPI } from 'douhub-ui-web-basic';
 import React, { useEffect, useState } from 'react';
 import { useEnvStore } from 'douhub-ui-store';
-
 
 const LIST_CATEGORIES_TAGS_CSS = `
     .douhub-list-categories-header .ant-select
@@ -39,11 +38,12 @@ const LIST_CATEGORIES_TAGS_CSS = `
     }
 `
 
-const ListCategoriesTags = (props: { 
-    entityName: string, entityType?: string, 
-    height: number, onClickClose?: any }) => {
+const ListCategoriesTags = (props: {
+    entityName: string, entityType?: string,
+    height: number, onClickClose?: any
+}) => {
     const envStore = useEnvStore();
-   
+
     const { entityName, entityType, height } = props;
     const solution = _window.solution;
 
@@ -58,11 +58,11 @@ const ListCategoriesTags = (props: {
     const [doing, setDoing] = useState('Loading data ...');
     const [curTab, setCurTab] = useState({ key: "categories", label: "Categories", value: "categories" });
     const [selectedId, setSelectedId] = useState('');
-    const [selectedNode, setSelectedNode] = useState<Record<string,any>|null>(null);
+    const [selectedNode, setSelectedNode] = useState<Record<string, any> | undefined>(undefined);
     const [op, setOp] = useState('');
     const [categoryText, setCategoryText] = useState('');
     const uiName = curTab.value == 'categories' ? 'Category' : 'Tag';
-   
+
     // const uiCollectionName = curTab.value == 'categories' ? 'Categories' : 'Tags';
 
     useEffect(() => {
@@ -88,7 +88,7 @@ const ListCategoriesTags = (props: {
                     setDoing('');
                 })
         }
-    }, [entityName, entityType, refresh])
+    }, [solution, entityName, entityType, refresh])
 
     // const onClickClose = () => {
     //     if (isFunction(props.onClickClose)) props.onClickClose();
@@ -126,13 +126,11 @@ const ListCategoriesTags = (props: {
         setOp(`add-${type}`);
     }
 
-    const getFilterNodes = ()=>{
-        if (isArray(categoriesCheckedNodes) && categoriesCheckedNodes.length>0)
-        {
+    const getFilterNodes = () => {
+        if (isArray(categoriesCheckedNodes) && categoriesCheckedNodes.length > 0) {
             return categoriesCheckedNodes;
         }
-        else
-        {
+        else {
             if (isObject(selectedNode)) return [selectedNode];
         }
         return [];
@@ -140,21 +138,17 @@ const ListCategoriesTags = (props: {
 
     const onClickFilterByCategory = () => {
         const filterNodes = getFilterNodes();
-        envStore.setValue('categories', map(filterNodes,(node:any)=>{
-            return {id: node.key, text: node.value}
-        }));
+        envStore.setValue('categories', filterNodes);
     }
 
-    const onClickFilterButton = (newSelectedNode:Record<string,any>) => {
+    const onClickFilterButton = (newSelectedNode: Record<string, any>) => {
 
         setCategoriesCheckedNodes([]);
-        if (selectedNode && selectedNode.id==newSelectedNode.id)
-        {
-            envStore.setValue('categories',  []);
+        if (selectedNode && selectedNode.id == newSelectedNode.id) {
+            envStore.setValue('categories', []);
         }
-        else
-        {
-            envStore.setValue('categories',  [newSelectedNode]);
+        else {
+            envStore.setValue('categories', [newSelectedNode]);
         }
 
     }
@@ -222,15 +216,19 @@ const ListCategoriesTags = (props: {
         setCategoriesExpendedIds(newExpendedIds);
     }
 
-    const onCheckCategory = (newCkeckedIds: string[], e:any ) => {
-        const {checkedNodes} = e;
-        setCategoriesCheckedIds(newCkeckedIds);
+    const onCheckCategory = (newCheckedIds: string[]) => {
+         setCategoriesCheckedIds(newCheckedIds);
+        const checkedNodes: any = [];
+        each(newCheckedIds, (newCheckedId)=>{
+            const newCheckedNode = getTreeItem(categories.data, (item?: Record<string, any>) => item?.id == newCheckedId);
+            if (newCheckedNode) checkedNodes.push(newCheckedNode);
+        })
         setCategoriesCheckedNodes(checkedNodes);
     }
 
-    const onSelectCategory = (newSelectId: string, e:any) => {
-        const {node} = e;
+    const onSelectCategory = (newSelectId: string) => {
         setSelectedId(newSelectId);
+        const node: Record<string, any> | undefined = getTreeItem(categories.data, (item?: Record<string, any>) => item?.id == newSelectId);
         setSelectedNode(node);
         setOp('');
         setCategoryText('');
@@ -349,7 +347,7 @@ const ListCategoriesTags = (props: {
             {(op.indexOf('add-') >= 0 || op == 'edit') && <div className="w-full flex flex-row py-2 items-center px-4 border-dashed border-b bg-white" style={{ height: 55 }}>
                 <TextField
                     inputWrapperStyle={{ marginBottom: 0, borderBottom: 'none' }}
-                    inputStyle={{ fontSize: 12, height: 30, background: 'transparent' }}
+                    inputStyle={{ height: 30, background: 'transparent' }}
                     onChange={(v: string) => {
                         console.log({ v })
                         setCategoryText(v)
